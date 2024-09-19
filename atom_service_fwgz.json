@@ -25,7 +25,11 @@
       "operating_system":[
         {
           "name": "Linux",
-          "version": "5.15.0-117-generic"
+          "version":[
+			"v1" : "5.13.0-117-generic",
+			"v2" : "5.14.0-117-generic",
+			"v3" : "5.15.0-117-generic"
+		  ]
         },
         {
           "name":"SylixOS",
@@ -74,6 +78,16 @@
     ],
     "rpc_methods": [
       {
+        "name": "UnitaryStream",
+        "requestType": "atomic_service_fwgz_Request",
+        "responseType": "atomic_service_fwgz_Reply",
+        "capabilities": {
+          "read": true,
+          "write": false,
+          "delete": false
+        }
+      },
+	  {
         "name": "UnitaryStream",
         "requestType": "atomic_service_fwgz_Request",
         "responseType": "atomic_service_fwgz_Reply",
