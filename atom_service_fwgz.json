@@ -25,27 +25,37 @@
       "operating_system":[
         {
           "name": "Linux",
-          "version":[
-			"v1" : "5.13.0-117-generic",
-			"v2" : "5.14.0-117-generic",
-			"v3" : "5.15.0-117-generic"
-		  ]
+          "version":{
+          "v1" : "5.13.0-117-generic",
+          "v2" : "5.14.0-117-generic",
+          "v3" : "5.15.0-117-generic"
+          }
         },
         {
           "name":"SylixOS",
-          "version":"RealEvo v3.9.5"
+          "version":{
+			  "v1":"1.0.0",
+			  "v2":"1.0.1"
+		  }
         },
         {
           "name":"EulerOS",
-          "version":"1.0.0"
+          "version":{
+			  "v1":"1.0.0",
+			  "v2":"1.2.3"
+		  }
         },
         {
           "name":"HarmonyOS",
-          "version":"1.0.0"
+          "version":{
+			  "v1":"1.0.0"
+		  }
         },
         {
           "name":"ACoreOS",
-          "version":"1.0.0"
+          "version":{
+			  "v1":"1.0.0"
+		  }
         }
       ]
     },
