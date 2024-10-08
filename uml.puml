@@ -5,31 +5,34 @@ class Service
 class Message
 class ServiceMethod
 class GrpcMethod
-class XmlRpcMethod
 class JsonRpcMethod
 class ReturnCode
 class AtomService
 class Implement
-class Combination
+class CombineService
 class Application
 class DDS
 
+Service <|-- AtomService
+Service <|-- CombineService
+Service <|-- Application
 
 
 AtomService "1"<--"1...n" ServiceMethod
-AtomService "1"<--"1" Implement
+
 
 GrpcMethod "1"<--"2" Message
-GrpcMethod "1"<--"1" ReturnCode
+ServiceMethod "1"<--"1" ReturnCode
 
-Service "1"<--"1...n" AtomService
-Service "1"<--"1" Combination
-Service "1"<--"1" Application
-Service "1"<--"1" DDS
 
+
+Implement <|-- DDS
+Implement <|-- GrpcImplement
+Implement <|-- JsonImplement
+
+CombineService "1"<--"1...n" AtomService
 
 ServiceMethod <|-- GrpcMethod
-ServiceMethod <|-- XmlRpcMethod
 ServiceMethod <|-- JsonRpcMethod
 
 
@@ -67,11 +70,13 @@ class operating_system {
 
 'Service "1"<--"1" developer
 'Service "1"<--"1" maintainer
+
 Service "1"<--"1" owner
 owner "1"<--"1" developer
 owner "1"<--"1" maintainer
 Service "1"<--"1" resource_requirements
 Service "1"<--"1" operating_system
+Service "1"<--"1" Implement
 operating_system "1"<--"1...n" system
 
 
@@ -85,10 +90,11 @@ class Service {
     -build_time: String
     -priority_level: int
     -license: String
+    -servicePath: String
     -owner_instance:owner
     -resource_requirements_instance:resource_requirements
     -operating_system_instance:operating_system
-
+    -implement_instance: Implemented
     -atom_service_instance:vector<AtomService>
 
     '+String loadFile(String filePath)
@@ -98,14 +104,21 @@ class Service {
     +bool writeCpp(String filePath, String systemVersion)
     +bool writeHpp(String filePath, String systemVersion)
     +bool generateJson(String fileName)
+'    +bool generateServiceProject()
+'    +bool generateServiceLib()
 
     +Json toJson()
     +String toString()
 }
 class AtomService{
-    -service_method_instance: vector<AtomService>
-    -implement_instance: Implemented
+    -service_method_instance: vector<ServiceMethod>
 }
+
+class CombineService {
+    -atom_service_list: vector<AtomService>
+}
+
+
 class Implement {
     -jsonFile: String
     -protoFile: String
@@ -132,6 +145,7 @@ class ServiceMethod {
     -name: String
     -chinese_name: String
     -description: String
+    -return_code: ReturnCode
 }
 
 
@@ -139,7 +153,6 @@ class GrpcMethod {
 
     -requestMsg: Message
     -responseMsg: Message
-    -returnCode: ReturnCode
     -capabilitiesVar: capabilities
 
     +bool loadInfo(Json data)
