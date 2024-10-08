@@ -91,15 +91,13 @@ class Service {
 
     -atom_service_instance:vector<AtomService>
 
-
-
     '+String loadFile(String filePath)
     +bool parseCpp(String fileName)
     +bool parseHpp(String fileName)
     +Json loadJson(String fileName)
-    +bool writeCpp(String filePath，String systemVersion)
+    +bool writeCpp(String filePath, String systemVersion)
     +bool writeHpp(String filePath, String systemVersion)
-    +bool generateJson(String filePath)
+    +bool generateJson(String fileName)
 
     +Json toJson()
     +String toString()
@@ -111,7 +109,7 @@ class AtomService{
 class Implement {
     -jsonFile: String
     -protoFile: String
-    -grpc_pb_File: String
+    -grpcPbFile: String
     -libFile: String
     -JinjaTemplateFile: String
 
@@ -142,7 +140,7 @@ class GrpcMethod {
     -requestMsg: Message
     -responseMsg: Message
     -returnCode: ReturnCode
-    -capabilities_instance: capabilities
+    -capabilitiesVar: capabilities
 
     +bool loadInfo(Json data)
     +Json toJson()
