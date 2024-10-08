@@ -1,0 +1,187 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Service
+class Message
+class ServiceMethod
+class GrpcMethod
+class XmlRpcMethod
+class JsonRpcMethod
+class ReturnCode
+class AtomService
+class Implement
+class Combination
+class Application
+class DDS
+
+
+
+AtomService "1"<--"1...n" ServiceMethod
+AtomService "1"<--"1" Implement
+
+GrpcMethod "1"<--"2" Message
+GrpcMethod "1"<--"1" ReturnCode
+
+Service "1"<--"1...n" AtomService
+Service "1"<--"1" Combination
+Service "1"<--"1" Application
+Service "1"<--"1" DDS
+
+
+ServiceMethod <|-- GrpcMethod
+ServiceMethod <|-- XmlRpcMethod
+ServiceMethod <|-- JsonRpcMethod
+
+
+class owner {
+	-developer_instance: developer
+	-maintainer_instance: maintainer
+}
+
+class developer {
+		-name: String
+		-email: String
+}
+
+class maintainer {
+		-name: String
+		-email: String
+}
+
+
+class resource_requirements {
+    -cpu_architecture: String
+    -memory: int
+    -hard_disk: int
+}
+
+class system {
+    -name: String
+    -version: String
+}
+
+class operating_system {
+    -systems: vector<system>
+}
+
+
+'Service "1"<--"1" developer
+'Service "1"<--"1" maintainer
+Service "1"<--"1" owner
+owner "1"<--"1" developer
+owner "1"<--"1" maintainer
+Service "1"<--"1" resource_requirements
+Service "1"<--"1" operating_system
+operating_system "1"<--"1...n" system
+
+
+
+
+class Service {
+    -name: String
+    -chinese_name: String
+    -description: String
+    -version: String
+    -build_time: String
+    -priority_level: int
+    -license: String
+    -owner_instance:owner
+    -resource_requirements_instance:resource_requirements
+    -operating_system_instance:operating_system
+
+    -atom_service_instance:vector<AtomService>
+
+
+
+    '+String loadFile(String filePath)
+    +bool parseCpp(String fileName)
+    +bool parseHpp(String fileName)
+    +Json loadJson(String fileName)
+    +bool writeCpp(String filePath，String systemVersion)
+    +bool writeHpp(String filePath, String systemVersion)
+    +bool generateJson(String filePath)
+
+    +Json toJson()
+    +String toString()
+}
+class AtomService{
+    -service_method_instance: vector<AtomService>
+    -implement_instance: Implemented
+}
+class Implement {
+    -jsonFile: String
+    -protoFile: String
+    -grpc_pb_File: String
+    -libFile: String
+    -JinjaTemplateFile: String
+
+    +bool generateProtoFile(String filePath)
+    +bool generateGrpcFile(String proto2pbFilePath)
+    +bool generateLib(String proto2pbFilePath)
+}
+
+
+
+struct capabilities {
+    read: bool
+    write: bool
+    delete: bool
+}
+
+GrpcMethod "1"<--"1" capabilities
+
+class ServiceMethod {
+    -name: String
+    -chinese_name: String
+    -description: String
+}
+
+
+class GrpcMethod {
+
+    -requestMsg: Message
+    -responseMsg: Message
+    -returnCode: ReturnCode
+    -capabilities_instance: capabilities
+
+    +bool loadInfo(Json data)
+    +Json toJson()
+    +String toString()
+}
+
+class ReturnCode {
+    -returnValue:map<String, int>
+
+    +bool addReturnValue(String key, int value)
+    +bool setReturnValue(String key, int value)
+    +bool removeReturnValue(String key)
+    +int getReturnValue(String key)
+    +String getReturnKey(int value)
+		+String toString()
+}
+
+class Field {
+    -id: int
+    -name: String
+    -type: String
+    -key: String
+    -value: String
+    -chinese_name: String
+}
+
+Message "1"<--"1...n" Field
+
+class Message {
+    -label: String
+    -name: String
+    -fields: vector<Field>
+
+    +bool loadInfo(Json data)
+    +Json toJson()
+    +String toString()
+}
+
+
+
+
+@enduml
