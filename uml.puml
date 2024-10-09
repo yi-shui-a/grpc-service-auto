@@ -1,7 +1,7 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-class Service
+class AXService
 class Message
 class ServiceMethod
 class GrpcMethod
@@ -10,21 +10,29 @@ class ReturnCode
 class AtomService
 class Implement
 class CombineService
-class Application
+class AppService
 class DDS
 
-Service <|-- AtomService
-Service <|-- CombineService
-Service <|-- Application
+
+
+AXService <|-- AtomService
+AXService <|-- CombineService
+AXService <|-- AppService
 
 
 AtomService "1"<--"1...n" ServiceMethod
 
 
-GrpcMethod "1"<--"2" Message
+
+
 ServiceMethod "1"<--"1" ReturnCode
+ServiceMethod <|-- GrpcMethod
+ServiceMethod <|-- JsonRpcMethod
 
+GrpcMethodImplement <|.. GrpcMethod
+GrpcMethod "1"<--"2" Message
 
+JsonRpcMethodImplement <|.. JsonRpcMethod
 
 Implement <|-- DDS
 Implement <|-- GrpcImplement
@@ -32,57 +40,37 @@ Implement <|-- JsonImplement
 
 CombineService "1"<--"1...n" AtomService
 
-ServiceMethod <|-- GrpcMethod
-ServiceMethod <|-- JsonRpcMethod
 
 
-class owner {
-	-developer_instance: developer
-	-maintainer_instance: maintainer
+
+class Owner {
+	-developer_instance: Developer
+	-maintainer_instance: Maintainer
 }
 
-class developer {
+class Developer {
 		-name: String
 		-email: String
 }
 
-class maintainer {
+class Maintainer {
 		-name: String
 		-email: String
 }
 
 
-class resource_requirements {
+class ResourceRequirements {
     -cpu_architecture: String
     -memory: int
     -hard_disk: int
 }
 
-class system {
+class OperatingSystem {
     -name: String
     -version: String
 }
 
-class operating_system {
-    -systems: vector<system>
-}
-
-
-'Service "1"<--"1" developer
-'Service "1"<--"1" maintainer
-
-Service "1"<--"1" owner
-owner "1"<--"1" developer
-owner "1"<--"1" maintainer
-Service "1"<--"1" resource_requirements
-Service "1"<--"1" operating_system
-Service "1"<--"1" Implement
-operating_system "1"<--"1...n" system
-
-
-
-
-class Service {
+class BaseInfo {
     -name: String
     -chinese_name: String
     -description: String
@@ -91,21 +79,32 @@ class Service {
     -priority_level: int
     -license: String
     -servicePath: String
-    -owner_instance:owner
-    -resource_requirements_instance:resource_requirements
-    -operating_system_instance:operating_system
-    -implement_instance: Implemented
-    -atom_service_instance:vector<AtomService>
 
-    '+String loadFile(String filePath)
+}
+
+
+AXService "1"<--"1" Owner
+Owner "1"<--"1" Developer
+Owner "1"<--"1" Maintainer
+AXService "1"<--"1" ResourceRequirements
+AXService "1"<--"1...n" OperatingSystem
+Implement <|... AXService
+AXService "1"<--"1" BaseInfo
+
+
+class AXService {
+    -base_info: BaseInfo
+    -owner_instance:Owner
+    -resource_requirements_instance:ResourceRequirements
+    -operating_system_instance:vector<OperatingSystem>
+    -implement_instance: Implemented
+
     +bool parseCpp(String fileName)
     +bool parseHpp(String fileName)
     +Json loadJson(String fileName)
     +bool writeCpp(String filePath, String systemVersion)
     +bool writeHpp(String filePath, String systemVersion)
     +bool generateJson(String fileName)
-'    +bool generateServiceProject()
-'    +bool generateServiceLib()
 
     +Json toJson()
     +String toString()
@@ -126,9 +125,18 @@ class Implement {
     -libFile: String
     -JinjaTemplateFile: String
 
-    +bool generateProtoFile(String filePath)
-    +bool generateGrpcFile(String proto2pbFilePath)
-    +bool generateLib(String proto2pbFilePath)
+    +bool parseCpp(String fileName)
+    +bool parseHpp(String fileName)
+    +Json loadJson(String fileName)
+    +bool writeCpp(String filePath, String systemVersion)
+    +bool writeHpp(String filePath, String systemVersion)
+    +bool generateJson(String fileName)
+
+'    +bool generateProtoFile(String filePath)
+'    +bool generateGrpcFile(String proto2pbFilePath)
+'    +bool generateLib(String proto2pbFilePath)
+'    +bool generateServiceImpl()
+'    +bool generateStubImpl()
 }
 
 
@@ -152,12 +160,29 @@ class ServiceMethod {
 class GrpcMethod {
 
     -requestMsg: Message
-    -responseMsg: Message
+    -responseMsg: vector<Message>
     -capabilitiesVar: capabilities
+
+    +bool generateProtoFile(String filePath)
+    +bool generateGrpcFile(String proto2pbFilePath)
+    +bool generateLib(String proto2pbFilePath)
+    +bool generateServiceImpl()
+    +bool generateStubImpl()
 
     +bool loadInfo(Json data)
     +Json toJson()
     +String toString()
+
+
+}
+
+class GrpcMethodImplement{
+
+    +bool generateProtoFile(String filePath)
+    +bool generateGrpcFile(String proto2pbFilePath)
+    +bool generateLib(String proto2pbFilePath)
+    +bool generateServiceImpl()
+    +bool generateStubImpl()
 }
 
 class ReturnCode {
