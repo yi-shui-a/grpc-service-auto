@@ -1,0 +1,223 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class AXService
+class Message
+class ServiceMethod
+class GrpcMethod
+class JsonRpcMethod
+class ReturnCode
+class AtomService
+class Implement
+class CombineService
+class AppService
+class DDS
+
+
+
+AXService <|-- AtomService
+AXService <|-- CombineService
+AXService <|-- AppService
+
+
+AtomService "1"<--"1...n" ServiceMethod
+
+
+
+
+ServiceMethod "1"<--"1" ReturnCode
+ServiceMethod <|-- GrpcMethod
+ServiceMethod <|-- JsonRpcMethod
+
+GrpcMethodImplement <|.. GrpcMethod
+GrpcMethod "1"<--"2" Message
+
+JsonRpcMethodImplement <|.. JsonRpcMethod
+
+Implement <|-- DDS
+Implement <|-- GrpcImplement
+Implement <|-- JsonImplement
+
+CombineService "1"<--"1...n" AtomService
+
+
+
+
+class Owner {
+	-developer_instance: Developer
+	-maintainer_instance: Maintainer
+}
+
+class Developer {
+		-name: String
+		-email: String
+}
+
+class Maintainer {
+		-name: String
+		-email: String
+}
+
+
+class ResourceRequirements {
+    -cpu_architecture: String
+    -memory: int
+    -hard_disk: int
+}
+
+class OperatingSystem {
+    -name: String
+    -version: String
+}
+
+class BaseInfo {
+    -name: String
+    -chinese_name: String
+    -description: String
+    -version: String
+    -build_time: String
+    -priority_level: int
+    -license: String
+    -servicePath: String
+
+}
+
+
+AXService "1"<--"1" Owner
+Owner "1"<--"1" Developer
+Owner "1"<--"1" Maintainer
+AXService "1"<--"1" ResourceRequirements
+AXService "1"<--"1...n" OperatingSystem
+Implement <|... AXService
+AXService "1"<--"1" BaseInfo
+
+
+class AXService {
+    -base_info: BaseInfo
+    -owner_instance:Owner
+    -resource_requirements_instance:ResourceRequirements
+    -operating_system_instance:vector<OperatingSystem>
+    -implement_instance: Implemented
+
+    +bool parseCpp(String fileName)
+    +bool parseHpp(String fileName)
+    +Json loadJson(String fileName)
+    +bool writeCpp(String filePath, String systemVersion)
+    +bool writeHpp(String filePath, String systemVersion)
+    +bool generateJson(String fileName)
+
+    +Json toJson()
+    +String toString()
+}
+class AtomService{
+    -service_method_instance: vector<ServiceMethod>
+}
+
+class CombineService {
+    -atom_service_list: vector<AtomService>
+}
+
+
+class Implement {
+    -jsonFile: String
+    -protoFile: String
+    -grpcPbFile: String
+    -libFile: String
+    -JinjaTemplateFile: String
+
+    +bool parseCpp(String fileName)
+    +bool parseHpp(String fileName)
+    +Json loadJson(String fileName)
+    +bool writeCpp(String filePath, String systemVersion)
+    +bool writeHpp(String filePath, String systemVersion)
+    +bool generateJson(String fileName)
+
+'    +bool generateProtoFile(String filePath)
+'    +bool generateGrpcFile(String proto2pbFilePath)
+'    +bool generateLib(String proto2pbFilePath)
+'    +bool generateServiceImpl()
+'    +bool generateStubImpl()
+}
+
+
+
+struct capabilities {
+    read: bool
+    write: bool
+    delete: bool
+}
+
+GrpcMethod "1"<--"1" capabilities
+
+class ServiceMethod {
+    -name: String
+    -chinese_name: String
+    -description: String
+    -return_code: ReturnCode
+}
+
+
+class GrpcMethod {
+
+    -requestMsg: Message
+    -responseMsg: vector<Message>
+    -capabilitiesVar: capabilities
+
+    +bool generateProtoFile(String filePath)
+    +bool generateGrpcFile(String proto2pbFilePath)
+    +bool generateLib(String proto2pbFilePath)
+    +bool generateServiceImpl()
+    +bool generateStubImpl()
+
+    +bool loadInfo(Json data)
+    +Json toJson()
+    +String toString()
+
+
+}
+
+class GrpcMethodImplement{
+
+    +bool generateProtoFile(String filePath)
+    +bool generateGrpcFile(String proto2pbFilePath)
+    +bool generateLib(String proto2pbFilePath)
+    +bool generateServiceImpl()
+    +bool generateStubImpl()
+}
+
+class ReturnCode {
+    -returnValue:map<String, int>
+
+    +bool addReturnValue(String key, int value)
+    +bool setReturnValue(String key, int value)
+    +bool removeReturnValue(String key)
+    +int getReturnValue(String key)
+    +String getReturnKey(int value)
+		+String toString()
+}
+
+class Field {
+    -id: int
+    -name: String
+    -type: String
+    -key: String
+    -value: String
+    -chinese_name: String
+}
+
+Message "1"<--"1...n" Field
+
+class Message {
+    -label: String
+    -name: String
+    -fields: vector<Field>
+
+    +bool loadInfo(Json data)
+    +Json toJson()
+    +String toString()
+}
+
+
+
+
+@enduml
