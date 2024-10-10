@@ -1,0 +1,231 @@
+{
+  "atomic_service": {
+    "basic_info": {
+      "name": "atomic_service_sj_Service",
+      "chinese_name": "原子服务——射击",
+      "description": " ********** content ********** ",
+      "version": "1.0.0",
+      "build_time": "2024-08-16T12:00:00Z",
+      "priority_level": 1,
+      "license": " ***** ",
+      "owner": {
+        "developer": {
+          "name": "Spiderman",
+          "email": "Spidermsan@atomic_service_fwgz.com"
+        },
+        "maintainer": {
+          "name": "IronMan",
+          "email": "ironman@PNUI.com"
+        }
+      },
+      "resource_requirements": {
+        "cpu_architecture": "x86_64",
+        "memory": "4GB",
+        "hard_disk": "50GB"
+      },
+      "operating_system": [
+        {
+          "name": "Linux",
+          "version": {
+            "v1": "5.13.0-117-generic",
+            "v2": "5.14.0-117-generic",
+            "v3": "5.15.0-117-generic"
+          }
+        },
+        {
+          "name": "SylixOS",
+          "version": {
+            "v1": "1.0.0",
+            "v2": "1.0.1"
+          }
+        },
+        {
+          "name": "EulerOS",
+          "version": {
+            "v1": "1.0.0",
+            "v2": "1.2.3"
+          }
+        },
+        {
+          "name": "HarmonyOS",
+          "version": {
+            "v1": "1.0.0"
+          }
+        },
+        {
+          "name": "ACoreOS",
+          "version": {
+            "v1": "1.0.0"
+          }
+        }
+      ]
+    },
+    "messages": [
+      {
+        "label": "request",
+        "name": "atomic_service_mbsb_task_A_Request_st",
+        "fields": [
+          {
+            "id": 1,
+            "name": "name",
+            "type": "string",
+            "chinese_name": "输入参数1"
+          },
+          {
+            "id": 2,
+            "name": "integer_field",
+            "type": "int32",
+            "chinese_name": "输入参数2"
+          },
+          {
+            "id": 3,
+            "name": "double_field",
+            "type": "double",
+            "chinese_name": "输入参数3"
+          },
+          {
+            "id": 4,
+            "name": "float_field",
+            "type": "float",
+            "chinese_name": "输入参数4"
+          },
+          {
+            "id": 5,
+            "name": "int_array",
+            "type": "int32",
+            "repeated": true,
+            "chinese_name": "输入参数5"
+          },
+          {
+            "id": 6,
+            "name": "string_int_map",
+            "type": "map",
+            "key": "string",
+            "value": "int32",
+            "map": true,
+            "chinese_name": "输入参数6"
+          }
+        ]
+      },
+      {
+        "lable": "reply",
+        "name": "atomic_service_mbsb_task_A_Reply_st",
+        "fields": [
+          {
+            "id": 1,
+            "name": "message",
+            "type": "string",
+            "chinese_name": "输出参数1"
+          },
+          {
+            "id": 2,
+            "name": "integer_reply",
+            "type": "int32",
+            "chinese_name": "输出参数2"
+          },
+          {
+            "id": 3,
+            "name": "double_reply",
+            "type": "double",
+            "chinese_name": "输出参数3"
+          },
+          {
+            "id": 4,
+            "name": "float_reply",
+            "type": "float",
+            "chinese_name": "输出参数4"
+          },
+          {
+            "id": 5,
+            "name": "int_array_reply",
+            "type": "int32",
+            "repeated": true,
+            "chinese_name": "输出参数5"
+          },
+          {
+            "id": 6,
+            "name": "string_int_map_reply",
+            "type": "map",
+            "key": "string",
+            "value": "int32",
+            "map": true,
+            "chinese_name": "输出参数6"
+          },
+          {
+            "id": 7,
+            "name": "error_type",
+            "type": "int32"
+          }
+        ]
+      }
+    ],
+    "grpc_methods": [
+      {
+        "name": "atomic_service_fun_task_A",
+        "description": "ccccc",
+        "requestMsg": "atomic_service_mbsb_task_A_Request_st",
+        "responseMsg": "atomic_service_mbsb_task_A_Reply_st",
+        "returnValue": {
+          "ATOMIC_SERVICE_SUCCESS": 1,
+          "OperationNotPermitted": 2,
+          "InterruptedSystemCall": 3
+        },
+        "capabilities": {
+          "read": true,
+          "write": false,
+          "delete": false
+        }
+      },
+      {
+        "name": "atomic_service_fun_task_B",
+        "description": "ccccc",
+        "requestType": "atomic_service_mbsb_task_B_Request_st",
+        "responseType": "atomic_service_mbsb_task_B_Reply_st",
+        "returnValue": {
+          "ATOMIC_SERVICE_SUCCESS": 1,
+          "OperationNotPermitted": 2,
+          "InterruptedSystemCall": 3
+        },
+        "capabilities": {
+          "read": true,
+          "write": false,
+          "delete": false
+        }
+      },
+      {
+        "name": "atomic_service_fun_task_C",
+        "description": "ccccc",
+        "requestType": "atomic_service_mbsb_task_C_Request_st",
+        "responseType": "stream atomic_service_mbsb_task_C_Reply_st",
+        "returnValue": {
+          "ATOMIC_SERVICE_SUCCESS": 1,
+          "OperationNotPermitted": 2,
+          "InterruptedSystemCall": 3
+        },
+        "capabilities": {
+          "read": false,
+          "write": true,
+          "delete": false
+        }
+      },
+      {
+        "name": "atomic_service_fun_task_D",
+        "description": "ccccc",
+        "requestType": "stream atomic_service_mbsb_task_D_Request_st",
+        "responseType": "atomic_service_mbsb_task_D_Reply_st",
+        "returnValue": {
+          "ATOMIC_SERVICE_SUCCESS": 1,
+          "OperationNotPermitted": 2,
+          "InterruptedSystemCall": 3
+        },
+        "capabilities": {
+          "read": true,
+          "write": false,
+          "delete": false
+        }
+      }
+    ],
+    "json_rpc_methods": [],
+    "xml_rpc_methods": []
+  }
+}
