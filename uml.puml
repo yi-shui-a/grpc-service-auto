@@ -1,17 +1,17 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-class AXService
-class Message
-class ServiceMethod
-class GrpcMethod
-class JsonRpcMethod
-class ReturnCode
-class AtomService
-class Implement
-class CombineService
-class AppService
-class DDS
+'class AXService
+'class Message
+'class ServiceMethod
+'class GrpcMethod
+'class JsonRpcMethod
+'class ReturnCode
+'class AtomService
+'class Implement
+'class CombineService
+'class AppService
+'class DDS
 
 
 
@@ -19,33 +19,28 @@ AXService <|-- AtomService
 AXService <|-- CombineService
 AXService <|-- AppService
 
-
-AtomService "1"<--"1...n" ServiceMethod
-
-
-
-
-ServiceMethod "1"<--"1" ReturnCode
-ServiceMethod <|-- GrpcMethod
-ServiceMethod <|-- JsonRpcMethod
-
-GrpcMethodImplement <|.. GrpcMethod
-GrpcMethod "1"<--"2" Message
-
-JsonRpcMethodImplement <|.. JsonRpcMethod
-
-Implement <|-- DDS
-Implement <|-- GrpcImplement
-Implement <|-- JsonImplement
+AXService "1"<--"1...n" ServiceMethod
+AXService "1"<--"1...n" Message
+AXService "1"<--"1" Owner
+AXService "1"<--"1" ResourceRequirement
+AXService "1"<--"1...n" OperatingSystem
+AXService "1"<--"1" BaseInfo
 
 CombineService "1"<--"1...n" AtomService
 
+ServiceMethod <|-- GrpcMethod
+ServiceMethod <|-- JsonRpcMethod
+ServiceMethod "1"<--"1" ReturnCode
 
+Owner "1"<--"1" Developer
+Owner "1"<--"1" Maintainer
 
+Message "1"<--"1...n" Field
+GrpcMethod "1"<--"1" capabilities
 
 class Owner {
-	-developer_instance: Developer
-	-maintainer_instance: Maintainer
+	-developer: Developer
+	-maintainer: Maintainer
 }
 
 class Developer {
@@ -58,8 +53,7 @@ class Maintainer {
 		-email: String
 }
 
-
-class ResourceRequirements {
+class ResourceRequirement {
     -cpu_architecture: String
     -memory: int
     -hard_disk: int
@@ -79,38 +73,30 @@ class BaseInfo {
     -priority_level: int
     -license: String
     -servicePath: String
-
 }
-
-
-AXService "1"<--"1" Owner
-Owner "1"<--"1" Developer
-Owner "1"<--"1" Maintainer
-AXService "1"<--"1" ResourceRequirements
-AXService "1"<--"1...n" OperatingSystem
-Implement <|... AXService
-AXService "1"<--"1" BaseInfo
-
 
 class AXService {
     -base_info: BaseInfo
-    -owner_instance:Owner
-    -resource_requirements_instance:ResourceRequirements
-    -operating_system_instance:vector<OperatingSystem>
-    -implement_instance: Implemented
+    -owner:Owner
+    -resource_requirements: ResourceRequirement
+    -operating_systems: vector<OperatingSystem>
+    -messages:vector<Message>
+    -service_methods: vector<ServiceMethod>
+'    -implement_instance: Implemented
 
-    +bool parseCpp(String fileName)
-    +bool parseHpp(String fileName)
-    +Json loadJson(String fileName)
-    +bool writeCpp(String filePath, String systemVersion)
-    +bool writeHpp(String filePath, String systemVersion)
-    +bool generateJson(String fileName)
+'    +bool parseCpp(String fileName)
+'    +bool parseHpp(String fileName)
+'    +Json loadJson(String fileName)
+'    +bool writeCpp(String filePath, String systemVersion)
+'    +bool writeHpp(String filePath, String systemVersion)
+'    +bool generateJson(String fileName)
 
-    +Json toJson()
+'    +Json toJson()
     +String toString()
 }
+
 class AtomService{
-    -service_method_instance: vector<ServiceMethod>
+
 }
 
 class CombineService {
@@ -118,18 +104,21 @@ class CombineService {
 }
 
 
-class Implement {
-    -jsonFile: String
-    -protoFile: String
-    -grpcPbFile: String
-    -libFile: String
-    -JinjaTemplateFile: String
+class ServiceUtil {
+    -service: AXService
+    -operating_system: OperatingSystem
+    -program_language: String
+'    -jsonFile: String
+'    -protoFile: String
+'    -grpcPbFile: String
+'    -libFile: String
+'    -JinjaTemplateFile: String
 
     +bool parseCpp(String fileName)
     +bool parseHpp(String fileName)
     +Json loadJson(String fileName)
-    +bool writeCpp(String filePath, String systemVersion)
-    +bool writeHpp(String filePath, String systemVersion)
+    +bool writeCpp(String filePath)
+    +bool writeHpp(String filePath)
     +bool generateJson(String fileName)
 
 '    +bool generateProtoFile(String filePath)
@@ -139,15 +128,13 @@ class Implement {
 '    +bool generateStubImpl()
 }
 
-
-
-struct capabilities {
+class capabilities {
     read: bool
     write: bool
     delete: bool
 }
 
-GrpcMethod "1"<--"1" capabilities
+
 
 class ServiceMethod {
     -name: String
@@ -156,27 +143,27 @@ class ServiceMethod {
     -return_code: ReturnCode
 }
 
-
 class GrpcMethod {
 
     -requestMsg: Message
-    -responseMsg: vector<Message>
+    -responseMsg: Message
     -capabilitiesVar: capabilities
 
-    +bool generateProtoFile(String filePath)
-    +bool generateGrpcFile(String proto2pbFilePath)
-    +bool generateLib(String proto2pbFilePath)
-    +bool generateServiceImpl()
-    +bool generateStubImpl()
-
-    +bool loadInfo(Json data)
-    +Json toJson()
+'    +bool generateProtoFile(String filePath)
+'    +bool generateGrpcFile(String proto2pbFilePath)
+'    +bool generateLib(String proto2pbFilePath)
+'    +bool generateServiceImpl()
+'    +bool generateStubImpl()
+'
+'    +bool loadInfo(Json data)
+'    +Json toJson()
     +String toString()
-
-
 }
 
-class GrpcMethodImplement{
+class ServiceMethodUtil{
+    -method: ServiceMethod
+    -operating_system: OperatingSystem
+    -program_language: String
 
     +bool generateProtoFile(String filePath)
     +bool generateGrpcFile(String proto2pbFilePath)
@@ -193,7 +180,7 @@ class ReturnCode {
     +bool removeReturnValue(String key)
     +int getReturnValue(String key)
     +String getReturnKey(int value)
-		+String toString()
+	+String toString()
 }
 
 class Field {
@@ -205,19 +192,15 @@ class Field {
     -chinese_name: String
 }
 
-Message "1"<--"1...n" Field
-
 class Message {
     -label: String
     -name: String
     -fields: vector<Field>
 
-    +bool loadInfo(Json data)
-    +Json toJson()
+'    +bool loadInfo(Json data)
+'    +Json toJson()
     +String toString()
 }
-
-
 
 
 @enduml
