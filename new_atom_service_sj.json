@@ -20,7 +20,7 @@
       },
       "resource_requirements": {
         "cpu_architecture": "x86_64",
-        "memory": "4GB",
+        "memory_size": "4GB",
         "hard_disk": "50GB"
       },
       "operating_system": [
