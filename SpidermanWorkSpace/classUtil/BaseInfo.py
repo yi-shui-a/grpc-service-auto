@@ -26,7 +26,7 @@ class BaseInfo:
 
     def set_all_info(self, name:str, chinese_name:str,description:str,version:str,build_time:str,priorty_level:int,license:str,servicePath:str):
         self.name = name
-        self.chinese__name = chinese_name
+        self.chinese_name = chinese_name
         self.description = description
         self.version = version
         self.build_time = build_time
@@ -36,6 +36,6 @@ class BaseInfo:
     
 if __name__ == "__main__":
     baseInfo = BaseInfo()
-    print(baseInfo.description)
-    baseInfo.set_info("AXService", "AXService", "AXService", "1.0.0", "2022-01-01", 1, "MIT", "servicePath")
-    print(baseInfo.description)
+    info = {"name":"AXService", "chinese_name":"AXService", "description":"AXService", "version":"1.0.0", "build_time":"2022-01-01", "priorty_level":1, "license":"MIT", "servicePath":"servicePath"}
+    baseInfo.set_info(info)
+    print(baseInfo.toString())
