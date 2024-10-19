@@ -1,0 +1,91 @@
+[
+  {
+    "package": {
+      "syntax": "proto3",
+      "package_name": "atomic_service_mbsb_Package",
+      "service_name": "atomic_service_mbsb_Service",
+      "request_name": "atomic_service_mbsb_Request_st",
+      "reply_name": "atomic_service_mbsb_Reply_st",
+      "atom_interface": "atomic_service_mbsb_interface_func",
+      "atom_name": "atomic_service_mbsb"
+    },
+    "messages": {
+      "request": {
+        "name": "atomic_service_mbsb_Request_st",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string",
+            "id": 1,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "integer_field",
+            "type": "int32",
+            "id": 2,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "double_field",
+            "type": "double",
+            "id": 3,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "float_field",
+            "type": "float",
+            "id": 4,
+            "repeated": false,
+            "map": false
+          }
+        ]
+      },
+      "reply": {
+        "name": "atomic_service_mbsb_Reply_st",
+        "fields": [
+          {
+            "name": "message",
+            "type": "string",
+            "id": 1,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "integer_reply",
+            "type": "int32",
+            "id": 2,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "double_reply",
+            "type": "double",
+            "id": 3,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "float_reply",
+            "type": "float",
+            "id": 4,
+            "repeated": false,
+            "map": false
+          }
+        ]
+      }
+    },
+    "services": {
+      "name": "atomic_service_mbsb_Service",
+      "methods": [
+        {
+          "name": "atomic_service_mbsb_interface",
+          "requestType": "atomic_service_mbsb_Request_st",
+          "responseType": "atomic_service_mbsb_Reply_st"
+        }
+      ]
+    }
+  }
+]

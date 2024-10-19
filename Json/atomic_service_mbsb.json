@@ -1,0 +1,124 @@
+{
+    "atomic_service_mbsb": {
+        "name": "atomic_service_mbsbservice",
+        "description": "",
+        "developer": {
+            "name": "Spiderman",
+            "email": "Spidermsan@atomic_service_fwgz.com"
+        },
+        "version": "V1.0.0",
+        "build_time": "2024-09-21T09-21-21",
+        "priority_level": -999,
+        "resource_requirements": {
+            "cpu_architecture": "x86_64",
+            "hard_disk": "50GB",
+            "memory": "4GB"
+        }
+    },
+    "implement_rpc": {
+        "syntax": "proto3",
+        "package": "atomic_service_mbsb_Package",
+        "service_name": "atomic_service_mbsb_Service",
+        "request": "atomic_service_mbsb_Request_st",
+        "reply": "atomic_service_mbsb_Reply_st",
+        "atom_interface": "atomic_service_mbsb_interface_func",
+        "atom_name": "atomic_service_mbsb"
+    },
+    "messages": [
+        {
+            "name": "atomic_service_mbsb_Request_st",
+            "fields": [
+                {
+                    "id": 1,
+                    "name": "name",
+                    "type": "string",
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
+                },
+                {
+                    "id": 2,
+                    "name": "integer_field",
+                    "type": "int32",
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
+                },
+                {
+                    "id": 3,
+                    "name": "double_field",
+                    "type": "double",
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
+                },
+                {
+                    "id": 4,
+                    "name": "float_field",
+                    "type": "float",
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
+                }
+            ],
+            "lable": "request"
+        },
+        {
+            "name": "atomic_service_mbsb_Reply_st",
+            "fields": [
+                {
+                    "id": 1,
+                    "name": "message",
+                    "type": "string",
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
+                },
+                {
+                    "id": 2,
+                    "name": "integer_reply",
+                    "type": "int32",
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
+                },
+                {
+                    "id": 3,
+                    "name": "double_reply",
+                    "type": "double",
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
+                },
+                {
+                    "id": 4,
+                    "name": "float_reply",
+                    "type": "float",
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
+                }
+            ],
+            "lable": "reply"
+        }
+    ],
+    "services": [
+        {
+            "name": "atomic_service_mbsb_Service",
+            "methods": [
+                {
+                    "name": "atomic_service_mbsb_interface",
+                    "description": "ccccc",
+                    "capabilities": {
+                        "read": true,
+                        "write": false,
+                        "delete": false
+                    },
+                    "category": "user_management",
+                    "requestType": "atomic_service_mbsb_Request_st",
+                    "responseType": "atomic_service_mbsb_Reply_st"
+                }
+            ]
+        }
+    ]
+}

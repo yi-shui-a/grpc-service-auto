@@ -1,0 +1,118 @@
+#include <iostream>
+#include <memory>
+#include <string>
+#include <thread>
+#include <grpcpp/grpcpp.h>
+#include "../protos/{{ package.atom_name|lower }}.grpc.pb.h"
+#include "../protos/{{ package.atom_name|lower }}.pb.h"
+#include "../atom_inc/{{ package.atom_name|lower }}.h"
+class {{ package.service_name }}_Client {
+public:
+    {{ package.service_name }}_Client(std::shared_ptr<::grpc::Channel> channel)
+        : stub_(::{{package.package_name}}::{{ package.service_name }}::NewStub(channel)){}
+    {% for method in services.methods %}
+    {% if method.name == "UnitaryStream" %}
+    //Client---> UnitaryStream rpc method
+    {{ package.atom_name }}_Reply_st {{ method.name }}(const {{ package.atom_name }}_Request_st& {{ package.atom_name }}_Request_t){
+        {{package.package_name}}::{{ package.request_name }} request;
+        {% for field in  messages.request.fields %}
+        {% if field.repeated == true %}
+        for(int i=0;i < {{ package.atom_name }}_Request_t.{{field.name}}.size();i++){
+            request.add_{{field.name}}({{ package.atom_name }}_Request_t.{{field.name}}[i]);
+        }
+        {% elif field.map == true %}
+        for (const auto& item : {{ package.atom_name }}_Request_t.{{field.name}}) {
+        (*request.mutable_{{field.name}}())[item.first] = item.second;
+        }
+        {% else %}
+        request.set_{{field.name}}({{ package.atom_name }}_Request_t.{{field.name}});
+        {% endif %}
+        {% endfor %}
+        //Received reply data translate to {{ package.atom_name }}_Reply_t; 
+        // {{package.package_name}}::{{ package.request_name }} reply;
+        {{ package.atom_name }}_Reply_st {{ package.atom_name }}_Reply_t;
+        {{package.package_name}}::{{ package.reply_name }} reply;
+        ::grpc::ClientContext context;
+        ::grpc::Status status = stub_->{{ method.name }}(&context, request, &reply);
+        {% for field in  messages.reply.fields %}
+        {% if field.repeated == true %}
+        for(int i=0; i < reply.{{field.name}}_size();++i){
+            {{ package.atom_name }}_Reply_t.{{field.name}}.push_back(reply.{{field.name}}(i));
+        }
+        {% elif field.map == true %}
+        for (const auto& item : reply.{{field.name}}()) {
+            ({{ package.atom_name }}_Reply_t.{{field.name}})[item.first] = item.second;
+        }
+        {% else %}
+        {{ package.atom_name }}_Reply_t.{{field.name}} = reply.{{field.name}}();
+        {% endif %}
+        {% endfor %}
+        if (status.ok()) {
+            std::cout << "{{ package.atom_name }}--> {{ method.name }} : Received server data success " << std::endl;
+        } else {
+            std::cout << "{{ package.atom_name }}--> {{ method.name }} :" << status.error_code() << ": " << status.error_message() << std::endl;
+        }
+        return {{ package.atom_name }}_Reply_t;
+    }
+    //Client---> ServerStream rpc method
+    {% elif method.name == "ServerStream" %}
+    std::vector<{{ package.atom_name }}_Reply_st> {{ method.name }}(const {{ package.atom_name }}_Request_st& {{ package.atom_name }}_Request_t) {
+        {{package.package_name}}::{{ package.request_name }} request;
+        // Received reply data translate to {{ package.atom_name }}_Reply_t;
+        {{ package.atom_name }}_Reply_st {{ package.atom_name }}_Reply_t;
+        {{package.package_name}}::{{ package.reply_name }} reply; 
+        ::grpc::ClientContext context;
+        std::unique_ptr<grpc::ClientReader< {{package.package_name}}::{{package.reply_name}}>> reader(
+            stub_->ServerStream(&context, request));
+        std::vector<{{ package.atom_name }}_Reply_st> replies_t;
+        // while read server data
+        while (reader->Read(&reply)) {
+            {{ package.atom_name }}_Reply_st {{ package.atom_name }}_Reply_t;
+            {% for field in  messages.reply.fields %}
+            {% if field.repeated == true %}
+            for(int i=0; i < reply.{{field.name}}_size();++i){
+                {{ package.atom_name }}_Reply_t.{{field.name}}.push_back(reply.{{field.name}}(i));
+            }
+            {% elif field.map == true %}
+            for (const auto& item : reply.{{field.name}}()) {
+                ({{ package.atom_name }}_Reply_t.{{field.name}})[item.first] = item.second;
+            }
+            {% else %}
+            {{ package.atom_name }}_Reply_t.{{field.name}} = reply.{{field.name}}();
+            {% endif %}
+            {% endfor %}
+            replies_t.push_back({{ package.atom_name }}_Reply_t);
+            // std::cout << "ServerStream:: Greeting: "<< reply.message() << std::endl;
+        }
+        ::grpc::Status status = reader->Finish();
+        if (status.ok()) {
+            std::cout << "{{ package.atom_name }}--> {{ method.name }} : Received server data success " << std::endl;
+        } else {
+            std::cout << "{{ package.atom_name }}--> {{ method.name }} :" << status.error_code() << ": " << status.error_message() << std::endl;
+        }
+        return replies_t;
+    }
+
+    //Client---> ClientStream rpc method
+    {% elif method.name == "ClientStream"  %}
+    {{ package.atom_name }}_Reply_st {{ method.name }}(const {{ package.atom_name }}_Request_st& {{ package.atom_name }}_Request_t){
+        {{ package.atom_name }}_Reply_st {{ package.atom_name }}_Reply_t;
+        std::cout << "This is ClientStream" << std::endl;
+        std::cout << "This is Method={{ method.name }} ServiceName={{package.service_name}}" << std::endl;
+        return   {{ package.atom_name }}_Reply_t;
+    }
+
+    //Client---> BidirectionalStream rpc method
+    {% elif method.name == "BidirectionalStream"  %}
+    {{ package.atom_name }}_Reply_st {{ method.name }}(const {{ package.atom_name }}_Request_st& {{ package.atom_name }}_Request_t){
+        {{ package.atom_name }}_Reply_st {{ package.atom_name }}_Reply_t;
+        std::cout << "This is BidirectionalStream" << std::endl;
+        std::cout << "This is Method={{ method.name }} ServiceName={{package.service_name}}" << std::endl;
+        return {{ package.atom_name }}_Reply_t;
+    }
+    {% else %}
+    {% endif %}
+    {% endfor %}
+private:
+    std::unique_ptr<::{{package.package_name}}::{{ package.service_name }}::Stub> stub_;
+};

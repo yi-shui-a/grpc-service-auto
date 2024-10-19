@@ -1,0 +1,20 @@
+pip install pyinstaller
+
+vi /root/.pip/pip.conf
+
+[global]
+index-url=https://pypi.tuna.tsinghua.edu.cn/simple/
+[install]
+trusted-host=pypi.tuna.tsinghua.edu.cn
+
+pip3 install pyinstaller
+
+
+pyinstaller --name your_executable_name --windowed your_script.py
+
+
+PyInstaller会分析脚本,收集所有必要的文件,并在dist目录下生成可执行文件。对于生成无控制台窗口的图形界面程序,可以使用-w参数:
+
+
+
+ln -s /path/to/original/file /path/to/symlink

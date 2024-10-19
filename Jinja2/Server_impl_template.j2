@@ -1,0 +1,93 @@
+#include <iostream>
+#include <memory>
+#include <string>
+#include <thread>
+#include <grpcpp/grpcpp.h>
+#include "../protos/{{ package.atom_name|lower }}.grpc.pb.h"
+#include "../atom_inc/{{ package.atom_name|lower }}.h"
+{# #include "{{ services.name }}_server_impl.h" #}
+void {{ package.atom_interface }}({{ package.atom_name }}_Request_st* request, {{ package.atom_name }}_Reply_st* reply);
+
+class {{ package.service_name }}_ServerImpl final : public ::{{package.package_name}}::{{ package.service_name }}::Service {
+public:
+    {{ package.service_name }}_ServerImpl() {} 
+    {% for method in services.methods %}
+    {% if method.name == "UnitaryStream" %}
+    // UnitaryStream rpc method
+    ::grpc::Status {{ method.name }}(::grpc::ServerContext* context, 
+            const ::{{package.package_name}}::{{ package.request_name }}* request, 
+                ::{{package.package_name}}::{{ package.reply_name }}* reply) override {
+
+        {{ package.atom_name }}_Request_st {{ package.atom_name }}_Request_t;
+        {{ package.atom_name }}_Reply_st {{ package.atom_name }}_Reply_t;
+
+        {% for field in  messages.request.fields %}
+        {% if field.repeated == true %}
+        for(int i=0; i < request->{{field.name}}_size();++i){
+            {{ package.atom_name }}_Request_t.{{field.name}}.push_back(request->{{field.name}}(i));
+        }
+        {% elif field.map == true %}
+        for (const auto& item : request->{{field.name}}()) {
+            {{ package.atom_name }}_Request_t.{{field.name}}[item.first] = item.second;
+        }
+        {% else %}
+        {{ package.atom_name }}_Request_t.{{field.name}} = request->{{field.name}}();
+        {% endif %}
+        {% endfor %}
+
+        /******************************************************************/
+        {{ package.atom_interface }}(&{{ package.atom_name }}_Request_t, &{{ package.atom_name }}_Reply_t);
+
+        /******************************************************************/
+
+        reply->Clear(); // clear reply message
+        {% for field in  messages.reply.fields %}
+        {% if field.repeated == true %}
+        for(int i=0; i < {{ package.atom_name }}_Reply_t.{{field.name}}.size(); ++i){
+            reply->mutable_{{field.name}}()->Add({{ package.atom_name }}_Reply_t.{{field.name}}[i]);
+        }
+        {% elif field.map == true %}
+        for (const auto& item : {{ package.atom_name }}_Reply_t.{{field.name}}) {
+            reply->mutable_{{field.name}}()->insert({item.first, item.second});
+        }
+        {% else %}
+        reply->set_{{field.name}}({{ package.atom_name }}_Reply_t.{{field.name}});
+        {% endif %}
+        {% endfor %}
+        std::cout << "This is Method={{ method.name }} ServiceName={{package.service_name}}" << std::endl;
+        return grpc::Status::OK;
+    }
+    // ServerStream rpc method
+    {% elif method.name == "ServerStream" %}
+    ::grpc::Status {{ method.name }}(grpc::ServerContext* context, 
+                const ::{{package.package_name}}::{{ package.request_name }}* request, 
+                ::grpc::ServerWriter<::{{package.package_name}}::{{ package.reply_name }}>* writer) override {
+        for (int i=0; i < 5; ++i){
+            
+        }
+        std::cout << "This is ServerStream" << std::endl;
+        std::cout << "This is Method={{ method.name }} ServiceName={{package.service_name}}" << std::endl;
+        return grpc::Status::OK;
+    }
+    // ClientStream rpc method
+    {% elif method.name == "ClientStream"  %}
+    ::grpc::Status {{ method.name }}(grpc::ServerContext* context, 
+            ::grpc::ServerReader< ::{{package.package_name}}::{{ package.request_name }}>* reader, 
+            ::{{package.package_name}}::{{ package.reply_name }}* reply) override {
+        std::cout << "This is ClientStream" << std::endl;
+        std::cout << "This is Method={{ method.name }} ServiceName={{package.service_name}}" << std::endl;
+        return grpc::Status::OK;
+    }
+    // BidirectionalStream rpc method
+    {% elif method.name == "BidirectionalStream"  %}
+    ::grpc::Status {{ method.name }}(grpc::ServerContext* context, 
+            ::grpc::ServerReaderWriter< ::{{package.package_name}}::{{ package.reply_name }} , 
+            ::{{package.package_name}}::{{ package.request_name }}>* stream) override {
+        std::cout << "This is BidirectionalStream" << std::endl;
+        std::cout << "This is Method={{ method.name }} ServiceName={{package.service_name}}" << std::endl;
+        return grpc::Status::OK;
+    }
+    {% else %}
+    {% endif %}
+    {% endfor %}
+};

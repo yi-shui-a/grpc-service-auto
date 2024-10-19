@@ -1,0 +1,662 @@
+[
+  {
+    "package": {
+      "syntax": "proto3",
+      "package_name": "atomic_service_sfzt_Package",
+      "service_name": "atomic_service_sfzt_Service",
+      "request_name": "atomic_service_sfzt_Request",
+      "reply_name": "atomic_service_sfzt_Reply",
+      "atom_interface": "atomic_service_sfzt_interface",
+      "atom_name": "atomic_service_sfzt"
+    },
+    "messages": {
+      "request": {
+        "name": "atomic_service_sfzt_Request",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string",
+            "id": 1,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "integer_field",
+            "type": "int32",
+            "id": 2,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "double_field",
+            "type": "double",
+            "id": 3,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "float_field",
+            "type": "float",
+            "id": 4,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "int_array",
+            "type": "int32",
+            "id": 5,
+            "repeated": true,
+            "map": false
+          },
+          {
+            "name": "string_int_map",
+            "type": "map",
+            "id": 6,
+            "repeated": false,
+            "map": true
+          }
+        ]
+      },
+      "reply": {
+        "name": "atomic_service_sfzt_Reply",
+        "fields": [
+          {
+            "name": "message",
+            "type": "string",
+            "id": 1,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "integer_reply",
+            "type": "int32",
+            "id": 2,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "double_reply",
+            "type": "double",
+            "id": 3,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "float_reply",
+            "type": "float",
+            "id": 4,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "int_array_reply",
+            "type": "int32",
+            "id": 5,
+            "repeated": true,
+            "map": false
+          },
+          {
+            "name": "string_int_map_reply",
+            "type": "map",
+            "id": 6,
+            "repeated": false,
+            "map": true
+          }
+        ]
+      }
+    },
+    "services": {
+      "name": "atomic_service_sfzt_Service",
+      "methods": [
+        {
+          "name": "UnitaryStream",
+          "requestType": "atomic_service_sfzt_Request",
+          "responseType": "atomic_service_sfzt_Reply"
+        },
+        {
+          "name": "ServerStream",
+          "requestType": "atomic_service_sfzt_Request",
+          "responseType": "stream atomic_service_sfzt_Reply"
+        },
+        {
+          "name": "ClientStream",
+          "requestType": "stream atomic_service_sfzt_Request",
+          "responseType": "atomic_service_sfzt_Reply"
+        },
+        {
+          "name": "BidirectionalStream",
+          "requestType": "stream atomic_service_sfzt_Request",
+          "responseType": "stream atomic_service_sfzt_Reply"
+        }
+      ]
+    }
+  },
+  {
+    "package": {
+      "syntax": "proto3",
+      "package_name": "atomic_service_skzt_Package",
+      "service_name": "atomic_service_skzt_Service",
+      "request_name": "atomic_service_skzt_Request",
+      "reply_name": "atomic_service_skzt_Reply",
+      "atom_interface": "atomic_service_skzt_interface",
+      "atom_name": "atomic_service_skzt"
+    },
+    "messages": {
+      "request": {
+        "name": "atomic_service_skzt_Request",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string",
+            "id": 1,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "integer_field",
+            "type": "int32",
+            "id": 2,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "double_field",
+            "type": "double",
+            "id": 3,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "float_field",
+            "type": "float",
+            "id": 4,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "int_array",
+            "type": "int32",
+            "id": 5,
+            "repeated": true,
+            "map": false
+          },
+          {
+            "name": "string_int_map",
+            "type": "map",
+            "id": 6,
+            "repeated": false,
+            "map": true
+          }
+        ]
+      },
+      "reply": {
+        "name": "atomic_service_skzt_Reply",
+        "fields": [
+          {
+            "name": "message",
+            "type": "string",
+            "id": 1,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "integer_reply",
+            "type": "int32",
+            "id": 2,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "double_reply",
+            "type": "double",
+            "id": 3,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "float_reply",
+            "type": "float",
+            "id": 4,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "int_array_reply",
+            "type": "int32",
+            "id": 5,
+            "repeated": true,
+            "map": false
+          },
+          {
+            "name": "string_int_map_reply",
+            "type": "map",
+            "id": 6,
+            "repeated": false,
+            "map": true
+          }
+        ]
+      }
+    },
+    "services": {
+      "name": "atomic_service_skzt_Service",
+      "methods": [
+        {
+          "name": "UnitaryStream",
+          "requestType": "atomic_service_skzt_Request",
+          "responseType": "atomic_service_skzt_Reply"
+        },
+        {
+          "name": "ServerStream",
+          "requestType": "atomic_service_skzt_Request",
+          "responseType": "stream atomic_service_skzt_Reply"
+        },
+        {
+          "name": "ClientStream",
+          "requestType": "stream atomic_service_skzt_Request",
+          "responseType": "atomic_service_skzt_Reply"
+        },
+        {
+          "name": "BidirectionalStream",
+          "requestType": "stream atomic_service_skzt_Request",
+          "responseType": "stream atomic_service_skzt_Reply"
+        }
+      ]
+    }
+  },
+  {
+    "package": {
+      "syntax": "proto3",
+      "package_name": "atomic_service_mbsb_Package",
+      "service_name": "atomic_service_mbsb_Service",
+      "request_name": "atomic_service_mbsb_Request",
+      "reply_name": "atomic_service_mbsb_Reply",
+      "atom_interface": "atomic_service_mbsb_interface",
+      "atom_name": "atomic_service_mbsb"
+    },
+    "messages": {
+      "request": {
+        "name": "atomic_service_mbsb_Request",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string",
+            "id": 1,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "integer_field",
+            "type": "int32",
+            "id": 2,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "double_field",
+            "type": "double",
+            "id": 3,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "float_field",
+            "type": "float",
+            "id": 4,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "int_array",
+            "type": "int32",
+            "id": 5,
+            "repeated": true,
+            "map": false
+          },
+          {
+            "name": "string_int_map",
+            "type": "map",
+            "id": 6,
+            "repeated": false,
+            "map": true
+          }
+        ]
+      },
+      "reply": {
+        "name": "atomic_service_mbsb_Reply",
+        "fields": [
+          {
+            "name": "message",
+            "type": "string",
+            "id": 1,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "integer_reply",
+            "type": "int32",
+            "id": 2,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "double_reply",
+            "type": "double",
+            "id": 3,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "float_reply",
+            "type": "float",
+            "id": 4,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "int_array_reply",
+            "type": "int32",
+            "id": 5,
+            "repeated": true,
+            "map": false
+          },
+          {
+            "name": "string_int_map_reply",
+            "type": "map",
+            "id": 6,
+            "repeated": false,
+            "map": true
+          }
+        ]
+      }
+    },
+    "services": {
+      "name": "atomic_service_mbsb_Service",
+      "methods": [
+        {
+          "name": "UnitaryStream",
+          "requestType": "atomic_service_mbsb_Request",
+          "responseType": "atomic_service_mbsb_Reply"
+        },
+        {
+          "name": "ServerStream",
+          "requestType": "atomic_service_mbsb_Request",
+          "responseType": "stream atomic_service_mbsb_Reply"
+        },
+        {
+          "name": "ClientStream",
+          "requestType": "stream atomic_service_mbsb_Request",
+          "responseType": "atomic_service_mbsb_Reply"
+        },
+        {
+          "name": "BidirectionalStream",
+          "requestType": "stream atomic_service_mbsb_Request",
+          "responseType": "stream atomic_service_mbsb_Reply"
+        }
+      ]
+    }
+  },
+  {
+    "package": {
+      "syntax": "proto3",
+      "package_name": "atomic_service_sj_Package",
+      "service_name": "atomic_service_sj_Service",
+      "request_name": "atomic_service_sj_Request",
+      "reply_name": "atomic_service_sj_Reply",
+      "atom_interface": "atomic_service_sj_interface",
+      "atom_name": "atomic_service_sj"
+    },
+    "messages": {
+      "request": {
+        "name": "atomic_service_sj_Request",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string",
+            "id": 1,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "integer_field",
+            "type": "int32",
+            "id": 2,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "double_field",
+            "type": "double",
+            "id": 3,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "float_field",
+            "type": "float",
+            "id": 4,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "int_array",
+            "type": "int32",
+            "id": 5,
+            "repeated": true,
+            "map": false
+          },
+          {
+            "name": "string_int_map",
+            "type": "map",
+            "id": 6,
+            "repeated": false,
+            "map": true
+          }
+        ]
+      },
+      "reply": {
+        "name": "atomic_service_sj_Reply",
+        "fields": [
+          {
+            "name": "message",
+            "type": "string",
+            "id": 1,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "integer_reply",
+            "type": "int32",
+            "id": 2,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "double_reply",
+            "type": "double",
+            "id": 3,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "float_reply",
+            "type": "float",
+            "id": 4,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "int_array_reply",
+            "type": "int32",
+            "id": 5,
+            "repeated": true,
+            "map": false
+          },
+          {
+            "name": "string_int_map_reply",
+            "type": "map",
+            "id": 6,
+            "repeated": false,
+            "map": true
+          }
+        ]
+      }
+    },
+    "services": {
+      "name": "atomic_service_sj_Service",
+      "methods": [
+        {
+          "name": "UnitaryStream",
+          "requestType": "atomic_service_sj_Request",
+          "responseType": "atomic_service_sj_Reply"
+        },
+        {
+          "name": "ServerStream",
+          "requestType": "atomic_service_sj_Request",
+          "responseType": "stream atomic_service_sj_Reply"
+        },
+        {
+          "name": "ClientStream",
+          "requestType": "stream atomic_service_sj_Request",
+          "responseType": "atomic_service_sj_Reply"
+        },
+        {
+          "name": "BidirectionalStream",
+          "requestType": "stream atomic_service_sj_Request",
+          "responseType": "stream atomic_service_sj_Reply"
+        }
+      ]
+    }
+  },
+  {
+    "package": {
+      "syntax": "proto3",
+      "package_name": "atomic_service_st_Package",
+      "service_name": "atomic_service_st_Service",
+      "request_name": "atomic_service_st_Request",
+      "reply_name": "atomic_service_st_Reply",
+      "atom_interface": "atomic_service_st_interface",
+      "atom_name": "atomic_service_st"
+    },
+    "messages": {
+      "request": {
+        "name": "atomic_service_st_Request",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string",
+            "id": 1,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "integer_field",
+            "type": "int32",
+            "id": 2,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "double_field",
+            "type": "double",
+            "id": 3,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "float_field",
+            "type": "float",
+            "id": 4,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "int_array",
+            "type": "int32",
+            "id": 5,
+            "repeated": true,
+            "map": false
+          },
+          {
+            "name": "string_int_map",
+            "type": "map",
+            "id": 6,
+            "repeated": false,
+            "map": true
+          }
+        ]
+      },
+      "reply": {
+        "name": "atomic_service_st_Reply",
+        "fields": [
+          {
+            "name": "message",
+            "type": "string",
+            "id": 1,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "integer_reply",
+            "type": "int32",
+            "id": 2,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "double_reply",
+            "type": "double",
+            "id": 3,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "float_reply",
+            "type": "float",
+            "id": 4,
+            "repeated": false,
+            "map": false
+          },
+          {
+            "name": "int_array_reply",
+            "type": "int32",
+            "id": 5,
+            "repeated": true,
+            "map": false
+          },
+          {
+            "name": "string_int_map_reply",
+            "type": "map",
+            "id": 6,
+            "repeated": false,
+            "map": true
+          }
+        ]
+      }
+    },
+    "services": {
+      "name": "atomic_service_st_Service",
+      "methods": [
+        {
+          "name": "UnitaryStream",
+          "requestType": "atomic_service_st_Request",
+          "responseType": "atomic_service_st_Reply"
+        },
+        {
+          "name": "ServerStream",
+          "requestType": "atomic_service_st_Request",
+          "responseType": "stream atomic_service_st_Reply"
+        },
+        {
+          "name": "ClientStream",
+          "requestType": "stream atomic_service_st_Request",
+          "responseType": "atomic_service_st_Reply"
+        },
+        {
+          "name": "BidirectionalStream",
+          "requestType": "stream atomic_service_st_Request",
+          "responseType": "stream atomic_service_st_Reply"
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,133 @@
+#include <iostream>
+#include <fstream>
+#include <thread>
+#include <chrono>
+#include <cstring>
+#include <cstdlib>
+#include <cerrno>
+#include <netdb.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <nlohmann/json.hpp>
+
+{% for service_name in data %}
+#include "../rpc_client_inc/{{ service_name }}_client.h"
+#include "../atom_inc/{{ service_name }}.h"
+{% endfor %}
+
+{% for service_name in data %}
+class {{ service_name }}_Client;
+{% endfor%}
+
+int main(int argc, char** argv) {
+
+    std::string server_addr = "localhost:50051";
+    auto channel = grpc::CreateChannel(server_addr, grpc::InsecureChannelCredentials());
+    // TODO add *Client 
+    // GreeterClient greeter(channel);
+    // AtomServerSJClient atom_server_sj_client(channel);
+
+    {% for service_name in data %}
+    {{ service_name }}_Service_Client {{ service_name }}(channel);
+    {% endfor %}
+
+    {% for service_name in data %}
+    {{ service_name }}_Request_st {{ service_name }}_Request_st;
+    {{ service_name }}_Reply_st {{ service_name }}_Reply_t;
+
+    {{ service_name }}_Request_st.name ="{{ service_name }}";
+    {{ service_name }}_Request_st.integer_field = 123;
+    {{ service_name }}_Request_st.double_field = 123.123;
+    {{ service_name }}_Request_st.float_field = 12.12;
+    std::vector<int> {{ service_name }}_int_array_var;
+    for(int i=0;i<20;i++) {
+        {{ service_name }}_int_array_var.push_back(11);
+    }
+    {{ service_name }}_Request_st.int_array = {{ service_name }}_int_array_var;
+    std::map<std::string, int32_t> {{ service_name }}_string_int_map_var;
+    for(int i = 0; i < 10; i++) {
+        {{ service_name }}_string_int_map_var["key_" + std::to_string(i)] = i+100;
+    }
+    {{ service_name }}_Request_st.string_int_map = {{ service_name }}_string_int_map_var;
+    {% endfor %}
+    
+    {% for service_name in data %}
+    std::cout << "<<<<<<<<<<<<<<<<<< Call the RPC << {{ service_name }}>> and wait for response >>>>>>>>>>>>>>>>>>>>>" << std::endl;
+    {{ service_name }}_Reply_st {{ service_name }}_rpc_reply = {{ service_name }}.UnitaryStream({{ service_name }}_Request_st);
+    std::cout << "Greeter received: " << {{ service_name }}_rpc_reply.message << std::endl;
+    std::cout << "Greeter received: " << {{ service_name }}_rpc_reply.integer_reply << std::endl;
+    std::cout << "Greeter received: " << {{ service_name }}_rpc_reply.double_reply << std::endl;
+    std::cout << "Greeter received: " << {{ service_name }}_rpc_reply.float_reply<< std::endl;
+    for(int i = 0; i < {{ service_name }}_rpc_reply.int_array_reply.size(); i++){
+        std::cout << "{{ service_name }} received: " << {{ service_name }}_rpc_reply.int_array_reply[i] << std::endl;
+    }
+    for (const auto& pair : {{ service_name }}_rpc_reply.string_int_map_reply) {
+        std::cout<< "{{ service_name }} map data:" << "Key: " << pair.first << ", Value: " << pair.second << std::endl;
+    }
+    {% endfor %}
+
+#if 0
+    // Call the RPC and wait for SayHello_reply response
+    std::cout << "<<<<<<<<<<<<<<<<<< Call the RPC and wait for SayHello_reply response >>>>>>>>>>>>>>>>>>>>>" << std::endl;
+    helloworld::HelloReply SayHello_reply = greeter.SayHello(user, int_field, double_field, float_field, int_array, string_int_map);
+    std::cout << "Greeter received: " << SayHello_reply.message() << std::endl;
+    std::cout << "Greeter received: " << SayHello_reply.integer_reply() << std::endl;
+    std::cout << "Greeter received: " << SayHello_reply.double_reply() << std::endl;
+    std::cout << "Greeter received: " << SayHello_reply.float_reply() << std::endl;
+    for(int i = 0; i < SayHello_reply.int_array_reply_size(); i++){
+        std::cout << "Greeter received: " << SayHello_reply.int_array_reply(i) << std::endl;
+    }
+    for (const auto& pair : SayHello_reply.string_int_map_reply()) {
+        std::cout << "Key: " << pair.first << ", Value: " << pair.second << std::endl;
+    }
+    // Call the RPC and wait for ServerStream_reply response
+    std::cout << "<<<<<<<<<<<<<<<<< Call the RPC and wait for ServerStream_reply response >>>>>>>>>>>>>>>>>>" << std::endl;
+    std::vector<helloworld::HelloReply> ServerStream_reply = greeter.ServerStream(user, int_field, double_field, float_field, int_array, string_int_map);
+    for (const auto& reply : ServerStream_reply) {
+        std::cout << "Greeter received: " << reply.message() << std::endl;
+        std::cout << "Greeter received: " << reply.integer_reply() << std::endl;
+        std::cout << "Greeter received: " << reply.double_reply() << std::endl;
+        std::cout << "Greeter received: " << reply.float_reply() << std::endl;
+        for(int i = 0; i < reply.int_array_reply_size(); i++){
+            std::cout << "Greeter received: " << reply.int_array_reply(i) << std::endl;
+        }
+        for (const auto& pair : reply.string_int_map_reply()) {
+            std::cout << "Key: " << pair.first << ", Value: " << pair.second << std::endl;
+        }
+    }
+
+    // Call the RPC and wait for ClientStream_reply response
+    std::cout << "<<<<<<<<<<<<<<<<< Call the RPC and wait for ClientStream_reply response >>>>>>>>>>>>>>>>>>" << std::endl;
+    helloworld::HelloReply ClientStream_reply = greeter.ClientStream(user, int_field, double_field, float_field, int_array, string_int_map);
+    std::cout << "Greeter received: " << SayHello_reply.message() << std::endl;
+    std::cout << "Greeter received: " << SayHello_reply.integer_reply() << std::endl;
+    std::cout << "Greeter received: " << SayHello_reply.double_reply() << std::endl;
+    std::cout << "Greeter received: " << SayHello_reply.float_reply() << std::endl;
+    for(int i = 0; i < SayHello_reply.int_array_reply_size(); i++){
+        std::cout << "Greeter received: " << SayHello_reply.int_array_reply(i) << std::endl;
+    }
+    for (const auto& pair : SayHello_reply.string_int_map_reply()) {
+        std::cout << "Key: " << pair.first << ", Value: " << pair.second << std::endl;
+    }
+
+    // Call the RPC and wait for Chat_reply response
+    std::cout << "<<<<<<<<<<<<<<<<< Call the RPC and wait for Chat_reply response >>>>>>>>>>>>>>>>>>>>>>" << std::endl;
+    std::vector<helloworld::HelloReply> Chat_reply = greeter.Chat(user, int_field, double_field, float_field, int_array, string_int_map);
+    for (const auto& reply : Chat_reply) {
+        std::cout << "Greeter received: " << reply.message() << std::endl;
+        std::cout << "Greeter received: " << reply.integer_reply() << std::endl;
+        std::cout << "Greeter received: " << reply.double_reply() << std::endl;
+        std::cout << "Greeter received: " << reply.float_reply() << std::endl;
+        for(int i = 0; i < reply.int_array_reply_size(); i++){
+            std::cout << "Greeter received: " << reply.int_array_reply(i) << std::endl;
+        }
+        for (const auto& pair : reply.string_int_map_reply()) {
+            std::cout << "Key: " << pair.first << ", Value: " << pair.second << std::endl;
+        }
+    }
+#endif
+
+    return 0;
+}

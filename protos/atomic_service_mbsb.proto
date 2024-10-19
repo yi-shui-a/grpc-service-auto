@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package atomic_service_mbsb_Package;
+
+message atomic_service_mbsb_Request_st {
+  string name = 1;
+  int32 integer_field = 2;
+  double double_field = 3;
+  float float_field = 4;
+}
+
+message atomic_service_mbsb_Reply_st {
+  string message = 1;
+  int32 integer_reply = 2;
+  double double_reply = 3;
+  float float_reply = 4;
+}
+
+service atomic_service_mbsb_Service {
+  rpc atomic_service_mbsb_interface (atomic_service_mbsb_Request_st) returns (atomic_service_mbsb_Reply_st) {}
+}
+
