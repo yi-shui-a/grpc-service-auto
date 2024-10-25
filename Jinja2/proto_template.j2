@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package {{service_name_package}};
+
+
+{% for message in messages %}
+message {{message._name}} {
+    {% for field in message._fields %}
+    {{field._type}} {{field._name}} = {{field._id}};
+    {% endfor %}
+}
+
+{% endfor %}
+
+
+service {{service_name_proto}} {
+    {% for method in methods %}
+    rpc {{method._name}} ({{method._requestMsg._name}}) returns ({{method._responseMsg._name}}) {}
+    {% endfor %}
+}
+

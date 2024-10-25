@@ -1,18 +1,49 @@
 syntax = "proto3";
 
-package atomic_service_sf_Package;
+package atomic_service_sf_package;
 
-message atomic_service_sf_Request_st {
-  string name = 1;
-  string title = 2;
+
+
+message atomic_service_sf_task_C_Request_st {
+    
+    std::string name = 1;
+    
+    std::string title = 2;
+    
 }
 
-message atomic_service_sf_Reply_st {
-  string result = 1;
-  int32 return_type = 2;
+
+message atomic_service_sf_task_C_Reply_st {
+    
+    std::string result = 1;
+    
+    int return_type = 2;
+    
 }
 
-service atomic_service_sf_Service {
-  rpc atomic_service_fun_task_C (atomic_service_sf_Request_st) returns (atomic_service_sf_Reply_st) {}
+
+message atomic_service_sf_task_D_Request_st {
+    
+    std::vector<int32_t> int_array = 1;
+    
 }
 
+
+message atomic_service_sf_task_D_Reply_st {
+    
+    std::map<std::string, std::int32_t> string_int_map_reply = 1;
+    
+    int return_type = 2;
+    
+}
+
+
+
+
+service atomic_service_sf_service {
+    
+    rpc atomic_service_fun_task_C (atomic_service_sf_task_C_Request_st) returns (atomic_service_sf_task_C_Reply_st) {}
+    
+    rpc atomic_service_fun_task_D (atomic_service_sf_task_D_Request_st) returns (atomic_service_sf_task_D_Reply_st) {}
+    
+}

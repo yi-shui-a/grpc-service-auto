@@ -57,41 +57,7 @@ GRPC_SERVER_INC = ./rpc_server_inc
 GRPC_CLIENT_INC = ./rpc_client_inc
 
 vpath %.cpp $(SRC_PATH) 
-#vpath %.cc $(PROTOS_PATH)
 vpath %.proto $(PROTOS_PATH)
-
-# SRC_GRPC_WILDCARD = $(wildcard $(PROTOS_PATH)/*.cc *)
-# OBJ_GRPC = $(patsubst %.cc,%.o, $(wildcard $(SRC_GRPC_WILDCARD)))
-# OBJ_GRPC = $(patsubst %.cc,%.o, $(GRPC_CODE)/*.cc)
-# OBJ_GRPC = $(patsubst %.cc,%.o, $(wildcard $(GRPC_CODE)/*.cc))
-
-# OBJ = $(patsubst %.cpp,%.o, $(wildcard $(SRC_PATH)/*.cpp))
-# OBJ += $(OBJ_GRPC)
-# OBJ = $(OBJ_GRPC)
-
-# BIN = $(patsubst %.cpp,%.out, $(wildcard $(SRC_PATH)/*.cpp))
-# BIN += $(patsubst %.cc,%.out, $(wildcard $(SRC_PATH)/*.cc))
-# OBJS = $(patsubst %.c,%.o,$(wildcard *.c))
-# TARGET = world.out
-# $(TARGET): $(OBJS)
-# 	cc -o $(TARGET) $(OBJS)
-# %.o: %.c
-# 	@echo 'compiling $<...'
-# 	cc -c -o $@ $<
-# clean:
-# 	rm -f *.o $(TARGET)
-# SRC_NONE =$(GRPC_CODE)/*.cc *.cc
-
-# SRC_GRPC_WILDCARD = $(wildcard $(PROTOS_PATH)/*.cc *.cc)
-# OBJ_GRPC = $(patsubst %.cc, %.o, $(SRC_GRPC_WILDCARD))
-# OBJ_GRPC += $(patsubst %.cpp, %.o, $(wildcard $(ATOM_SERVER_SRC)/*.cpp *.cc))
-
-# Makefile
-# Makefile
-# MY_ARRAY ?= default_value
-# FIRST_ELEMENT ?= default_first_element
-# SECOND_ELEMENT ?= default_second_element
-# REST_OF_ARRAY ?= default_rest_of_array
 
 SERVER_DEPEND_ELEMENTS = ?= default_server_depend_elements
 CLIENT_DEPEND_ELEMENTS = ?= default_client_depend_elements
@@ -142,20 +108,7 @@ all: system-check $(BIN_PATH)/$(SERVER) $(BIN_PATH)/$(CLIENT) $(BIN_PATH)/$(ASYN
 	done
 	@echo "==================================<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
 
-# $(BIN_PATH)/$(SERVER): $(OBJS_PATH)/my_service.pb.o $(OBJS_PATH)/my_service.grpc.pb.o  \
-# $(OBJS_PATH)/atom_server_hk.o $(OBJS_PATH)/atom_server_sj.o \
-# $(OBJS_PATH)/sj_service.pb.o $(OBJS_PATH)/sj_service.grpc.pb.o \
-# $(OBJS_PATH)/Aserver.o
-# 	$(CXX) $^ $(LDFLAGS) -o $@
 
-# $(BIN_PATH)/$(SERVER): $(OBJ_GRPC) $(OBJS_PATH)/Aserver.o
-# 	$(CXX) $^ $(LDFLAGS) -o $@
-# $(BIN_PATH)/$(CLIENT): $(OBJ_GRPC) $(OBJS_PATH)/Aclient.o
-# 	$(CXX) $^ $(LDFLAGS) -o $@
-# $(BIN_PATH)/$(SERVER): $(OBJS_PATH_GRPC)/%.pb.o $(OBJS_PATH_GRPC)/%.grpc.pb.o $(OBJS_PATH_MAIN)/server.o
-# 	$(CXX) $^ $(LDFLAGS) -o $@
-# $(BIN_PATH)/$(CLIENT): $(OBJS_PATH_GRPC)/%.pb.o $(OBJS_PATH_GRPC)/%.grpc.pb.o  $(OBJS_PATH_MAIN)/client.o
-# 	$(CXX) $^ $(LDFLAGS) -o $@
 
 $(BIN_PATH)/$(SERVER): $(SERVER_DEPEND_ELEMENTS)
 	@echo ">>>>[INFO] Linking $(SERVER)..."
@@ -168,13 +121,7 @@ $(BIN_PATH)/$(ASYNC_SERVER): $(ASYNC_SERVER_DEPEND_ELEMENTS)
 	@echo ">>>>[INFO] Linking $(ASYNC_SERVER)..."
 	$(CXX) $^ $(LDFLAGS) -o $@
 
-# $(BIN_PATH)/$(CLIENT): $(OBJS_PATH)/my_service.pb.o $(OBJS_PATH)/my_service.grpc.pb.o $(OBJS_PATH)/Aclient.o
-# 	@echo "Linking $(CLIENT)..."
-# 	$(CXX) $^ $(LDFLAGS) -o $@
 
-# $(OBJS_PATH)/%.o: $(ATOM_SERVER_SRC)/%.cpp
-# 	@echo '>>>> Compiling $<...'
-# 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJS_PATH)/%.o: $(SRC_PATH)/%.cpp
 	@echo '>>>>[INFO] Compiling $<...'
@@ -183,10 +130,7 @@ $(OBJS_PATH)/%.o: $(SRC_PATH)/%.cpp
 $(OBJS_PATH)/%.o: $(ATOM_SERVER_SRC)/%.cpp
 	@echo '>>>>[INFO] Compiling $<...'
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-# $(OBJS_PATH)/%.o: %.cpp
-# 	$(CXX) $(CXXFLAGS) -c $< -o $@
-# $(OBJS_PATH)/%.o: $(GRPC_CODE)/%.cc
-# 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
 
 $(OBJS_PATH)/%.pb.o: $(PROTOS_PATH)/%.pb.cc
 	@echo '>>>>[INFO] Compiling $<...'
@@ -205,15 +149,10 @@ $(OBJS_PATH)/%.grpc.pb.o: $(PROTOS_PATH)/%.grpc.pb.cc
 clean:
 	@echo ">>>>[INFO] Cleaning up..."
 	rm -f $(OBJS_PATH)/*.o $(OBJS_PATH)/*.o $(PROTOS_PATH)/*.pb.cc $(PROTOS_PATH)/*.pb.h $(PROTOS_PATH)/*.proto $(BIN_PATH)/*
-#	rm -f $(GRPC_CODE)/*.h
-#	rm -f $(ATOM_SERVER_SRC)/*.cpp
 	rm -f $(ATOM_SERVER_INC)/*h
 	@echo ">>>>[INFO] Cleanup finished."
 
-# clean:
-# 	rm -f $(OBJS_PATH)/*.o $(PROTOS_PATH)/*.pb.cc $(PROTOS_PATH)/*.pb.h $(BIN_PATH)/*
-# The following is to test your system and ensure a smoother experience.
-# They are by no means necessary to actually compile a grpc-enabled software.
+
 
 PROTOC_CMD = which $(PROTOC)
 PROTOC_CHECK_CMD = $(PROTOC) --version | grep -q libprotoc.3

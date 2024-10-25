@@ -2,17 +2,17 @@
     "basic_info": {
         "owner": {
             "developer": {
-                "name": "Spiderman",
-                "email": "Spidermsan@atomic_service_fwgz.com"
+                "name": "yishui",
+                "email": "yishui@atomic_service_fwgz.com"
             },
             "maintainer": {
                 "name": "IronMan",
                 "email": "ironman@PNUI.com"
             }
         },
-        "name": "atomic_service_mbsb",
-        "version": "V1.0.0",
-        "build_time": "2024-09-21T09-21-21",
+        "name": "atomic_service_sf",
+        "version": "V1.0.2",
+        "build_time": "2024-09-30T09-21-21",
         "resource_requirement": {
             "cpu_architecture": "x86_64",
             "memory": "4GB",
@@ -49,28 +49,28 @@
     "messages": [
         {
             "label": "request",
-            "name": "atomic_service_mbsb_task_A_Request_st",
+            "name": "atomic_service_sf_task_C_Request_st",
             "fields": [
                 {
                     "id": 1,
-                    "type": "int",
-                    "name": "number1"
+                    "type": "std::string",
+                    "name": "name"
                 },
                 {
                     "id": 2,
-                    "type": "int",
-                    "name": "number2"
+                    "type": "std::string",
+                    "name": "title"
                 }
             ]
         },
         {
             "label": "reply",
-            "name": "atomic_service_mbsb_task_A_Reply_st",
+            "name": "atomic_service_sf_task_C_Reply_st",
             "fields": [
                 {
                     "id": 1,
-                    "type": "int",
-                    "name": "sum_result"
+                    "type": "std::string",
+                    "name": "result"
                 },
                 {
                     "id": 2,
@@ -81,28 +81,23 @@
         },
         {
             "label": "request",
-            "name": "atomic_service_mbsb_task_B_Request_st",
+            "name": "atomic_service_sf_task_D_Request_st",
             "fields": [
                 {
                     "id": 1,
-                    "type": "int",
-                    "name": "number1"
-                },
-                {
-                    "id": 2,
-                    "type": "int",
-                    "name": "number2"
+                    "type": "std::vector<int32_t>",
+                    "name": "int_array"
                 }
             ]
         },
         {
             "label": "reply",
-            "name": "atomic_service_mbsb_task_B_Reply_st",
+            "name": "atomic_service_sf_task_D_Reply_st",
             "fields": [
                 {
                     "id": 1,
-                    "type": "int",
-                    "name": "sub_result"
+                    "type": "std::map<std::string, std::int32_t>",
+                    "name": "string_int_map_reply"
                 },
                 {
                     "id": 2,
@@ -114,10 +109,10 @@
     ],
     "grpc_methods": [
         {
-            "name": "atomic_service_fun_task_A",
+            "name": "atomic_service_fun_task_C",
             "description": "ccccc",
-            "requestMsg": "atomic_service_mbsb_task_A_Request_st",
-            "responseMsg": "atomic_service_mbsb_task_A_Reply_st",
+            "requestMsg": "atomic_service_sf_task_C_Request_st",
+            "responseMsg": "atomic_service_sf_task_C_Reply_st",
             "capabilities": {
                 "read": true,
                 "write": false,
@@ -125,10 +120,10 @@
             }
         },
         {
-            "name": "atomic_service_fun_task_B",
+            "name": "atomic_service_fun_task_D",
             "description": "ccccc",
-            "requestMsg": "atomic_service_mbsb_task_B_Request_st",
-            "responseMsg": "atomic_service_mbsb_task_B_Reply_st",
+            "requestMsg": "atomic_service_sf_task_D_Request_st",
+            "responseMsg": "atomic_service_sf_task_D_Reply_st",
             "capabilities": {
                 "read": true,
                 "write": false,

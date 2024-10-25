@@ -1,22 +1,51 @@
 syntax = "proto3";
 
-package atomic_service_mbsb_Package;
+package atomic_service_mbsb_package;
 
-message atomic_service_mbsb_Request_st {
-  string name = 1;
-  int32 integer_field = 2;
-  double double_field = 3;
-  float float_field = 4;
+
+
+message atomic_service_mbsb_task_A_Request_st {
+    
+    int number1 = 1;
+    
+    int number2 = 2;
+    
 }
 
-message atomic_service_mbsb_Reply_st {
-  string message = 1;
-  int32 integer_reply = 2;
-  double double_reply = 3;
-  float float_reply = 4;
+
+message atomic_service_mbsb_task_A_Reply_st {
+    
+    int sum_result = 1;
+    
+    int return_type = 2;
+    
 }
 
-service atomic_service_mbsb_Service {
-  rpc atomic_service_mbsb_interface (atomic_service_mbsb_Request_st) returns (atomic_service_mbsb_Reply_st) {}
+
+message atomic_service_mbsb_task_B_Request_st {
+    
+    int number1 = 1;
+    
+    int number2 = 2;
+    
 }
 
+
+message atomic_service_mbsb_task_B_Reply_st {
+    
+    int sub_result = 1;
+    
+    int return_type = 2;
+    
+}
+
+
+
+
+service atomic_service_mbsb_service {
+    
+    rpc atomic_service_fun_task_A (atomic_service_mbsb_task_A_Request_st) returns (atomic_service_mbsb_task_A_Reply_st) {}
+    
+    rpc atomic_service_fun_task_B (atomic_service_mbsb_task_B_Request_st) returns (atomic_service_mbsb_task_B_Reply_st) {}
+    
+}

@@ -1,12 +1,18 @@
-#include "../atom_inc/atomic_service_mbsb.h"
 
-void atomic_service_mbsb_interface(atomic_service_mbsb_Request_st *request, atomic_service_mbsb_Reply_st *reply) {
-    // Function implementation TODO 
 
-    reply->message = " from atom_service_mbsb_interface";
-    reply->integer_reply = 33333;
-    reply->double_reply = 111111;
-    reply->float_reply = 22.22;
+int atomic_service_fun_task_A(atomic_service_mbsb_task_A_Request_st *request, atomic_service_mbsb_task_A_Reply_st *reply){
+	// TODO: add your code here
+    request->number1 = 123;
+    request->number2 = 456;
+    reply->sum_result = request->number1 + request->number2;
+    
+    return ATOMIC_SERVICE_SUCCESS;
+}
 
-    std::cout << " >>>>>>>  atomic_service_mbsb_interface called" << std::endl;
+int atomic_service_fun_task_B(atomic_service_mbsb_task_B_Request_st *request, atomic_service_mbsb_task_B_Reply_st *reply){
+	// TODO: add your code here
+    request->number1 = 123;
+    request->number2 = 456;
+    reply->sub_result = request->number1 - request->number2;
+    return ATOMIC_SERVICE_SUCCESS;
 }

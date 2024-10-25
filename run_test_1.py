@@ -16,8 +16,7 @@ if __name__ == "__main__":
     serviceUtilsA.parseCpp("/root/grpc-generate-server/input_src/atom_service_mbsb.c")
     serviceUtilsB.parseHpp("/root/grpc-generate-server/input_inc/sf.h")
     serviceUtilsB.parseCpp("/root/grpc-generate-server/input_src/sf.c")
-
-    # 第
+    
 
     # 第二步，加载service_info.json
     ServerBaseInfo_json_file = os.path.abspath("./server_info.json")

@@ -3,15 +3,17 @@ import json
 from collections import defaultdict
 
 from jinja2 import Template
+import sys
+import os
 
-import AXService
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 import AtomService
 import OperatingSystem
 
 
-class ServiceUtils:
+class ServiceUtil:
     def __init__(self):
-        self._service = AXService.AXService()
+        self._service = AtomService.AtomService()
         self._service_method_fun:str = []
         self.__operating_system = OperatingSystem.OperatingSystem()
         self.__language = ""
@@ -301,7 +303,7 @@ class ServiceUtils:
         self._service.set_info(root_json_dict)
         
         # 保存json到Json文件夹
-        with open(f"../../Json/{self._service._base_info.getName()}.json", 'w') as file:
+        with open(f"{os.path.dirname(os.path.abspath(__file__))}/../../Json/{self._service._base_info.getName()}.json", 'w') as file:
             json.dump(root_json_dict, file, indent=4)
             # print(root_json_dict)
         # 将解析的文件导入到框架内
@@ -391,8 +393,8 @@ class ServiceUtils:
         # self._service_method_fun = function_pattern.findall(content)
 
         # 定义模板
-        input_src_header_template = Template(open("../../Jinja2/input_src_header_template.j2").read())
-        input_src_fun_template = Template(open("../../Jinja2/input_src_fun_template.j2").read())
+        input_src_header_template = Template(open(f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/input_src_header_template.j2").read())
+        input_src_fun_template = Template(open(f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/input_src_fun_template.j2").read())
         
 
         # 渲染模板
@@ -413,9 +415,9 @@ class ServiceUtils:
         #     res_str = res_str +input_src_fun_str+"\n\n"
 
         # 将res_str写入框架内的cpp文件中，同名不同路径
-        with open(f"../../atom_src/{self._service._base_info.getName()}.cpp", 'w') as file:
+        with open(f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_src/{self._service._base_info.getName()}.cpp", 'w') as file:
             file.write(res_str)
-        print(f"../../atom_src/{self._service._base_info.getName()}.cpp generated successfully!")
+        print(f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_src/{self._service._base_info.getName()}.cpp generated successfully!")
 
 
 
@@ -431,7 +433,7 @@ class ServiceUtils:
                 continue
         
         # 定义模板
-        input_inc_fun_template = Template(open("../../Jinja2/input_inc_fun_template.j2").read())
+        input_inc_fun_template = Template(open(f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/input_inc_fun_template.j2").read())
         # 渲染模板
         res_str = ""
         for method in self._service._service_methods:
@@ -455,89 +457,89 @@ class ServiceUtils:
         # lines.insert(endif_index, res_str + '\n')
 
         # 将修改后的内容写回文件
-        with open(f"../../atom_inc/{self._service._base_info.getName()}.h", 'w') as file:
+        with open(f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_inc/{self._service._base_info.getName()}.h", 'w') as file:
             file.writelines(lines)
-        print(f"../../atom_inc/{self._service._base_info.getName()}.h generated successfully!")
+        print(f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_inc/{self._service._base_info.getName()}.h generated successfully!")
 
-    def _correctJson(self):
-        res_dict =dict()
-        res_dict[self._service._base_info.getName()] = dict()
-        res_dict[self._service._base_info.getName()]["name"] = self._service._base_info.getName() +"service"
-        res_dict[self._service._base_info.getName()]["description"] = self._service._base_info.getDescription()
-        res_dict[self._service._base_info.getName()]["developer"] = dict()
-        res_dict[self._service._base_info.getName()]["developer"]["name"] = self._service._owner.get_developer().get_name()
-        res_dict[self._service._base_info.getName()]["developer"]["email"] = self._service._owner.get_developer().get_email()
-        res_dict[self._service._base_info.getName()]["version"] = self._service._base_info.getVersion()
-        res_dict[self._service._base_info.getName()]["build_time"] = self._service._base_info.getBuildTime()
-        res_dict[self._service._base_info.getName()]["priority_level"] = self._service._base_info.getPriorityLevel()
-        res_dict[self._service._base_info.getName()]["resource_requirements"] = dict()
-        res_dict[self._service._base_info.getName()]["resource_requirements"]["cpu_architecture"] = self._service._resource_requirement.get_cpu_architecture()
-        res_dict[self._service._base_info.getName()]["resource_requirements"]["hard_disk"] = self._service._resource_requirement.get_hard_disk()
-        res_dict[self._service._base_info.getName()]["resource_requirements"]["memory"] = self._service._resource_requirement.get_memory_size()
-        res_dict["implement_rpc"]= dict()
-        res_dict["implement_rpc"]["syntax"] = "proto3"
-        res_dict["implement_rpc"]["package"] = self._service._base_info.getName() + "_Package"
-        res_dict["implement_rpc"]["service_name"] = self._service._base_info.getName() + "_Service"
-        res_dict["implement_rpc"]["request"] = self._service._service_methods[0]._requestMsg.get_name()
-        res_dict["implement_rpc"]["reply"] = self._service._service_methods[0]._responseMsg.get_name()
-        res_dict["implement_rpc"]["atom_interface"] = self._service._service_methods[0]._name +"_func"
-        res_dict["implement_rpc"]["atom_name"] = self._service._base_info.getName()
+    # def _correctJson(self):
+    #     res_dict =dict()
+    #     res_dict[self._service._base_info.getName()] = dict()
+    #     res_dict[self._service._base_info.getName()]["name"] = self._service._base_info.getName() +"service"
+    #     res_dict[self._service._base_info.getName()]["description"] = self._service._base_info.getDescription()
+    #     res_dict[self._service._base_info.getName()]["developer"] = dict()
+    #     res_dict[self._service._base_info.getName()]["developer"]["name"] = self._service._owner.get_developer().get_name()
+    #     res_dict[self._service._base_info.getName()]["developer"]["email"] = self._service._owner.get_developer().get_email()
+    #     res_dict[self._service._base_info.getName()]["version"] = self._service._base_info.getVersion()
+    #     res_dict[self._service._base_info.getName()]["build_time"] = self._service._base_info.getBuildTime()
+    #     res_dict[self._service._base_info.getName()]["priority_level"] = self._service._base_info.getPriorityLevel()
+    #     res_dict[self._service._base_info.getName()]["resource_requirements"] = dict()
+    #     res_dict[self._service._base_info.getName()]["resource_requirements"]["cpu_architecture"] = self._service._resource_requirement.get_cpu_architecture()
+    #     res_dict[self._service._base_info.getName()]["resource_requirements"]["hard_disk"] = self._service._resource_requirement.get_hard_disk()
+    #     res_dict[self._service._base_info.getName()]["resource_requirements"]["memory"] = self._service._resource_requirement.get_memory_size()
+    #     res_dict["implement_rpc"]= dict()
+    #     res_dict["implement_rpc"]["syntax"] = "proto3"
+    #     res_dict["implement_rpc"]["package"] = self._service._base_info.getName() + "_Package"
+    #     res_dict["implement_rpc"]["service_name"] = self._service._base_info.getName() + "_Service"
+    #     res_dict["implement_rpc"]["request"] = self._service._service_methods[0]._requestMsg.get_name()
+    #     res_dict["implement_rpc"]["reply"] = self._service._service_methods[0]._responseMsg.get_name()
+    #     res_dict["implement_rpc"]["atom_interface"] = self._service._service_methods[0]._name +"_func"
+    #     res_dict["implement_rpc"]["atom_name"] = self._service._base_info.getName()
         
-        res_dict["messages"] =list()
-        res_dict["messages"].append(self._service._service_methods[0]._requestMsg.to_dict())
-        res_dict["messages"].append(self._service._service_methods[0]._responseMsg.to_dict())
-        res_dict["messages"][0]["lable"] = res_dict["messages"][0]["label"]
-        del res_dict["messages"][0]["label"]
-        res_dict["messages"][1]["lable"] = res_dict["messages"][1]["label"]
-        del res_dict["messages"][1]["label"]
-        for field in res_dict["messages"][0]["fields"]:
-            field["type"] = field["type"].replace("std::","")
-            if field["type"] == "int":
-                field["type"] = "int32"
-        for field in res_dict["messages"][1]["fields"]:
-            field["type"] = field["type"].replace("std::","")
-            if field["type"] == "int":
-                field["type"] = "int32"
+    #     res_dict["messages"] =list()
+    #     res_dict["messages"].append(self._service._service_methods[0]._requestMsg.to_dict())
+    #     res_dict["messages"].append(self._service._service_methods[0]._responseMsg.to_dict())
+    #     res_dict["messages"][0]["lable"] = res_dict["messages"][0]["label"]
+    #     del res_dict["messages"][0]["label"]
+    #     res_dict["messages"][1]["lable"] = res_dict["messages"][1]["label"]
+    #     del res_dict["messages"][1]["label"]
+    #     for field in res_dict["messages"][0]["fields"]:
+    #         field["type"] = field["type"].replace("std::","")
+    #         if field["type"] == "int":
+    #             field["type"] = "int32"
+    #     for field in res_dict["messages"][1]["fields"]:
+    #         field["type"] = field["type"].replace("std::","")
+    #         if field["type"] == "int":
+    #             field["type"] = "int32"
         
         
-        res_dict["services"] =list()
-        temp_dict =dict()
-        temp_dict["name"] = self._service._base_info.getName() +"_Service"
-        temp_dict["methods"] = list()
-        temp_dict["methods"].append(self._service._service_methods[0].to_dict())
-        temp_dict["methods"][0]["category"] = "user_management"
-        temp_dict["methods"][0]["requestType"] = temp_dict["methods"][0]["requestMsg"]
-        temp_dict["methods"][0]["responseType"] = temp_dict["methods"][0]["responseMsg"]
-        del temp_dict["methods"][0]["requestMsg"]
-        del temp_dict["methods"][0]["responseMsg"]
-        res_dict["services"].append(temp_dict)
+    #     res_dict["services"] =list()
+    #     temp_dict =dict()
+    #     temp_dict["name"] = self._service._base_info.getName() +"_Service"
+    #     temp_dict["methods"] = list()
+    #     temp_dict["methods"].append(self._service._service_methods[0].to_dict())
+    #     temp_dict["methods"][0]["category"] = "user_management"
+    #     temp_dict["methods"][0]["requestType"] = temp_dict["methods"][0]["requestMsg"]
+    #     temp_dict["methods"][0]["responseType"] = temp_dict["methods"][0]["responseMsg"]
+    #     del temp_dict["methods"][0]["requestMsg"]
+    #     del temp_dict["methods"][0]["responseMsg"]
+    #     res_dict["services"].append(temp_dict)
         
-        # 保存json到Json文件夹
-        with open(f"../../Json/{self._service._base_info.getName()}.json", 'w') as file:
-            json.dump(res_dict, file, indent=4)
-            print(f"../../Json/{self._service._base_info.getName()}.json generated successfully!")
+    #     # 保存json到Json文件夹
+    #     with open(f"../../Json/{self._service._base_info.getName()}.json", 'w') as file:
+    #         json.dump(res_dict, file, indent=4)
+    #         print(f"../../Json/{self._service._base_info.getName()}.json generated successfully!")
         
         
         
 
 if __name__ == '__main__':
-    serviceUtils = ServiceUtils()
+    serviceUtils = ServiceUtil()
     # serviceUtils.parseHpp("test/atom_service_mbsb.h")
     # serviceUtils.parseHpp("D:\ZT\长安望江_服务化\code_demo\grpc-generate-server\\test\\atom_service_mbsb.h")
     # print("\n\n\n\n")
     # print(json.dumps(serviceUtils._service.to_dict(), indent=4))
-    serviceUtilsA = ServiceUtils()
-    serviceUtilsB = ServiceUtils()
+    serviceUtilsA = ServiceUtil()
+    serviceUtilsB = ServiceUtil()
     # serviceUtils.parseHpp("test/atom_service_mbsb.h")
     # serviceUtils.parseHpp("D:\ZT\长安望江_服务化\code_demo\grpc-generate-server\\test\\atom_service_mbsb.h")
     # print("\n\n\n\n")
     # print(json.dumps(serviceUtils._service.to_dict(), indent=4))
     serviceUtilsA.parseHpp("/root/grpc-generate-server/input_inc/atomic_service_mbsb.h")
     serviceUtilsA.parseCpp("/root/grpc-generate-server/input_src/atomic_service_mbsb.cpp")
-    # serviceUtilsB.parseHpp("/root/grpc-generate-server/input_inc/atomic_service_sf.h")
-    # serviceUtilsB.parseCpp("/root/grpc-generate-server/input_src/atomic_service_sf.c")
+    serviceUtilsB.parseHpp("/root/grpc-generate-server/input_inc/atomic_service_sf.h")
+    serviceUtilsB.parseCpp("/root/grpc-generate-server/input_src/atomic_service_sf.c")
     
-    serviceUtilsA._correctJson()
+    # serviceUtilsA._correctJson()
     # serviceUtilsB._correctJson()
     
 

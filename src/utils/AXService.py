@@ -1,5 +1,8 @@
 from typing import List
+import sys
+import os
 
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 import BaseInfo
 import Owner
 import ResourceRequirement
@@ -8,11 +11,6 @@ import Message
 import ReturnCode
 import GrpcMethod
 import ServiceMethod
-
-
-# baseinfo =  BaseInfo.BaseInfo()
-# baseinfo.set_all_info("AXService", "AXService", "AXService", "1.0.0", "2022-01-01", 1, "MIT", "servicePath")
-# print(baseinfo.description)
 
 class AXService:
     def __init__(self):

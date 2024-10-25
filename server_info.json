@@ -1,0 +1,10 @@
+{
+    "service": [
+        {
+            "name": "atomic_service_sfzt"
+        },
+        {
+            "name": "atomic_service_skzt"
+        }
+    ],
+}
