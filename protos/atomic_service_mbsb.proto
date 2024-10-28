@@ -6,36 +6,36 @@ package atomic_service_mbsb_package;
 
 message atomic_service_mbsb_task_A_Request_st {
     
-    int number1 = 1;
+    int32 number1 = 1;
     
-    int number2 = 2;
+    int32 number2 = 2;
     
 }
 
 
 message atomic_service_mbsb_task_A_Reply_st {
     
-    int sum_result = 1;
+    int32 sum_result = 1;
     
-    int return_type = 2;
+    int32 return_type = 2;
     
 }
 
 
 message atomic_service_mbsb_task_B_Request_st {
     
-    int number1 = 1;
+    int32 number1 = 1;
     
-    int number2 = 2;
+    int32 number2 = 2;
     
 }
 
 
 message atomic_service_mbsb_task_B_Reply_st {
     
-    int sub_result = 1;
+    int32 sub_result = 1;
     
-    int return_type = 2;
+    int32 return_type = 2;
     
 }
 
