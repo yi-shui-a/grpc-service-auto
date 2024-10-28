@@ -6,34 +6,34 @@ package atomic_service_sf_package;
 
 message atomic_service_sf_task_C_Request_st {
     
-    std::string name = 1;
+    string name = 1;
     
-    std::string title = 2;
+    string title = 2;
     
 }
 
 
 message atomic_service_sf_task_C_Reply_st {
     
-    std::string result = 1;
+    string result = 1;
     
-    int return_type = 2;
+    int32 return_type = 2;
     
 }
 
 
 message atomic_service_sf_task_D_Request_st {
     
-    std::vector<int32_t> int_array = 1;
+    vector<int32_t> int_array = 1;
     
 }
 
 
 message atomic_service_sf_task_D_Reply_st {
     
-    std::map<std::string, std::int32_t> string_int_map_reply = 1;
+    map<string, int32_t> string_int_map_reply = 1;
     
-    int return_type = 2;
+    int32 return_type = 2;
     
 }
 

@@ -1,18 +1,23 @@
 {
     "basic_info": {
+        "name": "atomic_service_mbsb",
+        "chinese_name": "",
+        "description": "",
+        "version": "V1.0.0",
+        "build_time": "2024-09-21T09-21-21",
+        "priority_level": -999,
+        "license": "",
+        "service_path": "",
         "owner": {
-            "developer": {
-                "name": "Spiderman",
-                "email": "Spidermsan@atomic_service_fwgz.com"
-            },
             "maintainer": {
                 "name": "IronMan",
                 "email": "ironman@PNUI.com"
+            },
+            "developer": {
+                "name": "Spiderman",
+                "email": "Spidermsan@atomic_service_fwgz.com"
             }
         },
-        "name": "atomic_service_mbsb",
-        "version": "V1.0.0",
-        "build_time": "2024-09-21T09-21-21",
         "resource_requirement": {
             "cpu_architecture": "x86_64",
             "memory": "4GB",
@@ -20,15 +25,15 @@
         },
         "operating_system": [
             {
-                "name": "Linux",
-                "version": {
+                "os_name": "Linux",
+                "os_version": {
                     "v1": "5.13.0-117-generic",
                     "v2": "5.14.0-117-generic"
                 }
             },
             {
-                "name": "SylixOS",
-                "version": {
+                "os_name": "SylixOS",
+                "os_version": {
                     "v1": "1.0.0",
                     "v2": "1.0.2"
                 }
@@ -48,66 +53,90 @@
     },
     "messages": [
         {
-            "label": "request",
             "name": "atomic_service_mbsb_task_A_Request_st",
-            "fields": [
-                {
-                    "id": 1,
-                    "type": "int",
-                    "name": "number1"
-                },
-                {
-                    "id": 2,
-                    "type": "int",
-                    "name": "number2"
-                }
-            ]
-        },
-        {
-            "label": "reply",
-            "name": "atomic_service_mbsb_task_A_Reply_st",
-            "fields": [
-                {
-                    "id": 1,
-                    "type": "int",
-                    "name": "sum_result"
-                },
-                {
-                    "id": 2,
-                    "type": "int",
-                    "name": "return_type"
-                }
-            ]
-        },
-        {
             "label": "request",
-            "name": "atomic_service_mbsb_task_B_Request_st",
             "fields": [
                 {
                     "id": 1,
+                    "name": "number1",
                     "type": "int",
-                    "name": "number1"
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
                 },
                 {
                     "id": 2,
+                    "name": "number2",
                     "type": "int",
-                    "name": "number2"
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
                 }
             ]
         },
         {
+            "name": "atomic_service_mbsb_task_A_Reply_st",
             "label": "reply",
-            "name": "atomic_service_mbsb_task_B_Reply_st",
             "fields": [
                 {
                     "id": 1,
+                    "name": "sum_result",
                     "type": "int",
-                    "name": "sub_result"
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
                 },
                 {
                     "id": 2,
+                    "name": "return_type",
                     "type": "int",
-                    "name": "return_type"
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "atomic_service_mbsb_task_B_Request_st",
+            "label": "request",
+            "fields": [
+                {
+                    "id": 1,
+                    "name": "number1",
+                    "type": "int",
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
+                },
+                {
+                    "id": 2,
+                    "name": "number2",
+                    "type": "int",
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "atomic_service_mbsb_task_B_Reply_st",
+            "label": "reply",
+            "fields": [
+                {
+                    "id": 1,
+                    "name": "sub_result",
+                    "type": "int",
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
+                },
+                {
+                    "id": 2,
+                    "name": "return_type",
+                    "type": "int",
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
                 }
             ]
         }

@@ -195,7 +195,13 @@ class ServiceUtil:
                 break
             line_index += 1
         
-        
+        '''
+        处理代码部分可能出现的注释，并将剩余代码合成一个大字符串
+        '''
+        # 处理代码部分可能出现的注释
+        for line in lines[line_index:]:
+            if line.strip().startswith('/*') and line.strip().endswith('*/'):
+                lines.remove(line)
         # 将其余的字符串从按行转为一个大字符串
         input_str = "\n".join(lines[line_index:])
         # 删除单行注释
@@ -303,8 +309,9 @@ class ServiceUtil:
         self._service.set_info(root_json_dict)
         
         # 保存json到Json文件夹
+        json_info = self._service.to_dict()
         with open(f"{os.path.dirname(os.path.abspath(__file__))}/../../Json/{self._service._base_info.getName()}.json", 'w') as file:
-            json.dump(root_json_dict, file, indent=4)
+            json.dump(json_info, file, indent=4)
             # print(root_json_dict)
         # 将解析的文件导入到框架内
         self._loadHpp(fileName)

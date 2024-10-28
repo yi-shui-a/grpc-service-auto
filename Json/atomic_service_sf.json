@@ -1,18 +1,23 @@
 {
     "basic_info": {
+        "name": "atomic_service_sf",
+        "chinese_name": "",
+        "description": "",
+        "version": "V1.0.2",
+        "build_time": "2024-09-30T09-21-21",
+        "priority_level": -999,
+        "license": "",
+        "service_path": "",
         "owner": {
-            "developer": {
-                "name": "yishui",
-                "email": "yishui@atomic_service_fwgz.com"
-            },
             "maintainer": {
                 "name": "IronMan",
                 "email": "ironman@PNUI.com"
+            },
+            "developer": {
+                "name": "yishui",
+                "email": "yishui@atomic_service_fwgz.com"
             }
         },
-        "name": "atomic_service_sf",
-        "version": "V1.0.2",
-        "build_time": "2024-09-30T09-21-21",
         "resource_requirement": {
             "cpu_architecture": "x86_64",
             "memory": "4GB",
@@ -20,15 +25,15 @@
         },
         "operating_system": [
             {
-                "name": "Linux",
-                "version": {
+                "os_name": "Linux",
+                "os_version": {
                     "v1": "5.13.0-117-generic",
                     "v2": "5.14.0-117-generic"
                 }
             },
             {
-                "name": "SylixOS",
-                "version": {
+                "os_name": "SylixOS",
+                "os_version": {
                     "v1": "1.0.0",
                     "v2": "1.0.2"
                 }
@@ -48,61 +53,82 @@
     },
     "messages": [
         {
-            "label": "request",
             "name": "atomic_service_sf_task_C_Request_st",
-            "fields": [
-                {
-                    "id": 1,
-                    "type": "std::string",
-                    "name": "name"
-                },
-                {
-                    "id": 2,
-                    "type": "std::string",
-                    "name": "title"
-                }
-            ]
-        },
-        {
-            "label": "reply",
-            "name": "atomic_service_sf_task_C_Reply_st",
-            "fields": [
-                {
-                    "id": 1,
-                    "type": "std::string",
-                    "name": "result"
-                },
-                {
-                    "id": 2,
-                    "type": "int",
-                    "name": "return_type"
-                }
-            ]
-        },
-        {
             "label": "request",
-            "name": "atomic_service_sf_task_D_Request_st",
             "fields": [
                 {
                     "id": 1,
-                    "type": "std::vector<int32_t>",
-                    "name": "int_array"
+                    "name": "name",
+                    "type": "std::string",
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
+                },
+                {
+                    "id": 2,
+                    "name": "title",
+                    "type": "std::string",
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
                 }
             ]
         },
         {
+            "name": "atomic_service_sf_task_C_Reply_st",
             "label": "reply",
-            "name": "atomic_service_sf_task_D_Reply_st",
             "fields": [
                 {
                     "id": 1,
-                    "type": "std::map<std::string, std::int32_t>",
-                    "name": "string_int_map_reply"
+                    "name": "result",
+                    "type": "std::string",
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
                 },
                 {
                     "id": 2,
+                    "name": "return_type",
                     "type": "int",
-                    "name": "return_type"
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "atomic_service_sf_task_D_Request_st",
+            "label": "request",
+            "fields": [
+                {
+                    "id": 1,
+                    "name": "int_array",
+                    "type": "std::vector<int32_t>",
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
+                }
+            ]
+        },
+        {
+            "name": "atomic_service_sf_task_D_Reply_st",
+            "label": "reply",
+            "fields": [
+                {
+                    "id": 1,
+                    "name": "string_int_map_reply",
+                    "type": "std::map<std::string, std::int32_t>",
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
+                },
+                {
+                    "id": 2,
+                    "name": "return_type",
+                    "type": "int",
+                    "repeated": false,
+                    "key": "",
+                    "value": ""
                 }
             ]
         }
