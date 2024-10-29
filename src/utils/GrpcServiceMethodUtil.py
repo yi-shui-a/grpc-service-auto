@@ -1,6 +1,7 @@
 from jinja2 import Template
 import sys
 import os
+import re
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 import ServiceMethod
@@ -40,10 +41,39 @@ class GrpcServiceMethodUtil:
         # 删除std::
         for message in self._messages:
             for field in message._fields:
-                    field._type = cpp_types.get(field._type,field._type)
-                    if field._type.count("std::") > 0:
-                        field._type = field._type.replace("std::", "")
+                # 为 _type_proto 赋值
+                field._type_proto = cpp_types.get(field._type,field._type)
+                # 去除命名空间标示符
+                if field._type_proto.count("std::") > 0:
+                    field._type_proto = field._type_proto.replace("std::", "")
                     
+                # 数组转为repeated 
+                # vector
+                if field._type_proto.count("vector") > 0:
+                    field._repeated = True
+                    # 使用正则表达式提取类型
+                    match = re.search(r'vector<(\w+)>', field._type_proto)
+                    temp_str = cpp_types.get(match.group(1),match.group(1))
+                    if match:
+                        field._type_proto = "repeated " +  temp_str
+                        
+                            
+                # []
+                if field._name.count('[') > 0 and field._name.count(']') > 0:
+                    field._repeated = True
+                    field._type_proto =  "repeated " + field._type_proto
+                    
+                    
+                # map中的数据类型处理
+                if field._type_proto.count("map") > 0:
+                    field._map = True
+                    match = re.search(r'map<(\w+),\s*(\w+)>', field._type_proto)
+                    if match:
+                        field._key = cpp_types.get(match.group(1),match.group(1))
+                        field._value = cpp_types.get(match.group(2),match.group(2))
+                        field._type_proto = f"map<{field._key}, {field._value}>"
+                
+                
         
             
 

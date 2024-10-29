@@ -9,6 +9,7 @@ import os
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 import AtomService
 import OperatingSystem
+from config.types import cpp_types
 
 
 class ServiceUtil:
@@ -309,6 +310,7 @@ class ServiceUtil:
         self._service.set_info(root_json_dict)
         
         # 保存json到Json文件夹
+        
         json_info = self._service.to_dict()
         with open(f"{os.path.dirname(os.path.abspath(__file__))}/../../Json/{self._service._base_info.getName()}.json", 'w') as file:
             json.dump(json_info, file, indent=4)

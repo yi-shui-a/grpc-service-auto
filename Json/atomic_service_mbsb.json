@@ -60,17 +60,23 @@
                     "id": 1,
                     "name": "number1",
                     "type": "int",
+                    "type_proto": "",
                     "repeated": false,
+                    "map": false,
                     "key": "",
-                    "value": ""
+                    "value": "",
+                    "chinese_name": ""
                 },
                 {
                     "id": 2,
                     "name": "number2",
                     "type": "int",
+                    "type_proto": "",
                     "repeated": false,
+                    "map": false,
                     "key": "",
-                    "value": ""
+                    "value": "",
+                    "chinese_name": ""
                 }
             ]
         },
@@ -82,17 +88,23 @@
                     "id": 1,
                     "name": "sum_result",
                     "type": "int",
+                    "type_proto": "",
                     "repeated": false,
+                    "map": false,
                     "key": "",
-                    "value": ""
+                    "value": "",
+                    "chinese_name": ""
                 },
                 {
                     "id": 2,
                     "name": "return_type",
                     "type": "int",
+                    "type_proto": "",
                     "repeated": false,
+                    "map": false,
                     "key": "",
-                    "value": ""
+                    "value": "",
+                    "chinese_name": ""
                 }
             ]
         },
@@ -104,17 +116,23 @@
                     "id": 1,
                     "name": "number1",
                     "type": "int",
+                    "type_proto": "",
                     "repeated": false,
+                    "map": false,
                     "key": "",
-                    "value": ""
+                    "value": "",
+                    "chinese_name": ""
                 },
                 {
                     "id": 2,
                     "name": "number2",
                     "type": "int",
+                    "type_proto": "",
                     "repeated": false,
+                    "map": false,
                     "key": "",
-                    "value": ""
+                    "value": "",
+                    "chinese_name": ""
                 }
             ]
         },
@@ -126,17 +144,23 @@
                     "id": 1,
                     "name": "sub_result",
                     "type": "int",
+                    "type_proto": "",
                     "repeated": false,
+                    "map": false,
                     "key": "",
-                    "value": ""
+                    "value": "",
+                    "chinese_name": ""
                 },
                 {
                     "id": 2,
                     "name": "return_type",
                     "type": "int",
+                    "type_proto": "",
                     "repeated": false,
+                    "map": false,
                     "key": "",
-                    "value": ""
+                    "value": "",
+                    "chinese_name": ""
                 }
             ]
         }

@@ -6,7 +6,7 @@ package {{service_name_package}};
 {% for message in messages %}
 message {{message._name}} {
     {% for field in message._fields %}
-    {{field._type}} {{field._name}} = {{field._id}};
+    {{field._type_proto}} {{field._name}} = {{field._id}};
     {% endfor %}
 }
 

@@ -60,17 +60,23 @@
                     "id": 1,
                     "name": "name",
                     "type": "std::string",
+                    "type_proto": "",
                     "repeated": false,
+                    "map": false,
                     "key": "",
-                    "value": ""
+                    "value": "",
+                    "chinese_name": ""
                 },
                 {
                     "id": 2,
                     "name": "title",
                     "type": "std::string",
+                    "type_proto": "",
                     "repeated": false,
+                    "map": false,
                     "key": "",
-                    "value": ""
+                    "value": "",
+                    "chinese_name": ""
                 }
             ]
         },
@@ -82,17 +88,23 @@
                     "id": 1,
                     "name": "result",
                     "type": "std::string",
+                    "type_proto": "",
                     "repeated": false,
+                    "map": false,
                     "key": "",
-                    "value": ""
+                    "value": "",
+                    "chinese_name": ""
                 },
                 {
                     "id": 2,
                     "name": "return_type",
                     "type": "int",
+                    "type_proto": "",
                     "repeated": false,
+                    "map": false,
                     "key": "",
-                    "value": ""
+                    "value": "",
+                    "chinese_name": ""
                 }
             ]
         },
@@ -104,9 +116,12 @@
                     "id": 1,
                     "name": "int_array",
                     "type": "std::vector<int32_t>",
+                    "type_proto": "",
                     "repeated": false,
+                    "map": false,
                     "key": "",
-                    "value": ""
+                    "value": "",
+                    "chinese_name": ""
                 }
             ]
         },
@@ -118,17 +133,23 @@
                     "id": 1,
                     "name": "string_int_map_reply",
                     "type": "std::map<std::string, std::int32_t>",
+                    "type_proto": "",
                     "repeated": false,
+                    "map": false,
                     "key": "",
-                    "value": ""
+                    "value": "",
+                    "chinese_name": ""
                 },
                 {
                     "id": 2,
                     "name": "return_type",
                     "type": "int",
+                    "type_proto": "",
                     "repeated": false,
+                    "map": false,
                     "key": "",
-                    "value": ""
+                    "value": "",
+                    "chinese_name": ""
                 }
             ]
         }

@@ -24,14 +24,14 @@ message atomic_service_sf_task_C_Reply_st {
 
 message atomic_service_sf_task_D_Request_st {
     
-    vector<int32_t> int_array = 1;
+    repeated int32 int_array = 1;
     
 }
 
 
 message atomic_service_sf_task_D_Reply_st {
     
-    map<string, int32_t> string_int_map_reply = 1;
+    map<string, int32> string_int_map_reply = 1;
     
     int32 return_type = 2;
     
