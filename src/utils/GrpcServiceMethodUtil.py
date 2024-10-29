@@ -9,6 +9,7 @@ import OperatingSystem
 import AtomService
 import Message
 from config.types import cpp_types
+from config.types import cpp_types
 
 class GrpcServiceMethodUtil:
     def __init__(self):
