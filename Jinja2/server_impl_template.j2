@@ -1,0 +1,64 @@
+#include <iostream>
+#include <memory>
+#include <string>
+#include <thread>
+#include <grpcpp/grpcpp.h>
+#include "../protos/{{ service_name|lower }}.grpc.pb.h"
+#include "../atom_inc/{{ service_name|lower }}.h"
+
+{% for method in methods %}
+void {{ method._name }}_func({{ method._requestMsg._name }}* request, {{ method._responseMsg._name }}* reply);
+
+{% endfor %}
+
+class {{ service_name_service }}_ServerImpl final : public ::{{service_name_package}}::{{ service_name_service }}::Service {
+public:
+    {{ service_name_service }}_ServerImpl() {} 
+    {% for method in methods %}
+
+    ::grpc::Status {{ method._name }}(::grpc::ServerContext* context, 
+            const ::{{service_name_package}}::{{ method._requestMsg._name }}* request, 
+                ::{{service_name_package}}::{{ method._responseMsg._name }}* reply) override {
+
+        {{ method._requestMsg._name }} {{ service_name }}_Request_t;
+        {{ method._responseMsg._name }} {{ service_name }}_Reply_t;
+
+        {% for field in  method._requestMsg._fields %}
+        {% if field._repeated == true %}
+        for(int i=0; i < request->{{field._name}}_size();++i){
+            {{ service_name }}_Request_t.{{field._name}}.push_back(request->{{field._name}}(i));
+        }
+        {% elif field._map == true %}
+        for (const auto& item : request->{{field._name}}()) {
+            {{ service_name }}_Request_t.{{field._name}}[item.first] = item.second;
+        }
+        {% else %}
+        {{ service_name }}_Request_t.{{field._name}} = request->{{field._name}}();
+        {% endif %}
+        {% endfor %}
+
+        /******************************************************************/
+        {{ method._name }}_func(&{{ service_name }}_Request_t, &{{ service_name }}_Reply_t);
+
+        /******************************************************************/
+
+        reply->Clear(); // clear reply message
+        {% for field in  method._responseMsg._fields %}
+        {% if field._repeated == true %}
+        for(int i=0; i < {{ service_name }}_Reply_t.{{field._name}}.size(); ++i){
+            reply->mutable_{{field._name}}()->Add({{ service_name }}_Reply_t.{{field._name}}[i]);
+        }
+        {% elif field._map == true %}
+        for (const auto& item : {{ service_name }}_Reply_t.{{field._name}}) {
+            reply->mutable_{{field._name}}()->insert({item.first, item.second});
+        }
+        {% else %}
+        reply->set_{{field._name}}({{ service_name }}_Reply_t.{{field._name}});
+        {% endif %}
+        {% endfor %}
+        std::cout << "This is Method = {{ method._name }},   ServiceName = {{ service_name_service }}" << std::endl;
+        return grpc::Status::OK;
+    }
+
+    {% endfor %}
+};

@@ -414,14 +414,14 @@ class ServiceUtil:
         for string in self._service_method_fun:
             res_str = res_str +string + "\n\n"
 
-        # for method in self._service._service_methods:
-        #     func_name = method._name + "_func"
-        #     request_type =method._requestMsg.get_name()
-        #     reply_type = method._responseMsg.get_name()
-        #     prim_func_name = method._name
+        for method in self._service._service_methods:
+            func_name = method._name + "_func"
+            request_type =method._requestMsg.get_name()
+            reply_type = method._responseMsg.get_name()
+            prim_func_name = method._name
 
-        #     input_src_fun_str = input_src_fun_template.render(func_name=func_name,request_type=request_type,reply_type=reply_type,prim_func_name=prim_func_name)
-        #     res_str = res_str +input_src_fun_str+"\n\n"
+            input_src_fun_str = input_src_fun_template.render(func_name=func_name,request_type=request_type,reply_type=reply_type,prim_func_name=prim_func_name)
+            res_str = res_str +input_src_fun_str+"\n\n"
 
         # 将res_str写入框架内的cpp文件中，同名不同路径
         with open(f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_src/{self._service._base_info.getName()}.cpp", 'w') as file:
@@ -463,7 +463,7 @@ class ServiceUtil:
             raise ValueError("文件中没有找到 #endif")
         
         # 在 #endif 之前插入字符串
-        # lines.insert(endif_index, res_str + '\n')
+        lines.insert(endif_index, res_str + '\n')
 
         # 将修改后的内容写回文件
         with open(f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_inc/{self._service._base_info.getName()}.h", 'w') as file:

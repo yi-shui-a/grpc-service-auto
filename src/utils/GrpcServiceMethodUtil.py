@@ -34,14 +34,19 @@ class GrpcServiceMethodUtil:
         return True
     
     def _generate_info(self):
-        self.__service_name_proto = self.__service_name + "_service"
-        self.__service_name_package = self.__service_name +"_package"
+        self.__service_name_service = self.__service_name + "_Service"
+        self.__service_name_package = self.__service_name +"_Package"
+        self.__service_name_interface = self.__service_name +"_interface"
         
     def _type_convert(self):
         # 修改数据类型
         # 删除std::
         for message in self._messages:
             for field in message._fields:
+                # field._type_proto为赋值时，才进行此操作
+                if field._type_proto !="":
+                    continue
+                
                 # 为 _type_proto 赋值
                 field._type_proto = cpp_types.get(field._type,field._type)
                 # 去除命名空间标示符
@@ -75,9 +80,6 @@ class GrpcServiceMethodUtil:
                         field._type_proto = f"map<{field._key}, {field._value}>"
                 
                 
-        
-            
-
     def generateProtoFile(self):
         # TODO: Read the input file and extract the necessary information
         # Example: Read from inputFilrName and write to outputFilrName
@@ -85,7 +87,7 @@ class GrpcServiceMethodUtil:
         proto_template = Template(open(f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/proto_template.j2").read())
         
         
-        res_str = proto_template.render(service_name_package = self.__service_name_package, service_name_proto = self.__service_name_proto, messages = self._messages, methods = self._service_methods)
+        res_str = proto_template.render(service_name_package = self.__service_name_package, service_name_service = self.__service_name_service, messages = self._messages, methods = self._service_methods)
         
         # 将res_str写入框架内的cpp文件中，同名不同路径
         with open(f"{os.path.dirname(os.path.abspath(__file__))}/../../protos/{self.__service_name}.proto", 'w') as file:
@@ -102,9 +104,18 @@ class GrpcServiceMethodUtil:
         # TODO: Read the input file and extract the necessary information
         # Example: Read from inputFilrName and write to outputFilrName
         pass
-    def generateServerImpl(self, inputFilrName, outputFileName):
+    def generateServerImpl(self):
         # TODO: Read the input file and extract the necessary information
         # Example: Read from inputFilrName and write to outputFilr
+        proto_template = Template(open(f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/server_impl_template.j2").read())
+
+        res_str = proto_template.render(service_name = self.__service_name, service_name_package = self.__service_name_package, service_name_service = self.__service_name_service, service_name_interface=self.__service_name_interface, messages = self._messages, methods = self._service_methods)
+        
+        # 将res_str写入框架内的cpp文件中，同名不同路径
+        with open(f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_server_inc/{self.__service_name}_impl.h", 'w') as file:
+            file.write(res_str)
+        print(f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_server_inc/{self.__service_name}_impl.h generated successfully!")
+
         pass
     def generateStubImpl(self, inputFilrName, outputFileName):
         # TODO: Read the input file and extract the necessary information

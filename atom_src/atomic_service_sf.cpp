@@ -21,3 +21,15 @@ int atomic_service_fun_task_D(atomic_service_sf_task_D_Request_st *request, atom
     return ATOMIC_SERVICE_SUCCESS;
 }
 
+ void atomic_service_fun_task_C_func(atomic_service_sf_task_C_Request_st *request, atomic_service_sf_task_C_Reply_st *reply){
+ 	// Function implementation TODO
+     int ret_type = atomic_service_fun_task_C(request, reply);
+     reply->return_type = ret_type;
+ }
+
+ void atomic_service_fun_task_D_func(atomic_service_sf_task_D_Request_st *request, atomic_service_sf_task_D_Reply_st *reply){
+ 	// Function implementation TODO
+     int ret_type = atomic_service_fun_task_D(request, reply);
+     reply->return_type = ret_type;
+ }
+

@@ -116,4 +116,7 @@ int atomic_service_fun_task_D(atomic_service_sf_task_D_Request_st *request, atom
 // void atomic_service_sf_func_D(atomic_service_sf_task_D_Request_st *request, atomic_service_sf_task_D_Reply_st *reply);
 
 
+
+void atomic_service_fun_task_C_func(atomic_service_sf_task_C_Request_st *request, atomic_service_sf_task_C_Reply_st *reply);
+void atomic_service_fun_task_D_func(atomic_service_sf_task_D_Request_st *request, atomic_service_sf_task_D_Reply_st *reply);
 #endif // _ATOMIC_SERVICE_SF_H_
