@@ -1,0 +1,59 @@
+#include <iostream>
+#include <memory>
+#include <string>
+#include <thread>
+#include <grpcpp/grpcpp.h>
+#include "../protos/{{ service_name|lower }}.grpc.pb.h"
+#include "../protos/{{ service_name|lower }}.pb.h"
+#include "../atom_inc/{{ service_name|lower }}.h"
+class {{ service_name_service }}_Client {
+public:
+    {{ service_name_service }}_Client(std::shared_ptr<::grpc::Channel> channel)
+        : stub_(::{{ service_name_package }}::{{ service_name_service }}::NewStub(channel)){}
+    {% for method in methods %}
+
+    {{ method._responseMsg._name }} {{ method._name }}(const {{ method._requestMsg._name }}& {{ service_name }}_Request_t){
+        {{ service_name_package }}::{{ method._requestMsg._name }} request;
+        {% for field in  method._requestMsg._fields %}
+        {% if field._repeated == true %}
+        for(int i=0;i < {{ service_name }}_Request_t.{{field._name}}.size();i++){
+            request.add_{{field._name}}({{ service_name }}_Request_t.{{field._name}}[i]);
+        }
+        {% elif field._map == true %}
+        for (const auto& item : {{ service_name }}_Request_t.{{field._name}}) {
+        (*request.mutable_{{field._name}}())[item.first] = item.second;
+        }
+        {% else %}
+        request.set_{{field._name}}({{ service_name }}_Request_t.{{field._name}});
+        {% endif %}
+        {% endfor %}
+        //Received reply data translate to {{ service_name }}_Reply_t; 
+        {{ method._responseMsg._name }} {{ service_name }}_Reply_t;
+        {{ service_name_package }}::{{ method._responseMsg._name }} reply;
+        ::grpc::ClientContext context;
+        ::grpc::Status status = stub_->{{ method._name }}(&context, request, &reply);
+        {% for field in  method._responseMsg._fields %}
+        {% if field._repeated == true %}
+        for(int i=0; i < reply.{{field._name}}_size();++i){
+            {{ service_name }}_Reply_t.{{field._name}}.push_back(reply.{{field._name}}(i));
+        }
+        {% elif field._map == true %}
+        for (const auto& item : reply.{{field._name}}()) {
+            ({{ service_name }}_Reply_t.{{field._name}})[item.first] = item.second;
+        }
+        {% else %}
+        {{ service_name }}_Reply_t.{{field._name}} = reply.{{field._name}}();
+        {% endif %}
+        {% endfor %}
+        if (status.ok()) {
+            std::cout << "{{ service_name }}--> {{ method._name }} : Received server data success " << std::endl;
+        } else {
+            std::cout << "{{ service_name }}--> {{ method._name }} :" << status.error_code() << ": " << status.error_message() << std::endl;
+        }
+        return {{ service_name }}_Reply_t;
+    }
+
+    {% endfor %}
+private:
+    std::unique_ptr<::{{ service_name_package }}::{{ service_name_service }}::Stub> stub_;
+};

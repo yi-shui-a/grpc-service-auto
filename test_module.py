@@ -25,4 +25,7 @@ if __name__ == '__main__':
     methodUtilsA.generateProtoFile()
     methodUtilsB.generateProtoFile()
     methodUtilsA.generateServerImpl()
-    methodUtilsA.generateServerImpl()
+    methodUtilsB.generateServerImpl()
+    methodUtilsA.generateStubImpl()
+    methodUtilsB.generateStubImpl()
+    

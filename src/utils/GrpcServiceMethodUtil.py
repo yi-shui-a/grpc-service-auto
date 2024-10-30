@@ -104,6 +104,7 @@ class GrpcServiceMethodUtil:
         # TODO: Read the input file and extract the necessary information
         # Example: Read from inputFilrName and write to outputFilrName
         pass
+    
     def generateServerImpl(self):
         # TODO: Read the input file and extract the necessary information
         # Example: Read from inputFilrName and write to outputFilr
@@ -116,8 +117,14 @@ class GrpcServiceMethodUtil:
             file.write(res_str)
         print(f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_server_inc/{self.__service_name}_impl.h generated successfully!")
 
-        pass
-    def generateStubImpl(self, inputFilrName, outputFileName):
+    def generateStubImpl(self):
         # TODO: Read the input file and extract the necessary information
         # Example: Read from inputFilrName and write to outputFilr
-        pass
+        proto_template = Template(open(f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/client_impl_template.j2").read())
+
+        res_str = proto_template.render(service_name = self.__service_name, service_name_package = self.__service_name_package, service_name_service = self.__service_name_service, service_name_interface=self.__service_name_interface, messages = self._messages, methods = self._service_methods)
+        
+        # 将res_str写入框架内的cpp文件中，同名不同路径
+        with open(f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_client_inc/{self.__service_name}_client.h", 'w') as file:
+            file.write(res_str)
+        print(f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_client_inc/{self.__service_name}_client.h generated successfully!")
