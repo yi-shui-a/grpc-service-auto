@@ -469,6 +469,20 @@ class ServiceUtil:
         with open(f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_inc/{self._service._base_info.getName()}.h", 'w') as file:
             file.writelines(lines)
         print(f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_inc/{self._service._base_info.getName()}.h generated successfully!")
+        
+    # def generateSyncServerFile(self):
+    #     proto_template = Template(open(f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/ClientMain_template.j2").read())
+
+    #     res_str = proto_template.render(service_name = self.__service_name, service_name_package = self.__service_name_package, service_name_service = self.__service_name_service, service_name_interface=self.__service_name_interface, messages = self._messages, methods = self._service_methods)
+        
+    #     # 将res_str写入框架内的cpp文件中，同名不同路径
+    #     with open(f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_server_inc/{self.__service_name}_impl.h", 'w') as file:
+    #         file.write(res_str)
+    #     print(f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_server_inc/{self.__service_name}_impl.h generated successfully!")
+    #     pass
+    
+    # def generateAsynServerFile(self):
+    #     pass
 
     # def _correctJson(self):
     #     res_dict =dict()
