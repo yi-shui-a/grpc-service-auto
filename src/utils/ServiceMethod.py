@@ -1,8 +1,12 @@
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 import ReturnCode
 
 
 class ServiceMethod:
-    def __init__(self, return_code=None,messages=None):
+    def __init__(self, return_code=None, messages=None):
         self._name = ""
         self._description = ""
         self._return_code = return_code

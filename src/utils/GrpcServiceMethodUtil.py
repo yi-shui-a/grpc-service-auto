@@ -98,18 +98,18 @@ class GrpcServiceMethodUtil:
         except json.JSONDecodeError as e:
             print(f"Error decoding JSON: {e}")
             return None
-
+        data["grpc_info"] = {}
         data["grpc_info"]["name"] = self.__service_name
         data["grpc_info"]["description"] = ""
         data["grpc_info"]["name_package"] = self.__service_name_package
         data["grpc_info"]["name_service"] = self.__service_name_service
-        data["grpc_info"]["interface"] = self.__service_name_interface
+        # data["grpc_info"]["name_interface"] = self.__service_name_interface
 
         with open(
             f"{os.path.dirname(os.path.abspath(__file__))}/../../Json/{self.__service_name}.json",
             "w",
         ) as file:
-            file.write(json.dumps(data))
+            file.write(json.dumps(data, indent=4))
         print(
             f"add grpc info to {os.path.dirname(os.path.abspath(__file__))}/../../Json/{self.__service_name}.json successfully!"
         )

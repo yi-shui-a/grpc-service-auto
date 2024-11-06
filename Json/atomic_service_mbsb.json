@@ -188,5 +188,11 @@
                 "delete": false
             }
         }
-    ]
+    ],
+    "grpc_info": {
+        "name": "atomic_service_mbsb",
+        "description": "",
+        "name_package": "atomic_service_mbsb_Package",
+        "name_service": "atomic_service_mbsb_Service"
+    }
 }

@@ -1,7 +1,15 @@
+import sys
+import os
+from typing import List
+
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+import AtomService
+
+
 class Server:
     def __init__(self):
         self._name: str = ""
-        self._services = []
+        self._services: List[AtomService.AtomService] = []
         self._ip: str = ""
         self._port: str = ""
         self._user_name: str = ""
