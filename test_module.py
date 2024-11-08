@@ -9,6 +9,7 @@ from src.utils.ServerUtil import ServerUtil
 from src.utils.Server import Server
 
 if __name__ == "__main__":
+if __name__ == "__main__":
 
     serviceUtilsA = ServiceUtil()
     serviceUtilsB = ServiceUtil()
@@ -28,8 +29,10 @@ if __name__ == "__main__":
     )
     # end2 = time.time()
 
+
     # print(".h parse time: ",(end1-start)*1000/2)
     # print(".cpp parse time: ",(end2-end1)*1000/2)
+
 
     methodUtilsA = GrpcServiceMethodUtil()
     methodUtilsB = GrpcServiceMethodUtil()
