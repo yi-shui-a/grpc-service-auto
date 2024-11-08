@@ -1,0 +1,18 @@
+{
+    "name": "serverA",
+    "chinese_name": "",
+    "description": "",
+    "version": "V1.0.0",
+    "build_time": "2024-09-21T09-21-21",
+    "ip": "0.0.0.0",
+    "port": "50051", 
+    "username": "root",
+    "password": "root",
+    "broadcast_address": "255.255.255.255",
+    "broadcast_port": "12345",
+    "heartbeat_interal":30,
+    "services": [
+        "atomic_service_mbsb",
+        "atomic_service_sf"
+    ]
+}

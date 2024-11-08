@@ -177,5 +177,11 @@
                 "delete": false
             }
         }
-    ]
+    ],
+    "grpc_info": {
+        "name": "atomic_service_sf",
+        "description": "",
+        "name_package": "atomic_service_sf_Package",
+        "name_service": "atomic_service_sf_Service"
+    }
 }

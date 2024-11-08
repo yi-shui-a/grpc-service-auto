@@ -1,13 +1,23 @@
+import sys
+import os
+from typing import List
+import json
+
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+import AtomService
+
+
 class Server:
     def __init__(self):
         self._name: str = ""
-        self._services = []
+        self._services: List[dict] = []
         self._ip: str = ""
         self._port: str = ""
-        self._user_name: str = ""
+        self._username: str = ""
         self._password: str = ""
         self._broadcast_address: str = ""
         self._broadcast_port: str = ""
+        self._heartbeat_interal = 30
 
     def get_name(self) -> str:
         return self._name
@@ -27,11 +37,11 @@ class Server:
     def set_port(self, port: str) -> None:
         self._port = port
 
-    def get_user_name(self) -> str:
-        return self._user_name
+    def get_username(self) -> str:
+        return self._username
 
-    def set_user_name(self, user_name: str) -> None:
-        self._user_name = user_name
+    def set_username(self, username: str) -> None:
+        self._username = username
 
     def get_password(self):
         return self._password
@@ -69,14 +79,32 @@ class Server:
                 service = new_service
                 break
 
+    def set_info_from_user(self, info):
+        self._name = info["name"]
+        self._ip = info["ip"]
+        self._port = info["port"]
+        self._username = info["username"]
+        self._password = info["password"]
+        self._broadcast_address = info["broadcast_address"]
+        self._broadcast_port = info["broadcast_port"]
+        self._heartbeat_interal = info["heartbeat_interal"]
+        for service in info["services"]:
+            with open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../Json/{service}.json",
+                "r",
+            ) as file:
+                # data = json.loads(file.read())
+                self.add_service(json.loads(file.read()))
+
     def set_info(self, info):
         self._name = info["name"]
         self._ip = info["ip"]
         self._port = info["port"]
-        self._user_name = info["user_name"]
+        self._username = info["username"]
         self._password = info["password"]
         self._broadcast_address = info["broadcast_address"]
         self._broadcast_port = info["broadcast_port"]
+        self._heartbeat_interal = info["heartbeat_interal"]
         for service in info["services"]:
             self.add_service(service)
 
@@ -85,9 +113,28 @@ class Server:
         res_dict["name"] = self._name
         res_dict["ip"] = self._ip
         res_dict["port"] = self._port
-        res_dict["user_name"] = self._user_name
+        res_dict["username"] = self._username
         res_dict["password"] = self._password
         res_dict["broadcast_address"] = self._broadcast_address
         res_dict["broadcast_port"] = self._broadcast_port
+        res_dict["heartbeat_interal"] = self._heartbeat_interal
         res_dict["services"] = self._services
         return res_dict
+
+    def saveServerJson(
+        self, path=f"{os.path.dirname(os.path.abspath(__file__))}/../../json_server/"
+    ):
+        try:
+            # 确保目录存在
+            os.makedirs(path, exist_ok=True)
+
+            # 构建完整的文件路径
+            file_path = os.path.join(path, self.get_name()) + ".json"
+
+            # 打开文件并写入 JSON 数据
+            with open(file_path, "w") as file:
+                json.dump(self.to_dict(), file, indent=4)
+
+            print(f"{file_path} saved successfully!")
+        except Exception as e:
+            print(f"Error saving JSON file: {e}")

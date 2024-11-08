@@ -1,14 +1,18 @@
-# Makefile to generate gRPC and Protobuf source files from .proto files
-
 # 配置
 PROTOC = protoc
 GRPC_CPP_PLUGIN = grpc_cpp_plugin
 GRPC_CPP_PLUGIN_PATH = $(shell which $(GRPC_CPP_PLUGIN))
 
 # 输入的 .proto 文件路径
-PROTO_PATH = ./protos
-PROTO_FILES = $(wildcard $(PROTO_PATH)/*.proto)
-PROTO_GEN_DIR = ./generated
+PROTO_PATH = ../../../protos
+PROTO_GEN_DIR = ../../../protos
+
+# 检查是否指定了 PROTO 变量
+ifdef PROTO
+  PROTO_FILES = $(PROTO_PATH)/$(PROTO)
+else
+  PROTO_FILES = $(wildcard $(PROTO_PATH)/*.proto)
+endif
 
 # 根据 .proto 文件生成的源文件和头文件
 GRPC_CC_FILES = $(PROTO_FILES:$(PROTO_PATH)/%.proto=$(PROTO_GEN_DIR)/%.grpc.pb.cc)
