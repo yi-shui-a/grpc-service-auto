@@ -5,14 +5,15 @@ CPPFLAGS = $(shell pkg-config --cflags protobuf grpc)
 LDFLAGS = $(shell pkg-config --libs protobuf grpc++ grpc) -pthread
 
 # 目录定义
-ATOM_INC = atom_inc
-ATOM_SRC = atom_src
-PROTOS = protos
-RPC_CLIENT_INC = rpc_client_inc
-RPC_SERVER_INC = rpc_server_inc
-SERVER_SRC = server_src
-OBJS_DIR = objs
-BIN_DIR = bin
+BASE_DIR = ../../../
+ATOM_INC = $(BASE_DIR)atom_inc
+ATOM_SRC = $(BASE_DIR)atom_src
+PROTOS = $(BASE_DIR)protos
+RPC_CLIENT_INC = $(BASE_DIR)rpc_client_inc
+RPC_SERVER_INC = $(BASE_DIR)rpc_server_inc
+SERVER_SRC = $(BASE_DIR)server_src
+OBJS_DIR = $(BASE_DIR)objs
+BIN_DIR = $(BASE_DIR)bin
 
 # gRPC 和 Protobuf 头文件路径
 GRPC_INC = /usr/local/include
@@ -31,19 +32,17 @@ ATOM_SRCS = $(addprefix $(ATOM_SRC)/, $(addsuffix .cpp, $(SERVICE)))
 PROTO_SRCS = $(addprefix $(PROTOS)/, $(addsuffix .pb.cc, $(SERVICE))) \
              $(addprefix $(PROTOS)/, $(addsuffix .grpc.pb.cc, $(SERVICE)))
 PROTO_INCS = $(addprefix $(PROTOS)/, $(addsuffix .pb.h, $(SERVICE))) \
-			 $(addprefix $(PROTOS)/, $(addsuffix .grpc.pb.h, $(SERVICE)))
+             $(addprefix $(PROTOS)/, $(addsuffix .grpc.pb.h, $(SERVICE)))
 SERVER_SRCS = $(addprefix $(SERVER_SRC)/, $(addsuffix .cpp, $(SERVER)))
-
 
 ATOM_OBJS = $(addprefix $(OBJS_DIR)/, $(addsuffix _atom.o, $(SERVICE)))
 PROTO_OBJS = $(addprefix $(OBJS_DIR)/, $(addsuffix _pb.o, $(SERVICE))) \
              $(addprefix $(OBJS_DIR)/, $(addsuffix _grpc_pb.o, $(SERVICE)))
-SERVER_OBJS = $(addprefix $(OBJS_DIR)/, $(addsuffix  _server.o, $(SERVER)))
+SERVER_OBJS = $(addprefix $(OBJS_DIR)/, $(addsuffix _server.o, $(SERVER)))
 
 # RPC 客户端和服务器头文件
 RPC_CLIENT_INCS = $(addprefix $(RPC_CLIENT_INC)/, $(addsuffix _client.h, $(SERVICE)))
 RPC_SERVER_INCS = $(addprefix $(RPC_SERVER_INC)/, $(addsuffix _impl.h, $(SERVICE)))
-
 
 # 所有对象文件
 ALL_OBJS = $(ATOM_OBJS) $(PROTO_OBJS) $(SERVER_OBJS)
@@ -59,13 +58,13 @@ all: $(EXECUTABLES)
 	@echo "ATOM_OBJS: $(ATOM_OBJS)"
 	@echo "PROTO_OBJS: $(PROTO_OBJS)"
 	@echo "ALL_OBJS: $(ALL_OBJS)"
-	@echo "SERVER": $(SERVER)
-	@echo "SERVER_SRCS": $(SERVER_SRCS)
-	@echo "SERVER_OBJS": $(SERVER_OBJS)
-	@echo "EXECUTABLES": $(EXECUTABLES)
+	@echo "SERVER: $(SERVER)"
+	@echo "SERVER_SRCS: $(SERVER_SRCS)"
+	@echo "SERVER_OBJS: $(SERVER_OBJS)"
+	@echo "EXECUTABLES: $(EXECUTABLES)"
 
 # 链接生成可执行文件
-$(BIN_DIR)/%: $(OBJS_DIR)/%_server.o $(ATOM_OBJS) $(PROTO_OBJS) 
+$(BIN_DIR)/%: $(OBJS_DIR)/%_server.o $(ATOM_OBJS) $(PROTO_OBJS)
 	@echo ">>>>[INFO] Linking $@..."
 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
@@ -84,10 +83,9 @@ $(OBJS_DIR)/%_grpc_pb.o: $(PROTOS)/%.grpc.pb.cc $(PROTOS)/%.grpc.pb.h $(PROTOS)/
 	$(CXX) $(CXXFLAGS) -I$(PROTOS) -I$(GRPC_INC) -c $< -o $@
 
 # 编译服务器源文件
-$(OBJS_DIR)/%_server.o: $(SERVER_SRC)/%.cpp  $(ATOM_INCS) $(RPC_SERVER_INCS) $(RPC_CLIENT_INCS)
+$(OBJS_DIR)/%_server.o: $(SERVER_SRC)/%.cpp $(ATOM_INCS) $(RPC_SERVER_INCS) $(RPC_CLIENT_INCS)
 	@echo ">>>>[INFO] Compiling $<..."
 	$(CXX) $(CXXFLAGS) -I$(ATOM_INC) -I$(RPC_SERVER_INC) -I$(RPC_CLIENT_INC) -c $< -o $@
-
 
 # 清理目标
 clean:
