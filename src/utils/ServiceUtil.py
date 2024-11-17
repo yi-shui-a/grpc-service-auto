@@ -15,7 +15,7 @@ from config.types import cpp_types
 class ServiceUtil:
     def __init__(self):
         self._service = AtomService.AtomService()
-        self._service_method_fun:str = []
+        self._service_method_fun: str = []
         self.__operating_system = OperatingSystem.OperatingSystem()
         self.__language = ""
 
@@ -23,9 +23,56 @@ class ServiceUtil:
     # def generate_service_class_name(service_name: str) -> str:
     #     return f"{service_name.title()}Service"
 
+    def __type_convert(self):
+        # 修改数据类型
+        # 删除std::
+        for message in self._service._messages:
+            for field in message._fields:
+                # field._type_proto为赋值时，才进行此操作
+                if field._type_proto != "":
+                    continue
+
+                # 为 _type_proto 赋值
+                field._type_proto = cpp_types.get(field._type, field._type)
+                # 去除命名空间标示符
+                if field._type_proto.count("std::") > 0:
+                    field._type_proto = field._type_proto.replace("std::", "")
+
+                # 数组转为repeated
+                # vector
+                if field._type_proto.count("vector") > 0:
+                    field._repeated = True
+                    # 使用正则表达式提取类型
+                    match = re.search(r"vector<(\w+)>", field._type_proto)
+                    temp_str = cpp_types.get(match.group(1), match.group(1))
+                    if match:
+                        field._type_proto = "repeated " + temp_str
+
+                # []
+                if field._name.count("[") > 0 and field._name.count("]") > 0:
+                    field._repeated = True
+                    field._type_proto = "repeated " + field._type_proto
+
+                # map中的数据类型处理
+                if field._type_proto.count("map") > 0:
+                    field._map = True
+                    match = re.search(r"map<(\w+),\s*(\w+)>", field._type_proto)
+                    if match:
+                        field._key = cpp_types.get(match.group(1), match.group(1))
+                        field._value = cpp_types.get(match.group(2), match.group(2))
+                        field._type_proto = f"map<{field._key}, {field._value}>"
+
     def __add_basic_info_dict(self, basic_info, key, value):
-        basic_info_format_list = ["name", "description", "chinese_name", "version", "build_time", "priority_level",
-                                  "license", "operating_system"]
+        basic_info_format_list = [
+            "name",
+            "description",
+            "chinese_name",
+            "version",
+            "build_time",
+            "priority_level",
+            "license",
+            "operating_system",
+        ]
         if key == "file":
             basic_info["name"] = value.split(".")[0]
             return
@@ -42,66 +89,65 @@ class ServiceUtil:
     def __extract_functions(self, file_content):
         # 匹配函数头部的正则表达式：支持类名、指针、引用、模板等复杂返回类型
         func_pattern = re.compile(
-            r'\b[\w\s\*&<>:,\[\]]+\b\s+\w+\s*\([^)]*\)\s*{', 
-            re.MULTILINE
+            r"\b[\w\s\*&<>:,\[\]]+\b\s+\w+\s*\([^)]*\)\s*{", re.MULTILINE
         )
 
         functions = []
         stack = []  # 用于处理嵌套大括号
-        start = 0   # 用于记录函数起始位置
+        start = 0  # 用于记录函数起始位置
 
         # 找到所有函数头部位置
         for match in func_pattern.finditer(file_content):
             if not stack:  # 新函数起始
                 start = match.start()
-            stack.append('{')
+            stack.append("{")
 
             # 向后扫描，找到完整函数体
             for i in range(match.end(), len(file_content)):
-                if file_content[i] == '{':
-                    stack.append('{')
-                elif file_content[i] == '}':
+                if file_content[i] == "{":
+                    stack.append("{")
+                elif file_content[i] == "}":
                     stack.pop()
                     if not stack:  # 栈为空，函数结束
-                        functions.append(file_content[start:i+1])
+                        functions.append(file_content[start : i + 1])
                         break
 
         return functions
 
-    def parseCpp(self, fileName,encodings=None)->list:
+    def parseCpp(self, fileName, encodings=None) -> list:
         # TODO: Parse the given C++ file and extract the necessary information
         if encodings is None:
-            encodings = ['utf-8', 'gbk', 'latin1']
+            encodings = ["utf-8", "gbk", "latin1"]
 
         for encoding in encodings:
             try:
-                with open(fileName, 'r', encoding=encoding) as file:
+                with open(fileName, "r", encoding=encoding) as file:
                     content = file.read()
             except UnicodeDecodeError:
                 continue
-            
-        # 删除单行注释
-        content = re.sub(r'//.*$', '', content, flags=re.MULTILINE)
 
-         # 正则表达式匹配函数定义
+        # 删除单行注释
+        content = re.sub(r"//.*$", "", content, flags=re.MULTILINE)
+
+        # 正则表达式匹配函数定义
         # function_pattern = re.compile(r'(\w+\s+\w+\s*\([^)]*\)\s*\{[^}]*\})', re.DOTALL)
         # self._service_method_fun = function_pattern.findall(content)
         self._service_method_fun = self.__extract_functions(content)
         # print(self._service_method_fun)
         # 将解析的文件导入到框架内
         self._loadCpp(fileName)
-        
+
         # return self._service_method_fun
 
     def parseHpp(self, fileName, encodings=None):
         # TODO: Parse the given C++ header file and extract the necessary information
 
         if encodings is None:
-            encodings = ['utf-8', 'gbk', 'latin1']
+            encodings = ["utf-8", "gbk", "latin1"]
 
         for encoding in encodings:
             try:
-                with open(fileName, 'r', encoding=encoding) as file:
+                with open(fileName, "r", encoding=encoding) as file:
                     content = file.read()
             except UnicodeDecodeError:
                 continue
@@ -114,9 +160,9 @@ class ServiceUtil:
         basic_info["owner"] = dict()
         lines = content.splitlines()
         # 过滤掉以 "//" 开头的行
-        lines = [line for line in lines if not line.strip().startswith('//')]
+        lines = [line for line in lines if not line.strip().startswith("//")]
         # 将过滤后的行重新组合成字符串
-        lines = '\n'.join(lines)
+        lines = "\n".join(lines)
         lines = lines.splitlines()
         # print(lines)
         current_section = None
@@ -124,16 +170,16 @@ class ServiceUtil:
 
         line_index = 0
         while line_index < len(lines):
-            '''
+            """
             解析注释
-            '''
+            """
             line = lines[line_index].strip()
             # print(line)
             # 解析以@开头的键值对
-            if line[:5].count('@') > 0:
-                parts = line[line.find('@') + 1:].strip()
+            if line[:5].count("@") > 0:
+                parts = line[line.find("@") + 1 :].strip()
                 # 使用正则表达式去除空格和冒号
-                cleaned_line = re.sub(r'\s*:\s*', ' ', parts)
+                cleaned_line = re.sub(r"\s*:\s*", " ", parts)
                 # 将字符串分为两个部分
 
                 parts2 = cleaned_line.split(maxsplit=1)
@@ -144,7 +190,12 @@ class ServiceUtil:
                     key = parts2[0]
                     value = None
 
-                if key in {"resource_requirement", "developer", "maintainer", "operating_system"}:
+                if key in {
+                    "resource_requirement",
+                    "developer",
+                    "maintainer",
+                    "operating_system",
+                }:
                     # 进入嵌套结构
                     current_section = key
                     if current_section in {"developer", "maintainer"}:
@@ -158,10 +209,10 @@ class ServiceUtil:
                     self.__add_basic_info_dict(basic_info, key, value)
 
             # 解析以+开头的嵌套键值对
-            elif line.count('+') > 0 and current_section:
-                nested_parts = line[1:].split(':', maxsplit=1)
+            elif line.count("+") > 0 and current_section:
+                nested_parts = line[1:].split(":", maxsplit=1)
                 nested_key = nested_parts[0].strip()
-                nested_key = nested_key.lstrip('+ ').strip()
+                nested_key = nested_key.lstrip("+ ").strip()
                 nested_value = nested_parts[1].strip() if len(nested_parts) > 1 else ""
                 if current_section in {"developer", "maintainer"}:
                     basic_info["owner"][current_section][nested_key] = nested_value
@@ -172,14 +223,15 @@ class ServiceUtil:
                         operating_system_instance["version"] = {}
                         basic_info["operating_system"].append(operating_system_instance)
                     else:
-                        basic_info["operating_system"][-1]["version"][nested_key] = nested_value
+                        basic_info["operating_system"][-1]["version"][
+                            nested_key
+                        ] = nested_value
 
                 else:
                     basic_info[current_section][nested_key] = nested_value
 
-
             # 解析return_code
-            elif line.startswith('#define') and line.count("<") == 0:
+            elif line.startswith("#define") and line.count("<") == 0:
                 return_parts = line[7:].strip()
                 return_parts = return_parts.split(maxsplit=1)
                 return_key = return_parts[0].strip()
@@ -192,25 +244,25 @@ class ServiceUtil:
                 return_code[return_key] = int(return_value)
 
             # 解析结构体
-            elif line.startswith('typedef') or line.startswith('struct'):
+            elif line.startswith("typedef") or line.startswith("struct"):
                 break
             line_index += 1
-        
-        '''
+
+        """
         处理代码部分可能出现的注释，并将剩余代码合成一个大字符串
-        '''
+        """
         # 处理代码部分可能出现的注释
         for line in lines[line_index:]:
-            if line.strip().startswith('/*') and line.strip().endswith('*/'):
+            if line.strip().startswith("/*") and line.strip().endswith("*/"):
                 lines.remove(line)
         # 将其余的字符串从按行转为一个大字符串
         input_str = "\n".join(lines[line_index:])
         # 删除单行注释
-        input_str = re.sub(r'//.*$', '', input_str, flags=re.MULTILINE)
+        input_str = re.sub(r"//.*$", "", input_str, flags=re.MULTILINE)
 
-        '''
+        """
         解析结构体
-        '''
+        """
         # current_section = None
         # while line_index < len(lines):
         #     line = lines[line_index].strip()
@@ -219,9 +271,9 @@ class ServiceUtil:
         #         current_section =
         # 使用正则表达式提取所有结构体的名称和字段
         # pattern = re.compile(r'typedef struct\s*\{(.*?)\}\s*(\w+);', re.DOTALL)
-        pattern = re.compile(r'typedef\s+struct\s*(?:\w+\s*)?\{(.*?)\}\s*(\w+);', re.DOTALL)
-
-
+        pattern = re.compile(
+            r"typedef\s+struct\s*(?:\w+\s*)?\{(.*?)\}\s*(\w+);", re.DOTALL
+        )
 
         matches = pattern.finditer(input_str)
         # print(matches)
@@ -239,14 +291,14 @@ class ServiceUtil:
             index = 1
             for field_match in fields_str.split("\n"):
                 field_match = field_match.strip()
-                if field_match =="" or field_match ==None:
+                if field_match == "" or field_match == None:
                     continue
                 # print(field_match)
-                field_list = field_match.rsplit(' ', 1)
+                field_list = field_match.rsplit(" ", 1)
                 # print(field_list)
                 field_type = field_list[0].strip()
                 field_name = field_list[1].strip()
-                if field_name[-1] ==";":
+                if field_name[-1] == ";":
                     field_name = field_name[:-1].strip()
                 # field_type = field_match.group(1)
                 # field_name = field_match.group(2)
@@ -263,19 +315,17 @@ class ServiceUtil:
             elif "reply" in struct_name.lower():
                 label = "reply"
 
-            json_obj = {
-                "label": label,
-                "name": struct_name,
-                "fields": fields
-            }
+            json_obj = {"label": label, "name": struct_name, "fields": fields}
             struct_json_list.append(json_obj)
 
-        '''
+        """
         解析函数声明
-        '''
+        """
         # 正则表达式模式，用于匹配函数声明
         # pattern = re.compile(r'int\s+(\w+)\s*\(([^,]+)\s*\*\s*([^,]+)\s*,\s*([^,]+)\s*\*\s*([^,]+)\s*\);')
-        pattern = re.compile(r'(?:\w+)\s+(\w+)\s*\(([^,]+)\s*\*\s*([^,]+)\s*,\s*([^,]+)\s*\*\s*([^,]+)\s*\);')
+        pattern = re.compile(
+            r"(?:\w+)\s+(\w+)\s*\(([^,]+)\s*\*\s*([^,]+)\s*,\s*([^,]+)\s*\*\s*([^,]+)\s*\);"
+        )
 
         # 解析函数声明
         matches = pattern.findall(input_str)
@@ -287,17 +337,15 @@ class ServiceUtil:
             request_type = match[1].strip()
             response_type = match[3].strip()
 
-            grpc_methods.append({
-                "name": method_name,
-                "description": "ccccc",  # 这里可以根据需要修改描述
-                "requestMsg": request_type,
-                "responseMsg": response_type,
-                "capabilities": {
-                    "read": True,
-                    "write": False,
-                    "delete": False
+            grpc_methods.append(
+                {
+                    "name": method_name,
+                    "description": "ccccc",  # 这里可以根据需要修改描述
+                    "requestMsg": request_type,
+                    "responseMsg": response_type,
+                    "capabilities": {"read": True, "write": False, "delete": False},
                 }
-            })
+            )
 
         root_json_dict["basic_info"] = basic_info
         root_json_dict["return_code"] = return_code
@@ -308,11 +356,17 @@ class ServiceUtil:
         # 根据dict创建对象
         self._service = AtomService.AtomService()
         self._service.set_info(root_json_dict)
-        
+
+        # 整理message数据类型
+        self.__type_convert()
+
         # 保存json到Json文件夹
-        
+
         json_info = self._service.to_dict()
-        with open(f"{os.path.dirname(os.path.abspath(__file__))}/../../Json/{self._service._base_info.getName()}.json", 'w') as file:
+        with open(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../Json/{self._service._base_info.getName()}.json",
+            "w",
+        ) as file:
             json.dump(json_info, file, indent=4)
             # print(root_json_dict)
         # 将解析的文件导入到框架内
@@ -320,10 +374,9 @@ class ServiceUtil:
 
     def loadJson(self, fileName):
         # TODO: Load the given JSON file and populate the service object with the extracted information
-        with open(fileName, 'r') as file:
+        with open(fileName, "r") as file:
             data = json.load(file)
             self._service.set_info(data)
-        
 
     def writeCpp(self, fileName):
         # TODO: Write the  C++ code to the given file From Web_UI_tools
@@ -333,10 +386,10 @@ class ServiceUtil:
         # Example:
         # #include "AXservice.h"
         # #include "OperatingSystem.h"
-        # 
+        #
         # AXservice axService;
         # OperatingSystem operatingSystem;
-        # 
+        #
         # // Populate AXservice and OperatingSystem objects with the extracted information
         # axService.setInfo(extractedAXserviceInfo);
         # operatingSystem.setInfo(extractedOperatingSystemInfo);
@@ -350,15 +403,15 @@ class ServiceUtil:
         # // AXservice.h
         # #ifndef AXSERVICE_H
         # #define AXSERVICE_H
-        # 
+        #
         # #include <iostream>
-        # 
+        #
         # class AXservice {
         # public:
         #     void setInfo(const std::string& name, const std::string& description, const std::string& version,
         #                 const std::string& buildTime, int priortyLevel, const std::string& license,
         #                 const std::string& servicePath);
-        # 
+        #
         #     std::string toString() const;
         # private:
         #     std::string name;
@@ -374,9 +427,9 @@ class ServiceUtil:
             "baseinfo": "***",
             "owner": "***",
             "resource_requirement": "***",
-            "operating_system": "***"
+            "operating_system": "***",
         }
-        with open(jsonFileName, 'w') as file:
+        with open(jsonFileName, "w") as file:
             json.dump(data, file, indent=4)
         print("JSON file generated successfully!")
 
@@ -386,11 +439,11 @@ class ServiceUtil:
 
     def _loadCpp(self, cppFileName, encodings=None):
         if encodings is None:
-            encodings = ['utf-8', 'gbk', 'latin1']
+            encodings = ["utf-8", "gbk", "latin1"]
 
         for encoding in encodings:
             try:
-                with open(cppFileName, 'r', encoding=encoding) as file:
+                with open(cppFileName, "r", encoding=encoding) as file:
                     content = file.read()
             except UnicodeDecodeError:
                 continue
@@ -402,85 +455,112 @@ class ServiceUtil:
         # self._service_method_fun = function_pattern.findall(content)
 
         # 定义模板
-        input_src_header_template = Template(open(f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/input_src_header_template.j2").read())
-        input_src_fun_template = Template(open(f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/input_src_fun_template.j2").read())
-        
+        input_src_header_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/input_src_header_template.j2"
+            ).read()
+        )
+        input_src_fun_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/input_src_fun_template.j2"
+            ).read()
+        )
 
         # 渲染模板
-        res_str=""
-        input_src_header_str = input_src_header_template.render(service_name=self._service._base_info.getName())
-        res_str=res_str + input_src_header_str + "\n\n"
+        res_str = ""
+        input_src_header_str = input_src_header_template.render(
+            service_name=self._service._base_info.getName()
+        )
+        res_str = res_str + input_src_header_str + "\n\n"
 
         for string in self._service_method_fun:
-            res_str = res_str +string + "\n\n"
+            res_str = res_str + string + "\n\n"
 
         for method in self._service._service_methods:
             func_name = method._name + "_func"
-            request_type =method._requestMsg.get_name()
+            request_type = method._requestMsg.get_name()
             reply_type = method._responseMsg.get_name()
             prim_func_name = method._name
 
-            input_src_fun_str = input_src_fun_template.render(func_name=func_name,request_type=request_type,reply_type=reply_type,prim_func_name=prim_func_name)
-            res_str = res_str +input_src_fun_str+"\n\n"
+            input_src_fun_str = input_src_fun_template.render(
+                func_name=func_name,
+                request_type=request_type,
+                reply_type=reply_type,
+                prim_func_name=prim_func_name,
+            )
+            res_str = res_str + input_src_fun_str + "\n\n"
 
         # 将res_str写入框架内的cpp文件中，同名不同路径
-        with open(f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_src/{self._service._base_info.getName()}.cpp", 'w') as file:
+        with open(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_src/{self._service._base_info.getName()}.cpp",
+            "w",
+        ) as file:
             file.write(res_str)
-        print(f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_src/{self._service._base_info.getName()}.cpp generated successfully!")
-
-
+        print(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_src/{self._service._base_info.getName()}.cpp generated successfully!"
+        )
 
     def _loadHpp(self, hppFileName, encodings=None):
         if encodings is None:
-            encodings = ['utf-8', 'gbk', 'latin1']
+            encodings = ["utf-8", "gbk", "latin1"]
 
         for encoding in encodings:
             try:
-                with open(hppFileName, 'r', encoding=encoding) as file:
+                with open(hppFileName, "r", encoding=encoding) as file:
                     lines = file.readlines()
             except UnicodeDecodeError:
                 continue
-        
+
         # 定义模板
-        input_inc_fun_template = Template(open(f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/input_inc_fun_template.j2").read())
+        input_inc_fun_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/input_inc_fun_template.j2"
+            ).read()
+        )
         # 渲染模板
         res_str = ""
         for method in self._service._service_methods:
             func_name = method._name + "_func"
-            request_type =method._requestMsg.get_name()
+            request_type = method._requestMsg.get_name()
             reply_type = method._responseMsg.get_name()
-            res_str += input_inc_fun_template.render(func_name=func_name,request_type=request_type,reply_type=reply_type)
-
+            res_str += input_inc_fun_template.render(
+                func_name=func_name, request_type=request_type, reply_type=reply_type
+            )
 
         # 从后往前找到 #endif 的位置
         endif_index = -1
         for i in range(len(lines) - 1, -1, -1):
-            if '#endif' in lines[i].strip() :
+            if "#endif" in lines[i].strip():
                 endif_index = i
                 break
 
         if endif_index == -1:
             raise ValueError("文件中没有找到 #endif")
-        
+
         # 在 #endif 之前插入字符串
-        lines.insert(endif_index, res_str + '\n')
+        lines.insert(endif_index, res_str + "\n")
 
         # 将修改后的内容写回文件
-        with open(f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_inc/{self._service._base_info.getName()}.h", 'w') as file:
+        with open(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_inc/{self._service._base_info.getName()}.h",
+            "w",
+        ) as file:
             file.writelines(lines)
-        print(f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_inc/{self._service._base_info.getName()}.h generated successfully!")
-        
+        print(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_inc/{self._service._base_info.getName()}.h generated successfully!"
+        )
+
     # def generateSyncServerFile(self):
     #     proto_template = Template(open(f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/ClientMain_template.j2").read())
 
     #     res_str = proto_template.render(service_name = self.__service_name, service_name_package = self.__service_name_package, service_name_service = self.__service_name_service, service_name_interface=self.__service_name_interface, messages = self._messages, methods = self._service_methods)
-        
+
     #     # 将res_str写入框架内的cpp文件中，同名不同路径
     #     with open(f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_server_inc/{self.__service_name}_impl.h", 'w') as file:
     #         file.write(res_str)
     #     print(f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_server_inc/{self.__service_name}_impl.h generated successfully!")
     #     pass
-    
+
     # def generateAsynServerFile(self):
     #     pass
 
@@ -507,7 +587,7 @@ class ServiceUtil:
     #     res_dict["implement_rpc"]["reply"] = self._service._service_methods[0]._responseMsg.get_name()
     #     res_dict["implement_rpc"]["atom_interface"] = self._service._service_methods[0]._name +"_func"
     #     res_dict["implement_rpc"]["atom_name"] = self._service._base_info.getName()
-        
+
     #     res_dict["messages"] =list()
     #     res_dict["messages"].append(self._service._service_methods[0]._requestMsg.to_dict())
     #     res_dict["messages"].append(self._service._service_methods[0]._responseMsg.to_dict())
@@ -523,8 +603,7 @@ class ServiceUtil:
     #         field["type"] = field["type"].replace("std::","")
     #         if field["type"] == "int":
     #             field["type"] = "int32"
-        
-        
+
     #     res_dict["services"] =list()
     #     temp_dict =dict()
     #     temp_dict["name"] = self._service._base_info.getName() +"_Service"
@@ -536,16 +615,14 @@ class ServiceUtil:
     #     del temp_dict["methods"][0]["requestMsg"]
     #     del temp_dict["methods"][0]["responseMsg"]
     #     res_dict["services"].append(temp_dict)
-        
+
     #     # 保存json到Json文件夹
     #     with open(f"../../Json/{self._service._base_info.getName()}.json", 'w') as file:
     #         json.dump(res_dict, file, indent=4)
     #         print(f"../../Json/{self._service._base_info.getName()}.json generated successfully!")
-        
-        
-        
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     serviceUtils = ServiceUtil()
     # serviceUtils.parseHpp("test/atom_service_mbsb.h")
     # serviceUtils.parseHpp("D:\ZT\长安望江_服务化\code_demo\grpc-generate-server\\test\\atom_service_mbsb.h")
@@ -558,14 +635,11 @@ if __name__ == '__main__':
     # print("\n\n\n\n")
     # print(json.dumps(serviceUtils._service.to_dict(), indent=4))
     serviceUtilsA.parseHpp("/root/grpc-generate-server/input_inc/atomic_service_mbsb.h")
-    serviceUtilsA.parseCpp("/root/grpc-generate-server/input_src/atomic_service_mbsb.cpp")
+    serviceUtilsA.parseCpp(
+        "/root/grpc-generate-server/input_src/atomic_service_mbsb.cpp"
+    )
     serviceUtilsB.parseHpp("/root/grpc-generate-server/input_inc/atomic_service_sf.h")
     serviceUtilsB.parseCpp("/root/grpc-generate-server/input_src/atomic_service_sf.c")
-    
+
     # serviceUtilsA._correctJson()
     # serviceUtilsB._correctJson()
-    
-
-
-
-

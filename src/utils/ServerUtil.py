@@ -14,7 +14,33 @@ class ServerUtil:
     #     pass
 
     def generateAsyncServer(self):
-        pass
+        # 定义模板
+        proto_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/asyn_server_template.j2"
+            ).read()
+        )
+
+        res_str = proto_template.render(
+            services=self._server._services,
+            name=self._server.get_name(),
+            ip=self._server.get_ip(),
+            port=self._server.get_port(),
+            username=self._server.get_username(),
+            password=self._server.get_password(),
+            broadcast_address=self._server.get_broadcast_address(),
+            broadcast_port=self._server.get_broadcast_port(),
+        )
+
+        # 将res_str写入框架内的cpp文件中，同名不同路径
+        with open(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../server_src/{self._server.get_name()}_async.cpp",
+            "w",
+        ) as file:
+            file.write(res_str)
+        print(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../server_src/{self._server.get_name()}_async.cpp generated successfully!"
+        )
 
     def generateSyncServer(self):
         # 定义模板

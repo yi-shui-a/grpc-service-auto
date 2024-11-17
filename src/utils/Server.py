@@ -88,6 +88,7 @@ class Server:
         self._broadcast_address = info["broadcast_address"]
         self._broadcast_port = info["broadcast_port"]
         self._heartbeat_interal = info["heartbeat_interal"]
+        # 将原子服务的json作为一个service的dict变量，全部传入
         for service in info["services"]:
             with open(
                 f"{os.path.dirname(os.path.abspath(__file__))}/../../Json/{service}.json",

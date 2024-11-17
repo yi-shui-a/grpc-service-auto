@@ -1,0 +1,365 @@
+#include <iostream>
+#include <fstream>
+#include <thread>
+#include <chrono>
+#include <cstring>
+#include <cstdlib>
+#include <cerrno>
+#include <netdb.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <nlohmann/json.hpp>
+
+#include <grpcpp/grpcpp.h>
+#include <grpc/support/log.h>
+
+using grpc::Server;
+using grpc::ServerAsyncResponseWriter;
+using grpc::ServerBuilder;
+using grpc::ServerContext;
+using grpc::ServerCompletionQueue;
+using grpc::Status;
+
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
+{% for service in services %}
+#include "../rpc_server_inc/{{ service["grpc_info"]["name"] }}_impl.h"
+{% endfor %}
+
+{% for service in services %}
+class {{ service["grpc_info"]["name_service"] }}_ServerImpl ;
+{% endfor%}
+
+
+//统计数字位数
+int getDigit(int number)
+{
+    int count = 0;
+    while (number != 0)
+    {
+        number /= 10;
+        count++;
+    }
+    return count;
+}
+
+//更新字符数
+int updateNumber(int number)
+{
+    int i = number;
+    i = i + getDigit(i);
+    i -= 1;
+    return i;
+}
+
+
+void monitorComm(const std::string& broadcastAddress, const int port){
+    int sock;
+    struct sockaddr_in sockertaddr;  
+    // 创建UDP socket  
+    if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {  
+        perror("socket creation failed");  
+        exit(EXIT_FAILURE);  
+    }  
+  
+    // 设置socket选项以允许广播  
+    int opt = 1;
+    if (setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &opt, sizeof(opt)) < 0) {  
+        perror("setsockopt(SO_BROADCAST) failed");  
+        exit(EXIT_FAILURE);  
+    }  
+  
+    // 初始化广播地址结构  
+    memset(&sockertaddr, 0, sizeof(sockertaddr));  
+    sockertaddr.sin_family = AF_INET;  
+    sockertaddr.sin_addr.s_addr = inet_addr(broadcastAddress.c_str());  
+    sockertaddr.sin_port = htons(port);  
+
+    // 构造注册信息
+    json registry_json;
+    json header;
+    header["protocol_identifier"] =22;
+    header["send_time"] = time(NULL);
+    header["message_length"] = 1;
+    header["message_serial_number"] = 1;
+    header["check_bit"] = 4;
+    header["type"] = 1;
+    registry_json["header"] = header;
+    registry_json["server_name"] = "{{name}}";
+    registry_json["address"] = "{{ip}}";
+    registry_json["port"] = {{port}};
+
+    json registry_services_list = json::array();
+    
+    {% for service in services %}
+    registry_services_list.push_back({ {"service_name","{{service["grpc_info"]["name"]}}"},{"role", 1} });
+    {% endfor %}
+    registry_json["services_list"] = registry_services_list;
+    std::string registry_str = registry_json.dump();
+    header["message_length"] = updateNumber(registry_str.size());
+    registry_str = registry_json.dump();
+    // 发送注册报文到广播地址
+    if (sendto(sock, registry_str.c_str(), registry_str.size(), 0, (struct sockaddr *)&sockertaddr, sizeof(sockertaddr)) < 0) {
+        close(sock);
+        exit(EXIT_FAILURE);
+    }
+
+    // 构造元数据信息
+    json metadata_registry_json;
+    header["protocol_identifier"] =22;
+    header["send_time"] = time(NULL);
+    header["message_length"] = 1;
+    header["message_serial_number"] = 1;
+    header["check_bit"] = 4;
+    header["type"] = 3;
+    metadata_registry_json["header"] = header;
+    metadata_registry_json["server_name"] = "{{name}}";
+    metadata_registry_json["address"] = "{{ip}}";
+    metadata_registry_json["port"] = {{port}};
+    json metadata_registry_services_list = json::array();
+    {% for service in services %}
+    metadata_registry_services_list.push_back({ {"metadata",{ { "version", "{{service["basic_info"]["version"]}}" },{"decription","{{service["basic_info"]["description"]}}"},{"developer","{{service["basic_info"]["owner"]["developer"]["name"]}}"},{"build_time","{{service["basic_info"]["build_time"]}}"} } },{"service_name", "{{service["basic_info"]["name"]}}" },{"card","atlas"},{"os","openeuler"} });
+    {% endfor %}
+    metadata_registry_json["services_list"] = metadata_registry_services_list;
+    std::string metadata_registry_str = metadata_registry_json.dump();
+    header["message_length"] = updateNumber(metadata_registry_str.size());
+    metadata_registry_str = metadata_registry_json.dump();
+    // 发送注册报文到广播地址
+    if (sendto(sock, metadata_registry_str.c_str(), metadata_registry_str.size(), 0, (struct sockaddr *)&sockertaddr, sizeof(sockertaddr)) < 0) {
+        close(sock);
+        exit(EXIT_FAILURE);
+    }
+
+
+    //构造心跳信息
+    json heartbeat_json;
+    json heartbeat_services_list;
+    while (1) { 
+        // 无限循环，每30秒发送一次  
+        header["protocol_identifier"] =22;
+        header["send_time"] = time(NULL);
+        header["message_length"] = 1;
+        header["message_serial_number"] = 1;
+        header["check_bit"] = 4;
+        header["type"] = 7;
+        heartbeat_json["header"] = header;
+        heartbeat_json["server_name"] = "{{name}}";
+        heartbeat_json["address"] = "{{ip}}";
+        heartbeat_json["port"] = {{port}};
+        heartbeat_services_list = json::array();
+        {% for service in services %}
+        heartbeat_services_list.push_back({ {"service_name","{{service["grpc_info"]["name"]}}"},{"role", 1} });
+        {% endfor %}
+        registry_json["services_list"] = metadata_registry_services_list;
+        std::string heartbeat_str = heartbeat_json.dump();
+        header["message_length"] = updateNumber(heartbeat_str.size());
+        heartbeat_str = heartbeat_json.dump();
+        // 发送注册报文到广播地址
+        if (sendto(sock, heartbeat_str.c_str(), heartbeat_str.size(), 0, (struct sockaddr *)&sockertaddr, sizeof(sockertaddr)) < 0) {
+            close(sock);
+            exit(EXIT_FAILURE);
+        }
+
+        sleep(30);  
+    }  
+
+    // 关闭socket
+    close(sock);  
+}
+
+
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Async_server_class BEGIN >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
+class AsyncServerImpl final {
+private:
+    std::string ip;
+    std::string port;
+public:
+    AsyncServerImpl(std::string ip, std::string port) : ip(ip), port(port) {}
+    ~AsyncServerImpl() {
+        server_->Shutdown();
+        // Always shutdown the completion queue after the server.
+        {% for service in services %}
+        {% for grpc_method in service["grpc_methods"] %}
+        {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_cq_->Shutdown();
+        {% endfor %}
+        {% endfor %}
+    }   
+#if 1
+  // There is no shutdown handling in this code.
+    void Run() {
+        std::string server_address(ip + ":" + port);
+        ServerBuilder builder;
+        builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
+        /* TODO: Add other services */
+        {% for service in services %}
+        {% for grpc_method in service["grpc_methods"] %}
+        builder.RegisterService(&{{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_service_);
+        {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_cq_ = builder.AddCompletionQueue();
+        {% endfor %}
+        {% endfor %}
+        // Finally assemble the server.
+        server_ = builder.BuildAndStart();
+        std::cout << "Server listening on " << server_address << std::endl;
+    }
+#endif
+
+//-----> Step1 Class encompasing the state and logic needed to serve a request.
+private: 
+    {% for service in services %}
+    {% for grpc_method in service["grpc_methods"] %}
+    /* CallData class {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_CallData  BEGIN */
+    class  {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_CallData {
+        public:
+            {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_CallData({{ service["grpc_info"]["name_package"] }}::{{ service["grpc_info"]["name_service"] }}::AsyncService* service, ServerCompletionQueue* cq)
+            : {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_service_(service), cq_(cq), responder_(&ctx_), status_(CREATE) {
+            Proceed();
+        }
+        void Proceed() {
+        if (status_ == CREATE) {
+        status_ = PROCESS;
+        {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_service_->Request{{ grpc_method["name"] }}(&ctx_, &request_, &responder_, cq_, cq_, this);
+        } else if (status_ == PROCESS) {
+            new {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_CallData({{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_service_, cq_);
+            // The actual processing.
+            /*TODO: */
+            {{ grpc_method["requestMsg"] }} {{ service["grpc_info"]["name"] }}_Request_t;
+            {{ grpc_method["responseMsg"] }} {{ service["grpc_info"]["name"] }}_Reply_t;
+
+            {% for message in service["messages"] %}
+            {% if message["name"] == grpc_method["requestMsg"] %}
+
+            {% for field in message["fields"] %}
+            {% if field["repeated"] == true %}
+            for(int i=0; i < request_.{{ field["name"] }}_size();++i){
+                {{ service["grpc_info"]["name"] }}_Request_t.{{ field["name"] }}.push_back(request_.{{ field["name"] }}(i));
+            }
+            {% elif field["map"] == true %}
+            for (const auto& item : request_.{{ field["name"] }}()) {
+                {{ service["grpc_info"]["name"] }}_Request_t.{{ field["name"] }}[item.first] = item.second;
+            }
+            {% else %}
+            {{ service["grpc_info"]["name"] }}_Request_t.{{ field["name"] }} = request_.{{ field["name"] }}();
+            {% endif %}
+            {% endfor %}
+
+            {% endif %}
+            {% endfor %}
+            /******************************************************************/
+            {{ grpc_method["name"] }}_func(&{{ service["grpc_info"]["name"] }}_Request_t, &{{ service["grpc_info"]["name"] }}_Reply_t);
+
+            /******************************************************************/
+            {% for message in service["messages"] %}
+            {% if message["name"] == grpc_method["responseMsg"] %}
+
+            reply_.Clear(); // clear reply message
+            {% for field in message["fields"] %}
+            {% if field["repeated"] == true %}
+            for(int i=0; i < {{ service["grpc_info"]["name"] }}_Reply_t.{{ field["name"] }}.size(); ++i){
+                reply_.mutable_{{ field["name"] }}()->Add({{ service["grpc_info"]["name"] }}_Reply_t.{{ field["name"] }}[i]);
+            }
+            {% elif field["map"] == true %}
+            for (const auto& item : {{ service["grpc_info"]["name"] }}_Reply_t.{{ field["name"] }}) {
+                reply_.mutable_{{ field["name"] }}()->insert({item.first, item.second});
+            }
+            {% else %}
+            reply_.set_{{ field["name"] }}({{ service["grpc_info"]["name"] }}_Reply_t.{{ field["name"] }});
+
+            {% endif %}
+            {% endfor %}
+
+            {% endif %}
+            {% endfor %}
+
+            std::cout << "This is Method = {{ grpc_method["name"] }}, ServiceName={{ service["grpc_info"]["name"] }}" << std::endl;
+            //return grpc::Status::OK;
+
+            status_ = FINISH;
+            responder_.Finish(reply_, Status::OK, this);
+        } else {
+            GPR_ASSERT(status_ == FINISH);
+            delete this;
+        }
+    }
+    private:
+        {{ service["grpc_info"]["name_package"] }}::{{ service["grpc_info"]["name_service"] }}::AsyncService* {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_service_;
+        ServerCompletionQueue* cq_;
+        ServerContext ctx_; 
+        {{ service["grpc_info"]["name_package"] }}::{{ grpc_method["requestMsg"] }} request_;
+        {{ service["grpc_info"]["name_package"] }}::{{ grpc_method["responseMsg"] }} reply_;
+        ServerAsyncResponseWriter<{{ service["grpc_info"]["name_package"] }}::{{ grpc_method["responseMsg"] }}> responder_;
+        enum CallStatus { CREATE, PROCESS, FINISH };
+        CallStatus status_;  // The current serving state.
+    };
+    /* CallData class {{ service["grpc_info"]["name"] }}_CallData  END */
+    {% endfor %}
+    {% endfor %}
+
+//-----> Step2 This can be run in multiple threads if needed.
+public:
+    {% for service in services %}
+    {% for grpc_method in service["grpc_methods"] %}
+    void {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_HandleRpcs() {
+        new {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_CallData(&{{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_service_, {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_cq_.get());
+        void* tag; 
+        bool ok;
+        while (true) {
+            GPR_ASSERT({{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_cq_->Next(&tag, &ok));
+            GPR_ASSERT(ok);
+            static_cast<{{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_CallData*>(tag)->Proceed();
+        }
+    }
+    {% endfor %}
+    {% endfor %}
+
+/* class var */
+private:
+    std::unique_ptr<Server> server_;
+    {% for service in services %}
+    {% for grpc_method in service["grpc_methods"] %}
+    std::unique_ptr<ServerCompletionQueue> {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_cq_;
+    {{ service["grpc_info"]["name_package"] }}::{{ service["grpc_info"]["name_service"] }}::AsyncService {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_service_;
+    {% endfor %}
+    {% endfor %}
+};
+
+
+/*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Async_server_class END >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
+int main(int argc, char** argv) {
+
+    std::string ip = "{{ ip }}";
+    std::string port = "{{ port }}";
+    std::string broadcastAddress = "{{ broadcast_address }}";  // Default broadcast addressIP "192.168.0.255"
+    std::string broadcastPort = "{{ broadcast_port }}";     // Default broadcast port
+
+    std::cout << ">>>>[INFO] Server IP: " << ip << std::endl;
+    std::cout << ">>>>[INFO] Server Port: " << port << std::endl;
+    std::cout << ">>>>[INFO] Broadcast Address: " << broadcastAddress << std::endl;
+    std::cout << ">>>>[INFO] Broadcast Port: " << broadcastPort << std::endl;
+
+    /* Create AsyncServerImpl BEGIN */
+    AsyncServerImpl serverPersonal(ip, port);
+    serverPersonal.Run();
+
+    {% for service in services %}
+    {% for grpc_method in service["grpc_methods"] %}
+    std::thread {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_thread(&AsyncServerImpl::{{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_HandleRpcs, &serverPersonal);
+    {% endfor %}
+    {% endfor %}
+
+    std::thread senderThread(monitorComm, broadcastAddress, broadcastPort);
+
+    {% for service in services %}
+    {% for grpc_method in service["grpc_methods"] %}
+    {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_thread.join();
+    {% endfor %}
+    {% endfor %}
+    /* Create AsyncServerImpl END */
+
+    senderThread.join();
+
+    return 0;
+}
