@@ -71,5 +71,20 @@ class ServerUtil:
             f"{os.path.dirname(os.path.abspath(__file__))}/../../server_src/{self._server.get_name()}_sync.cpp generated successfully!"
         )
 
-    def generateClient(self):
+    def generateAsyncClient(self):
+        pass
+
+    def generateSyncClient(self):
+        pass
+
+    def compileAsyncServer(self):
+        pass
+
+    def compileSyncServer(self):
+        pass
+
+    def compileAsyncClient(self):
+        pass
+
+    def compileSyncClient(self):
         pass

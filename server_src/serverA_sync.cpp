@@ -200,7 +200,7 @@ int main(int argc, char** argv) {
     std::cout << ">>>>[INFO] Broadcast Address: " << broadcastAddress << std::endl;
     std::cout << ">>>>[INFO] Broadcast Port: " << broadcastPort << std::endl;
 
-    std::thread senderThread(monitorComm, broadcastAddress, broadcastPort);
+    std::thread senderThread(monitorComm, broadcastAddress, std::stoi(broadcastPort));
     // TODO: Add other threads here
     
     RunServer(ip,port);

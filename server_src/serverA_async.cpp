@@ -709,7 +709,7 @@ int main(int argc, char** argv) {
     
     
 
-    std::thread senderThread(monitorComm, broadcastAddress, broadcastPort);
+    std::thread senderThread(monitorComm, broadcastAddress, std::stoi(broadcastPort));
 
     
     

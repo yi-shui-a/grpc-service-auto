@@ -7,6 +7,10 @@
     "broadcast_address": "255.255.255.255",
     "broadcast_port": "12345",
     "heartbeat_interal": 30,
+    "async_server_name": "serverA_async_server",
+    "sync_server_name": "serverA_sync_server",
+    "async_client_name": "serverA_async_client",
+    "sync_client_name": "serverA_sync_client",
     "services": [
         {
             "basic_info": {

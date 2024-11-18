@@ -19,6 +19,11 @@ class Server:
         self._broadcast_port: str = ""
         self._heartbeat_interal = 30
 
+        self._async_server_name: str = ""
+        self._sync_server_name: str = ""
+        self._async_client_name: str = ""
+        self._sync_client_name: str = ""
+
     def get_name(self) -> str:
         return self._name
 
@@ -79,6 +84,12 @@ class Server:
                 service = new_service
                 break
 
+    def set_file_name(self):
+        self._async_server_name = f"{self._name}_async_server"
+        self._sync_server_name = f"{self._name}_sync_server"
+        self._async_client_name = f"{self._name}_async_client"
+        self._sync_client_name = f"{self._name}_sync_client"
+
     def set_info_from_user(self, info):
         self._name = info["name"]
         self._ip = info["ip"]
@@ -88,6 +99,7 @@ class Server:
         self._broadcast_address = info["broadcast_address"]
         self._broadcast_port = info["broadcast_port"]
         self._heartbeat_interal = info["heartbeat_interal"]
+        self.set_file_name()
         # 将原子服务的json作为一个service的dict变量，全部传入
         for service in info["services"]:
             with open(
@@ -106,6 +118,12 @@ class Server:
         self._broadcast_address = info["broadcast_address"]
         self._broadcast_port = info["broadcast_port"]
         self._heartbeat_interal = info["heartbeat_interal"]
+
+        self._async_server_name = info["async_server_name"]
+        self._sync_server_name = info["sync_server_name"]
+        self._async_client_name = info["async_client_name"]
+        self._sync_client_name = info["sync_client_name"]
+
         for service in info["services"]:
             self.add_service(service)
 
@@ -119,6 +137,12 @@ class Server:
         res_dict["broadcast_address"] = self._broadcast_address
         res_dict["broadcast_port"] = self._broadcast_port
         res_dict["heartbeat_interal"] = self._heartbeat_interal
+
+        res_dict["async_server_name"] = self._async_server_name
+        res_dict["sync_server_name"] = self._sync_server_name
+        res_dict["async_client_name"] = self._async_client_name
+        res_dict["sync_client_name"] = self._sync_client_name
+
         res_dict["services"] = self._services
         return res_dict
 
