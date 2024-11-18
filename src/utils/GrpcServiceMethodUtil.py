@@ -170,7 +170,6 @@ class GrpcServiceMethodUtil:
             # 如果make命令失败，则捕获异常并打印错误信息
             print("Make failed with error:", e)
             print("Error Output:\n", e.stderr)
-        pass
 
     def generateLibFile(self, inputFilrName, outputFilrName):
         # TODO: Read the input file and extract the necessary information

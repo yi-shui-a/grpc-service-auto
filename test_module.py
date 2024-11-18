@@ -55,3 +55,5 @@ if __name__ == "__main__":
     serverUtilA = ServerUtil(serverA)
     serverUtilA.generateSyncServer()
     serverUtilA.generateAsyncServer()
+    serverUtilA.compileAsyncServer()
+    serverUtilA.compileSyncServer()
