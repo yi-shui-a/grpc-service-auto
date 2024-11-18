@@ -35,12 +35,12 @@ class ServerUtil:
 
         # 将res_str写入框架内的cpp文件中，同名不同路径
         with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../server_src/{self._server.get_name()}_async.cpp",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../server_src/{self._server._async_server_name}.cpp",
             "w",
         ) as file:
             file.write(res_str)
         print(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../server_src/{self._server.get_name()}_async.cpp generated successfully!"
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../server_src/{self._server._async_server_name}.cpp generated successfully!"
         )
 
     def generateSyncServer(self):
@@ -64,12 +64,12 @@ class ServerUtil:
 
         # 将res_str写入框架内的cpp文件中，同名不同路径
         with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../server_src/{self._server.get_name()}_sync.cpp",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../server_src/{self._server._sync_server_name}.cpp",
             "w",
         ) as file:
             file.write(res_str)
         print(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../server_src/{self._server.get_name()}_sync.cpp generated successfully!"
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../server_src/{self._server._sync_server_name}.cpp generated successfully!"
         )
 
     def generateAsyncClient(self):
@@ -80,7 +80,9 @@ class ServerUtil:
 
     def _get_name_list(self):
         # 从 self._server._services 列表中取出每个 service 的 name 变量，并组成一个字符串
-        service_names = [service["grpc_info"]["name"] for service in self._server]
+        service_names = [
+            service["grpc_info"]["name"] for service in self._server._services
+        ]
         return " ".join(service_names)
 
     def compileAsyncServer(self):
