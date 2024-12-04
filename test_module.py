@@ -53,6 +53,7 @@ if __name__ == "__main__":
     serverA.set_info_from_user(user_info)
     serverA.saveServerJson()
     serverUtilA = ServerUtil(serverA)
+    serverUtilA.compileDemo(filename="client_demo")
     serverUtilA.generateSyncServer()
     serverUtilA.generateAsyncServer()
     serverUtilA.compileAsyncServer()

@@ -193,7 +193,7 @@ int main(int argc, char** argv) {
     std::string ip = "0.0.0.0";
     std::string port = "50051";
     std::string broadcastAddress = "255.255.255.255";  // Default broadcast addressIP "192.168.0.255"
-    std::string broadcastPort = "12345";     // Default broadcast port
+    std::string broadcastPort = "8888";     // Default broadcast port
 
     std::cout << ">>>>[INFO] Server IP: " << ip << std::endl;
     std::cout << ">>>>[INFO] Server Port: " << port << std::endl;

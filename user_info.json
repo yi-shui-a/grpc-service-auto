@@ -9,7 +9,7 @@
     "username": "root",
     "password": "root",
     "broadcast_address": "255.255.255.255",
-    "broadcast_port": "12345",
+    "broadcast_port": "8888",
     "heartbeat_interal":30,
     "services": [
         "atomic_service_mbsb",
