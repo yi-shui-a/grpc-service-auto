@@ -83,7 +83,7 @@ void monitorComm(const std::string& broadcastAddress, const int port){
     header["type"] = 1;
     registry_json["header"] = header;
     registry_json["server_name"] = "serverA";
-    registry_json["address"] = "0.0.0.0";
+    registry_json["address"] = "localhost";
     registry_json["port"] = 50051;
 
     json registry_services_list = json::array();
@@ -113,7 +113,7 @@ void monitorComm(const std::string& broadcastAddress, const int port){
     header["type"] = 3;
     metadata_registry_json["header"] = header;
     metadata_registry_json["server_name"] = "serverA";
-    metadata_registry_json["address"] = "0.0.0.0";
+    metadata_registry_json["address"] = "localhost";
     metadata_registry_json["port"] = 50051;
     json metadata_registry_services_list = json::array();
     
@@ -145,7 +145,7 @@ void monitorComm(const std::string& broadcastAddress, const int port){
         header["type"] = 7;
         heartbeat_json["header"] = header;
         heartbeat_json["server_name"] = "serverA";
-        heartbeat_json["address"] = "0.0.0.0";
+        heartbeat_json["address"] = "localhost";
         heartbeat_json["port"] = 50051;
         heartbeat_services_list = json::array();
         
@@ -190,7 +190,7 @@ void RunServer(const std::string& ip, const std::string& port) {
 
 int main(int argc, char** argv) {
 
-    std::string ip = "0.0.0.0";
+    std::string ip = "localhost";
     std::string port = "50051";
     std::string broadcastAddress = "255.255.255.255";  // Default broadcast addressIP "192.168.0.255"
     std::string broadcastPort = "8888";     // Default broadcast port

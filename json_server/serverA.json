@@ -1,6 +1,6 @@
 {
     "name": "serverA",
-    "ip": "0.0.0.0",
+    "ip": "localhost",
     "port": "50051",
     "username": "root",
     "password": "root",

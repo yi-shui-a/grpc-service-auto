@@ -4,7 +4,7 @@
     "description": "",
     "version": "V1.0.0",
     "build_time": "2024-09-21T09-21-21",
-    "ip": "0.0.0.0",
+    "ip": "localhost",
     "port": "50051", 
     "username": "root",
     "password": "root",

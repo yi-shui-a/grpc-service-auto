@@ -27,7 +27,6 @@ class GrpcServiceMethodUtil:
         self._service_methods = service._service_methods
         self._messages = service._messages
         self._generate_info()
-        self._type_convert()
 
     def _check_situation(self) -> bool:
         if (
@@ -43,45 +42,6 @@ class GrpcServiceMethodUtil:
         self.__service_name_service = self.__service_name + "_Service"
         self.__service_name_package = self.__service_name + "_Package"
         self.__service_name_interface = self.__service_name + "_interface"
-
-    def _type_convert(self):
-        # 修改数据类型
-        # 删除std::
-        for message in self._messages:
-            for field in message._fields:
-                # field._type_proto为赋值时，才进行此操作
-                if field._type_proto != "":
-                    continue
-
-                # 为 _type_proto 赋值
-                field._type_proto = cpp_types.get(field._type, field._type)
-                # 去除命名空间标示符
-                if field._type_proto.count("std::") > 0:
-                    field._type_proto = field._type_proto.replace("std::", "")
-
-                # 数组转为repeated
-                # vector
-                if field._type_proto.count("vector") > 0:
-                    field._repeated = True
-                    # 使用正则表达式提取类型
-                    match = re.search(r"vector<(\w+)>", field._type_proto)
-                    temp_str = cpp_types.get(match.group(1), match.group(1))
-                    if match:
-                        field._type_proto = "repeated " + temp_str
-
-                # []
-                if field._name.count("[") > 0 and field._name.count("]") > 0:
-                    field._repeated = True
-                    field._type_proto = "repeated " + field._type_proto
-
-                # map中的数据类型处理
-                if field._type_proto.count("map") > 0:
-                    field._map = True
-                    match = re.search(r"map<(\w+),\s*(\w+)>", field._type_proto)
-                    if match:
-                        field._key = cpp_types.get(match.group(1), match.group(1))
-                        field._value = cpp_types.get(match.group(2), match.group(2))
-                        field._type_proto = f"map<{field._key}, {field._value}>"
 
     def add_info_to_json(self):
         file_path = f"{os.path.dirname(os.path.abspath(__file__))}/../../Json/{self.__service_name}.json"
