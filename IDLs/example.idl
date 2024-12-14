@@ -1,0 +1,15 @@
+// write for formal test
+
+module FormalTest
+{
+  struct test1
+  {
+    @key
+    long number1;
+    long number2;
+    double doubleNumber1;
+    double doubleNumber2;
+    string message1;
+    string message2;
+  };
+};

@@ -1,0 +1,36 @@
+# 定义输出目录
+OUTPUT_DIR = ../../../IDL_inc
+
+# 定义 idlc 工具的路径
+IDLC_PATH = /root/install_cyclonedds/bin/idlc
+
+# 定义输入文件的目录（默认值）
+IDL_DIR = ../../../IDLs
+
+# 默认目标
+all: compile_idl
+
+# 编译 IDL 文件的目标
+compile_idl:
+ifeq ($(IDL_FILE),)
+	@echo "Error: IDL_FILE is not specified. Please provide an .idl file name."
+	@exit 1
+endif
+	@echo "Compiling $(IDL_DIR)/$(IDL_FILE) to $(OUTPUT_DIR)..."
+	$(IDLC_PATH) -l c -o $(OUTPUT_DIR) $(IDL_DIR)/$(IDL_FILE)
+	@echo "Compilation of $(IDL_DIR)/$(IDL_FILE) completed."
+
+# 清理目标
+clean:
+ifeq ($(IDL_FILE),)
+	@echo "Error: IDL_FILE is not specified. Please provide an .idl file name."
+	@exit 1
+endif
+	@echo "Cleaning up generated files in $(OUTPUT_DIR)..."
+	rm -f $(OUTPUT_DIR)/$(notdir $(IDL_FILE:.idl=.h)) $(OUTPUT_DIR)/$(notdir $(IDL_FILE:.idl=.c))
+	@echo "Cleanup completed."
+
+# 创建输出目录（如果目录不存在）
+$(OUTPUT_DIR):
+	@echo "Creating output directory: $(OUTPUT_DIR)"
+	mkdir -p $(OUTPUT_DIR)
