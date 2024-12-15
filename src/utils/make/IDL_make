@@ -1,8 +1,8 @@
 # 定义输出目录
 OUTPUT_DIR = ../../../IDL_inc
 
-# 定义 idlc 工具的路径
-IDLC_PATH = /root/install_cyclonedds/bin/idlc
+# 定义 idlc 工具的路径，如果找不到全部库时使用
+# IDLC_PATH = /root/install_cyclonedds/bin/idlc
 
 # 定义输入文件的目录（默认值）
 IDL_DIR = ../../../IDLs
@@ -17,7 +17,8 @@ ifeq ($(IDL_FILE),)
 	@exit 1
 endif
 	@echo "Compiling $(IDL_DIR)/$(IDL_FILE) to $(OUTPUT_DIR)..."
-	$(IDLC_PATH) -l c -o $(OUTPUT_DIR) $(IDL_DIR)/$(IDL_FILE)
+	# $(IDLC_PATH) -l c -o $(OUTPUT_DIR) $(IDL_DIR)/$(IDL_FILE)
+	idlc -l c -o $(OUTPUT_DIR) $(IDL_DIR)/$(IDL_FILE)
 	@echo "Compilation of $(IDL_DIR)/$(IDL_FILE) completed."
 
 # 清理目标

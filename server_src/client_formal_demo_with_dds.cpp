@@ -24,6 +24,9 @@
 #include "../atom_inc/atomic_service_mbsb.h"
 #include "../atom_inc/atomic_service_sf.h"
 
+#include "dds/dds.h"
+#include "../IDL_inc/example.h"
+
 using grpc::Channel;
 using grpc::ClientContext;
 using grpc::Status;
@@ -46,14 +49,6 @@ typedef struct
     std::string ip;
 } ChannelInfo;
 
-typedef struct
-{
-    int number1;
-    int number2;
-    int number3;
-    int number4;
-} input_demo;
-
 // 统计数字位数
 int getDigit(int number);
 // 更新字符数
@@ -61,17 +56,7 @@ int updateNumber(int number);
 
 void queryServiceInfo(char *serviceName[], int num[], int size, QueryInfo info[], const char *broadcastAddress, const int port);
 
-input_demo receiveData()
-{
-    // 通过DDS获取数据
-    input_demo data;
-    data.number1 = 99;
-    data.number2 = 88;
-    data.number1 = 99;
-    data.number1 = 99;
-    // 返回数据
-    return data;
-}
+FormalTest_test1 *receiveData();
 
 void sendInfo()
 {
@@ -124,7 +109,7 @@ int main(int argc, char **argv)
             channel_list.push_back(info);
         }
     }
-    
+
     // 创建与服务器的通信通道
     atomic_service_mbsb_Service_Client atomic_service_mbsb(channel_list[0].channel);
     atomic_service_sf_Service_Client atomic_service_sf(channel_list[0].channel);
@@ -140,12 +125,11 @@ int main(int argc, char **argv)
         }
     }
 
-
     //===============================================================================
     //                             receiveData :接收输入数据
     //===============================================================================
 
-    input_demo data = receiveData();
+    FormalTest_test1 *data = receiveData();
 
     //===============================================================================
     //                             sendData :向前端发送信号
@@ -159,11 +143,11 @@ int main(int argc, char **argv)
 
     // 声明变量并赋值
     atomic_service_mbsb_task_A_Request_st request_a;
-    request_a.number1 = data.number1;
-    request_a.number2 = data.number2;
+    request_a.number1 = data->number1;
+    request_a.number2 = data->number2;
     atomic_service_mbsb_task_B_Request_st request_b;
-    request_b.number1 = data.number3;
-    request_b.number2 = data.number4;
+    request_b.number1 = data->number1;
+    request_b.number2 = data->number2;
 
     // 声明变量
     atomic_service_sf_task_C_Request_st request_c;
@@ -261,8 +245,9 @@ void queryServiceInfo(char *serviceName[], int num[], int size, QueryInfo info[]
         // 解析接收到的json消息
         json response_json = json::parse(buffer);
         if (response_json["header"]["type"] == 6)
-        { 
-            if (response_json.at("service_num").get<int>() == 0){
+        {
+            if (response_json.at("service_num").get<int>() == 0)
+            {
                 printf("error: invalid service");
                 exit(EXIT_FAILURE);
             }
@@ -296,4 +281,67 @@ int updateNumber(int number)
     i = i + getDigit(i);
     i -= 1;
     return i;
+}
+
+FormalTest_test1 *receiveData()
+{
+    // 定义dds数据类型
+    dds_entity_t participant;
+    dds_entity_t topic;
+    dds_entity_t reader;
+    dds_return_t rc;
+    FormalTest_test1 *msg;
+    void *samples[1];
+    dds_sample_info_t infos[1];
+
+    // 创建参与者
+    participant = dds_create_participant(DDS_DOMAIN_DEFAULT, NULL, NULL);
+    if (participant < 0)
+        DDS_FATAL("dds_create_participant: %s\n", dds_strretcode(-participant));
+
+    // 创建主题
+    topic = dds_create_topic(
+        participant, &FormalTest_test1_desc, "FormalTest_test1", NULL, NULL);
+    if (topic < 0)
+        DDS_FATAL("dds_create_topic: %s\n", dds_strretcode(-topic));
+
+    // 创建读取者
+    reader = dds_create_reader(participant, topic, NULL, NULL);
+    if (reader < 0)
+        DDS_FATAL("dds_create_reader: %s\n", dds_strretcode(-reader));
+
+    printf("=== [Subscriber] Waiting for a message ...\n");
+    fflush(stdout);
+
+    // 读取消息
+    while (true)
+    {
+        // 从reader中度取消，存储在 samples 数组中
+        // infos: 存储与数据样本相关的元信息（如样本的状态、时间戳等）长度与sample相同
+        // 最后两个参数，分别是samples数组和infos数组的长度
+        rc = dds_take(reader, samples, infos, 1, 1);
+        if (rc < 0)
+            DDS_FATAL("dds_take: %s\n", dds_strretcode(-rc));
+
+        // infos[0].valid_data: 判断infos[0]中的数据是否有效
+        if (rc > 0 && infos[0].valid_data)
+        {
+            // 显式类型转换
+            msg = (FormalTest_test1 *)samples[0];
+            printf("=== [Subscriber] Received: ");
+            printf("Message (number1: %ld, number2: %ld, doubleNumber1: %f, doubleNumber2: %f, message1: %s, message2: %s)\n",
+                   msg->number1, msg->number2, msg->doubleNumber1, msg->doubleNumber2, msg->message1, msg->message2);
+            // 强制刷新标准输出缓冲区，确保消息立即显示在控制台上
+            fflush(stdout);
+        }
+        // 让线程休眠 20 ms，避免循环占用过多CPU资源。
+        dds_sleepfor(DDS_MSECS(20));
+    }
+
+    // 删除参与者
+    rc = dds_delete(participant);
+    if (rc != DDS_RETCODE_OK)
+        DDS_FATAL("dds_delete: %s\n", dds_strretcode(-rc));
+
+    return msg;
 }

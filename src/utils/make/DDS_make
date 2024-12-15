@@ -1,0 +1,25 @@
+# 定义输入文件的目录（默认值）
+DDS_DIR = ../../../server_src
+
+# 定义输出目录
+OUTPUT_DIR = ../../../bin
+
+# 定义编译器和编译选项
+CXX = g++
+CXXFLAGS = -std=c++11 -I/usr/local/include/ddsc
+LDFLAGS = -L/usr/local/lib -lddsc
+
+# 默认目标
+all: $(OUTPUT_DIR)/$(basename $(DDS_FILE))
+
+# 编译目标文件
+$(OUTPUT_DIR)/$(basename $(DDS_FILE)): $(DDS_DIR)/$(DDS_FILE)
+	@mkdir -p $(OUTPUT_DIR)
+	$(CXX) $(CXXFLAGS) -o $@ $< $(LDFLAGS)
+
+# 清理生成的文件
+clean:
+	rm -rf $(OUTPUT_DIR)/*
+
+# 伪目标
+.PHONY: all clean
