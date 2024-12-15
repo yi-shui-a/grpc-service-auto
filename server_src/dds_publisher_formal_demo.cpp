@@ -53,8 +53,8 @@ int main(int argc, char **argv)
     msg.number2 = 2;
     msg.doubleNumber1 = 3.14;
     msg.doubleNumber2 = 2.71;
-    msg.message1 = "Hello";
-    msg.message2 = "World";
+    // msg.message1 = "Hello";
+    // msg.message2 = "World";
 
     printf("=== [Publisher] Writing: ");
     printf("Message (number1: %d, number2: %d, doubleNumber1: %f, doubleNumber2: %f, message1: %s, message2: %s)\n",
