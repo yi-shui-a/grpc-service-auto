@@ -13,7 +13,7 @@
 'class AppService
 'class DDS
 
-
+Server "1"<--"1...n" AtomService
 
 AXService <|-- AtomService
 AXService <|-- CombineService
@@ -25,6 +25,9 @@ AXService "1"<--"1" Owner
 AXService "1"<--"1" ResourceRequirement
 AXService "1"<--"1...n" OperatingSystem
 AXService "1"<--"1" BaseInfo
+
+ServiceUtil "1"<-"1" AtomService
+GrpcServiceMethodUtil "1"<-"1" AtomService
 
 CombineService "1"<--"1...n" AtomService
 
@@ -160,8 +163,8 @@ class GrpcMethod {
     +String toString()
 }
 
-class ServiceMethodUtil{
-    -method: ServiceMethod
+class GrpcServiceMethodUtil{
+    -methods: vector<ServiceMethod>
     -operating_system: OperatingSystem
     -program_language: String
 
@@ -200,6 +203,25 @@ class Message {
 '    +bool loadInfo(Json data)
 '    +Json toJson()
     +String toString()
+}
+
+class Server {
+    -name: String
+    -services: vector<AtomService>
+    -ip: String
+    -port: String
+    -user_name: String
+    -password: String
+    -broadcast_address: String
+    -broadcast_port: String
+
+}
+
+class ServerUtil {
+    +bool generateAsyncServer()
+    +bool generateSyncServer()
+    +bool generateClient()
+
 }
 
 
