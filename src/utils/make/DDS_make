@@ -1,25 +1,100 @@
-# 定义输入文件的目录（默认值）
-DDS_DIR = ../../../server_src
+# 变量定义
+
+# 编译器和链接器
+CXX := g++
+CC := gcc
+LINKER := g++
+
+# 定义输入文件的目录
+DDS_DIR := ../../../communication
 
 # 定义输出目录
-OUTPUT_DIR = ../../../bin
+OUTPUT_DIR := ../../../bin
 
-# 定义编译器和编译选项
-CXX = g++
-CXXFLAGS = -std=c++11 -I/usr/local/include/ddsc
-LDFLAGS = -L/usr/local/lib -lddsc
+# 编译中间文件目录
+BUILD_DIR := build
+
+# 头文件目录
+IDL_INC := ../../../IDL_inc
+
+# DDS 安装路径
+NDDSHOME := /usr/local
+
+# 编译选项
+CXXFLAGS := -std=c++11 -Wall -O2 -I$(IDL_INC) -I$(NDDSHOME)/include
+
+# C 编译选项
+CFLAGS := -Wall -O2 -I$(IDL_INC) -I$(NDDSHOME)/include
+
+# 链接选项
+LDFLAGS := -L$(NDDSHOME)/lib -lddsc -lpthread -Wl,-rpath=/usr/local/lib
+
+# 可执行文件名称
+# 使用命令行传入的 DDS_FILE 变量，如果未提供则使用默认值
+DDS_FILE ?= default
+DDS_FILE_basename := $(basename $(DDS_FILE))
+TARGET := $(OUTPUT_DIR)/$(DDS_FILE_basename)
+
+
+# 定义可执行文件的源文件
+
+# 每个可执行文件对应的 main 源文件
+MAIN_CPP := $(DDS_DIR)/$(DDS_FILE_basename).cpp
+
+
+
+# 定义其他需要编译的源文件
+C_SRCS := $(wildcard $(IDL_INC)/*.c)
+
+# 所有需要编译的源文件
+SRCS := $(MAIN_CPP) $(C_SRCS)
+
+# 目标文件
+OBJS := $(patsubst $(IDL_INC)/%.c,$(BUILD_DIR)/%.o,$(C_SRCS)) \
+        $(patsubst $(DDS_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(MAIN_CPP))
+
 
 # 默认目标
-all: $(OUTPUT_DIR)/$(basename $(DDS_FILE))
+all: $(TARGET) clean_build
 
-# 编译目标文件
-$(OUTPUT_DIR)/$(basename $(DDS_FILE)): $(DDS_DIR)/$(DDS_FILE)
-	@mkdir -p $(OUTPUT_DIR)
-	$(CXX) $(CXXFLAGS) -o $@ $< $(LDFLAGS)
 
-# 清理生成的文件
+# 链接规则
+
+$(TARGET): $(OBJS) | $(OUTPUT_DIR)
+	$(LINKER) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+
+
+# 编译规则
+
+# 编译 C++ 源文件
+$(BUILD_DIR)/%.o: $(DDS_DIR)/%.cpp | $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+# 编译 C 源文件
+$(BUILD_DIR)/%.o: $(IDL_INC)/%.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+
+# 目录创建规则
+
+# 使用“顺序仅依赖符 |”确保目录在编译和链接之前创建
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+$(OUTPUT_DIR):
+	mkdir -p $(OUTPUT_DIR)
+
+
+# 清理规则
+
 clean:
-	rm -rf $(OUTPUT_DIR)/*
+	rm -rf $(BUILD_DIR)/*.o $(OUTPUT_DIR)/$(DDS_FILE_basename)
 
-# 伪目标
+# 删除 build 目录
+clean_build:
+	rm -rf $(BUILD_DIR)
+
+
+# 伪目标声明
+
 .PHONY: all clean

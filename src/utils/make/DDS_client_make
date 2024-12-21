@@ -1,0 +1,114 @@
+# 定义输入文件的目录
+SERVER_SRC := ../../../client_src
+
+# 定义输出目录
+BIN_DIR := ../../../bin
+
+# 编译中间文件目录
+BUILD_DIR := build
+
+# 头文件目录
+IDL_INC := ../../../IDL_inc
+RPC_CLIENT_INC := ../../../rpc_client_inc
+ATOM_INC := ../../../atom_inc
+PROTOS :=../../../protos
+ATOM_SRC :=../../../atom_src
+RPC_SERVER_INC :=../../../rpc_server_inc
+
+# gRPC 和 Protobuf 头文件路径
+GRPC_INC = /usr/local/include
+
+# 编译器和链接器
+CXX := g++
+CC := gcc
+LINKER := g++
+
+# DDS 安装路径
+NDDSHOME := /usr/local
+
+# 编译选项
+CXXFLAGS := -std=c++11 -Wall -O2 -I$(NDDSHOME)/include
+CFLAGS := -Wall -O2 -I$(NDDSHOME)/include
+
+# 链接选项
+LDFLAGS = $(shell pkg-config --libs protobuf grpc++ grpc) -pthread -L$(NDDSHOME)/lib -lddsc -lprotobuf -lgrpc++ -lgrpc -lpthread -lssl -lcrypto
+
+# 默认的变量
+SERVICE ?= default
+TOPIC ?= default
+SERVER ?= default
+
+# 创建输出目录
+$(shell mkdir -p $(BUILD_DIR))
+$(shell mkdir -p $(BIN_DIR))
+
+
+# 头文件列表
+ATOM_INCS = $(addprefix $(ATOM_INC)/, $(addsuffix .h, $(SERVICE)))
+ATOM_SRCS = $(addprefix $(ATOM_SRC)/, $(addsuffix .cpp, $(SERVICE)))
+SERVER_SRCS = $(addprefix $(SERVER_SRC)/, $(addsuffix .cpp, $(SERVER)))
+IDL_INCS = $(addprefix $(IDL_INC)/, $(addsuffix.h, $(TOPIC)))
+IDL_SRCS = $(addprefix $(IDL_INC)/, $(addsuffix.c, $(TOPIC)))
+PROTO_SRCS = $(addprefix $(PROTOS)/, $(addsuffix .pb.cc, $(SERVICE))) \
+             $(addprefix $(PROTOS)/, $(addsuffix .grpc.pb.cc, $(SERVICE)))
+PROTO_INCS = $(addprefix $(PROTOS)/, $(addsuffix .pb.h, $(SERVICE))) \
+             $(addprefix $(PROTOS)/, $(addsuffix .grpc.pb.h, $(SERVICE)))
+# 中间目标对象文件
+SERVER_OBJS = $(addprefix $(BUILD_DIR)/, $(addsuffix _server.o, $(SERVER)))
+ATOM_OBJS = $(addprefix $(BUILD_DIR)/, $(addsuffix _atom.o, $(SERVICE)))
+PROTO_OBJS = $(addprefix $(BUILD_DIR)/, $(addsuffix _pb.o, $(SERVICE))) \
+             $(addprefix $(BUILD_DIR)/, $(addsuffix _grpc_pb.o, $(SERVICE)))
+IDL_OBJS = $(addprefix $(BUILD_DIR)/, $(addsuffix _idl.o, $(TOPIC)))
+# RPC头文件
+RPC_CLIENT_INCS = $(addprefix $(RPC_CLIENT_INC)/, $(addsuffix _client.h, $(SERVICE)))
+RPC_SERVER_INCS = $(addprefix $(RPC_SERVER_INC)/, $(addsuffix _impl.h, $(SERVICE)))
+
+# 所有对象文件
+ALL_OBJS = $(ATOM_OBJS) $(PROTO_OBJS) $(SERVER_OBJS) $(IDL_OBJS)
+
+# 可执行文件列表
+EXECUTABLES = $(addprefix $(BIN_DIR)/, $(SERVER))
+
+# 默认目标
+all: $(EXECUTABLES) clean_build
+
+# 链接生成可执行文件
+$(BIN_DIR)/%: $(BUILD_DIR)/%_server.o $(ATOM_OBJS) $(PROTO_OBJS) $(IDL_OBJS) 
+	@echo ">>>>[INFO] Linking $@..."
+	$(CXX) $(CXXFLAGS)  $^ $(LDFLAGS) -o $@
+
+
+# 编译原子服务源文件
+$(BUILD_DIR)/%_atom.o: $(ATOM_SRC)/%.cpp $(ATOM_INC)/%.h
+	@echo ">>>>[INFO] Compiling $<..."
+	$(CXX) $(CXXFLAGS) -I$(ATOM_INC) -c $< -o $@
+
+# 编译 Protobuf 生成的源文件
+$(BUILD_DIR)/%_pb.o: $(PROTOS)/%.pb.cc $(PROTOS)/%.pb.h
+	@echo ">>>>[INFO] Compiling $<..."
+	$(CXX) $(CXXFLAGS) -I$(PROTOS) -I$(GRPC_INC) -c $< -o $@
+
+$(BUILD_DIR)/%_grpc_pb.o: $(PROTOS)/%.grpc.pb.cc $(PROTOS)/%.grpc.pb.h $(PROTOS)/%.pb.h
+	@echo ">>>>[INFO] Compiling $<..."
+	$(CXX) $(CXXFLAGS) -I$(PROTOS) -I$(GRPC_INC) -c $< -o $@
+
+# 编译 C 源文件
+$(BUILD_DIR)/%_idl.o: $(IDL_INC)/%.c 
+	@echo ">>>>[INFO] Compiling $<..."
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+# 编译服务器源文件
+$(BUILD_DIR)/%_server.o: $(SERVER_SRC)/%.cpp $(ATOM_INCS) $(IDL_INCS) $(RPC_CLIENT_INCS)
+	@echo ">>>>[INFO] Compiling $<..."
+	$(CXX) $(CXXFLAGS) -I$(IDL_INC) -I$(RPC_CLIENT_INC) -I$(ATOM_INC) -c $< -o $@
+
+# 清理所有生成的文件
+clean:
+	rm -rf $(BUILD_DIR)/*.o $(EXECUTABLES)
+
+# 清理中间文件
+clean_build:
+	rm -rf $(BUILD_DIR)
+
+# 伪目标声明
+.PHONY: all clean clean_build

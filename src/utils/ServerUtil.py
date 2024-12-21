@@ -154,7 +154,38 @@ class ServerUtil:
     def compileSyncClient(self):
         pass
 
-    def compileDemo(self, filename):
+    def compileServerDemo(self, filename):
+        # 定义make命令及其参数
+        make_command = [
+            "make",
+            "-C",
+            f"{os.path.dirname(os.path.abspath(__file__))}/make/",
+            "-f",
+            "test2_make",
+            f"SERVICE={self._get_name_list()}",
+            f"SERVER={filename}",
+        ]
+        try:
+            # 调用make命令，并等待其完成
+            result = subprocess.run(
+                make_command,
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+
+            # 如果make命令成功执行，则打印其输出
+            if result.stdout:
+                print("Make Output:\n", result.stdout)
+
+        except subprocess.CalledProcessError as e:
+            # 如果make命令失败，则捕获异常并打印错误信息
+            print("Make failed with error:", e)
+            print("Error Output:\n", e.stderr)
+
+    def compileClientDemo(self, filename):
+        # TODO
         # 定义make命令及其参数
         make_command = [
             "make",
