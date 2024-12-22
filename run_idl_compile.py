@@ -7,3 +7,7 @@ Util.compileClientDemo(
     topic_list=["example"],
     filename="client_formal_demo_with_dds.cpp",
 )
+Util.compileServerDemo(
+    service_list=["atomic_service_mbsb", "atomic_service_sf"],
+    filename="serverA_sync_server",
+)
