@@ -325,11 +325,10 @@ FormalTest_test1 *receiveData()
         // 从reader中读取，存储在 samples 数组中
         // infos: 存储与数据样本相关的元信息（如样本的状态、时间戳等）长度与sample相同
         // 最后两个参数，分别是samples数组和infos数组的长度
-        printf("666666666\n");
         rc = dds_take(reader, samples, infos, 1, 1);
         if (rc < 0)
             DDS_FATAL("dds_take: %s\n", dds_strretcode(-rc));
-        printf("rc = %d\n", rc);
+            
         // infos[0].valid_data: 判断infos[0]中的数据是否有效
         if ((rc > 0) && (infos[0].valid_data))
         {

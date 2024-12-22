@@ -14,17 +14,14 @@
 /*------------------------  Service Info Begin  --------------------------*/
 /**
   *
-  * @file    atomic_service_mbsb.h
-  * @atomic_service_name "atomic_service_mbsb"
-  * @description information about atomic_service_mbsb
-  * @author  Spiderman
-  * @email   Spidermsan@atomic_service_st.com
-  * @version V1.0.0
-  * @date    2024-09-21T09-21-21
-  * @brief
-  *         + atom_service_mbsb is an implementation of the service interface
-  *         + atom_service_mbsb
-  * @priority  1
+  * @file:    atomic_service_mbsb.h
+  * @atomic_service_name: "atomic_service_mbsb"
+  * @chinese_name: "chinese_service_mbsb"
+  * @description: information about atomic_service_mbsb
+  * @author:  Spiderman
+  * @email:   Spidermsan@atomic_service_st.com
+  * @version: V1.0.0
+  * @date:    2024-09-21T09-21-21
   *
   * @resource_requirement:
   *         + cpu_architecture: x86_64
@@ -32,8 +29,8 @@
   *         + hard_disk: 50GB
   *
   *@developer:
-  *        +name: Spiderman
-  *        +email: Spidermsan@atomic_service_fwgz.com
+  *      +name: Spiderman
+  *      +email: Spidermsan@atomic_service_fwgz.com
   *@maintainer:
   *      +name:IronMan
   *      +email:ironman@PNUI.com
