@@ -21,8 +21,6 @@ class Server:
 
         self._async_server_name: str = ""
         self._sync_server_name: str = ""
-        self._async_client_name: str = ""
-        self._sync_client_name: str = ""
 
     def get_name(self) -> str:
         return self._name
@@ -90,6 +88,7 @@ class Server:
         self._async_client_name = f"{self._name}_async_client"
         self._sync_client_name = f"{self._name}_sync_client"
 
+    # 使用用户输入数据加载Server
     def set_info_from_user(self, info):
         self._name = info["name"]
         self._ip = info["ip"]
@@ -109,6 +108,7 @@ class Server:
                 # data = json.loads(file.read())
                 self.add_service(json.loads(file.read()))
 
+    # 加载json_client
     def set_info(self, info):
         self._name = info["name"]
         self._ip = info["ip"]
@@ -121,8 +121,6 @@ class Server:
 
         self._async_server_name = info["async_server_name"]
         self._sync_server_name = info["sync_server_name"]
-        self._async_client_name = info["async_client_name"]
-        self._sync_client_name = info["sync_client_name"]
 
         for service in info["services"]:
             self.add_service(service)
@@ -140,8 +138,6 @@ class Server:
 
         res_dict["async_server_name"] = self._async_server_name
         res_dict["sync_server_name"] = self._sync_server_name
-        res_dict["async_client_name"] = self._async_client_name
-        res_dict["sync_client_name"] = self._sync_client_name
 
         res_dict["services"] = self._services
         return res_dict

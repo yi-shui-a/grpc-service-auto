@@ -117,7 +117,7 @@ void monitorComm(const std::string& broadcastAddress, const int port){
     metadata_registry_json["port"] = 50051;
     json metadata_registry_services_list = json::array();
     
-    metadata_registry_services_list.push_back({ {"metadata",{ { "version", "V1.0.0" },{"decription",""},{"developer","Spiderman"},{"build_time","2024-09-21T09-21-21"} } },{"service_name", "atomic_service_mbsb" },{"card","atlas"},{"os","openeuler"} });
+    metadata_registry_services_list.push_back({ {"metadata",{ { "version", "V1.0.0" },{"decription","information about atomic_service_mbsb"},{"developer","Spiderman"},{"build_time","2024-09-21T09-21-21"} } },{"service_name", "atomic_service_mbsb" },{"card","atlas"},{"os","openeuler"} });
     
     metadata_registry_services_list.push_back({ {"metadata",{ { "version", "V1.0.2" },{"decription",""},{"developer","yishui"},{"build_time","2024-09-30T09-21-21"} } },{"service_name", "atomic_service_sf" },{"card","atlas"},{"os","openeuler"} });
     

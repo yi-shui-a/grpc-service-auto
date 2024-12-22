@@ -7,6 +7,7 @@ from src.utils.ServiceUtil import ServiceUtil
 from src.utils.GrpcServiceMethodUtil import GrpcServiceMethodUtil
 from src.utils.ServerUtil import ServerUtil
 from src.utils.Server import Server
+from src.utils.Util import Util
 
 if __name__ == "__main__":
 
@@ -54,7 +55,5 @@ if __name__ == "__main__":
     serverA.saveServerJson()
     serverUtilA = ServerUtil(serverA)
     serverUtilA.compileDemo(filename="time_test")
-    # serverUtilA.generateSyncServer()
-    # serverUtilA.compileSyncServer()
-    # serverUtilA.generateAsyncServer()
-    # serverUtilA.compileAsyncServer()
+    serverUtilA.generateSyncServer()
+    serverUtilA.compileSyncServer()

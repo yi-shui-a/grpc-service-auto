@@ -53,8 +53,8 @@ int main(int argc, char **argv)
     msg.number2 = 2;
     msg.doubleNumber1 = 3.14;
     msg.doubleNumber2 = 2.71;
-    // msg.message1 = "Hello";
-    // msg.message2 = "World";
+    msg.message1 = "Hello";
+    msg.message2 = "World";
 
     printf("=== [Publisher] Writing: ");
     printf("Message (number1: %d, number2: %d, doubleNumber1: %f, doubleNumber2: %f, message1: %s, message2: %s)\n",
@@ -66,10 +66,16 @@ int main(int argc, char **argv)
     if (rc != DDS_RETCODE_OK)
         DDS_FATAL("dds_write: %s\n", dds_strretcode(-rc));
 
+
+    // 等待一段时间以确保消息被接收
+    sleep(2);
+
     // 删除参与者
     rc = dds_delete(participant);
     if (rc != DDS_RETCODE_OK)
         DDS_FATAL("dds_delete: %s\n", dds_strretcode(-rc));
+
+    printf("=== [Publisher] 发布结束\n");
 
     return EXIT_SUCCESS;
 }

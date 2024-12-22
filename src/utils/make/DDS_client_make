@@ -31,7 +31,7 @@ CXXFLAGS := -std=c++11 -Wall -O2 -I$(NDDSHOME)/include
 CFLAGS := -Wall -O2 -I$(NDDSHOME)/include
 
 # 链接选项
-LDFLAGS = $(shell pkg-config --libs protobuf grpc++ grpc) -pthread -L$(NDDSHOME)/lib -lddsc -lprotobuf -lgrpc++ -lgrpc -lpthread -lssl -lcrypto
+LDFLAGS = $(shell pkg-config --libs protobuf grpc++ grpc) -pthread -L$(NDDSHOME)/lib -lddsc -lprotobuf -lgrpc++ -lgrpc -lpthread -lssl -lcrypto -Wl,-rpath=/usr/local/lib
 
 # 默认的变量
 SERVICE ?= default

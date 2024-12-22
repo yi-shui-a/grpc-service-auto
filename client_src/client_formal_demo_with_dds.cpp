@@ -310,32 +310,87 @@ FormalTest_test1 *receiveData()
     if (reader < 0)
         DDS_FATAL("dds_create_reader: %s\n", dds_strretcode(-reader));
 
+    // 为sample分配空间
+    for (int i = 0; i < 1; i++)
+    {
+        samples[i] = FormalTest_test1__alloc();
+    }
+
     printf("=== [Subscriber] Waiting for a message ...\n");
     fflush(stdout);
 
     // 读取消息
     while (true)
     {
-        // 从reader中度取消，存储在 samples 数组中
+        // 从reader中读取，存储在 samples 数组中
         // infos: 存储与数据样本相关的元信息（如样本的状态、时间戳等）长度与sample相同
         // 最后两个参数，分别是samples数组和infos数组的长度
+        printf("666666666\n");
         rc = dds_take(reader, samples, infos, 1, 1);
         if (rc < 0)
             DDS_FATAL("dds_take: %s\n", dds_strretcode(-rc));
-
+        printf("rc = %d\n", rc);
         // infos[0].valid_data: 判断infos[0]中的数据是否有效
-        if (rc > 0 && infos[0].valid_data)
+        if ((rc > 0) && (infos[0].valid_data))
         {
             // 显式类型转换
             msg = (FormalTest_test1 *)samples[0];
             printf("=== [Subscriber] Received: ");
-            printf("Message (number1: %ld, number2: %ld, doubleNumber1: %f, doubleNumber2: %f, message1: %s, message2: %s)\n",
+            printf("Message (number1: %d, number2: %d, doubleNumber1: %f, doubleNumber2: %f, message1: %s, message2: %s)\n",
                    msg->number1, msg->number2, msg->doubleNumber1, msg->doubleNumber2, msg->message1, msg->message2);
             // 强制刷新标准输出缓冲区，确保消息立即显示在控制台上
             fflush(stdout);
+
+            // 如果需要返回消息，可以在这里复制数据
+            FormalTest_test1 *ret_msg = (FormalTest_test1 *)malloc(sizeof(FormalTest_test1));
+            if (ret_msg == NULL)
+            {
+                DDS_FATAL("Failed to allocate memory for return message\n");
+                // 删除参与者
+                dds_delete(participant);
+                return NULL;
+            }
+
+            /**
+             * 复制数据
+             */
+            // 复制基本数据类型
+            ret_msg->number1 = msg->number1;
+            ret_msg->number2 = msg->number2;
+            ret_msg->doubleNumber1 = msg->doubleNumber1;
+            ret_msg->doubleNumber2 = msg->doubleNumber2;
+
+            // 复制字符串 message1
+            ret_msg->message1 = strdup(msg->message1); // 使用 strdup 分配并复制字符串
+            if (ret_msg->message1 == NULL)
+            {
+                DDS_FATAL("Failed to allocate memory for message1\n");
+                free(ret_msg); // 释放已分配的内存
+                dds_delete(participant);
+                return NULL;
+            }
+
+            // 复制字符串 message2
+            ret_msg->message2 = strdup(msg->message2); // 使用 strdup 分配并复制字符串
+            if (ret_msg->message2 == NULL)
+            {
+                DDS_FATAL("Failed to allocate memory for message2\n");
+                free(ret_msg->message1); // 释放已分配的 message1
+                free(ret_msg);           // 释放已分配的内存
+                dds_delete(participant);
+                return NULL;
+            }
+
+            // 删除 DDS 资源
+            rc = dds_delete(participant);
+            if (rc != DDS_RETCODE_OK)
+                DDS_FATAL("dds_delete: %s\n", dds_strretcode(-rc));
+
+            // 返回接收到的消息
+            return ret_msg;
         }
-        // 让线程休眠 20 ms，避免循环占用过多CPU资源。
-        dds_sleepfor(DDS_MSECS(20));
+        // 让线程休眠 1000 ms，避免循环占用过多CPU资源。
+        dds_sleepfor(DDS_MSECS(1000));
     }
 
     // 删除参与者
@@ -343,5 +398,5 @@ FormalTest_test1 *receiveData()
     if (rc != DDS_RETCODE_OK)
         DDS_FATAL("dds_delete: %s\n", dds_strretcode(-rc));
 
-    return msg;
+    return NULL;
 }

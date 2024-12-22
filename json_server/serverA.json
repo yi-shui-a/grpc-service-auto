@@ -9,14 +9,12 @@
     "heartbeat_interal": 30,
     "async_server_name": "serverA_async_server",
     "sync_server_name": "serverA_sync_server",
-    "async_client_name": "serverA_async_client",
-    "sync_client_name": "serverA_sync_client",
     "services": [
         {
             "basic_info": {
                 "name": "atomic_service_mbsb",
                 "chinese_name": "",
-                "description": "",
+                "description": "information about atomic_service_mbsb",
                 "version": "V1.0.0",
                 "build_time": "2024-09-21T09-21-21",
                 "priority_level": -999,

@@ -184,8 +184,8 @@ class ServerUtil:
             print("Make failed with error:", e)
             print("Error Output:\n", e.stderr)
 
-    def compileClientDemo(self, filename):
-        # TODO
+    def compileDemo(self, filename: str):
+        filename = filename.split(".")[0]
         # 定义make命令及其参数
         make_command = [
             "make",
