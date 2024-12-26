@@ -271,6 +271,7 @@ class ServiceUtil:
         #         current_section =
         # 使用正则表达式提取所有结构体的名称和字段
         # pattern = re.compile(r'typedef struct\s*\{(.*?)\}\s*(\w+);', re.DOTALL)
+        """解析typedef struct开头的结构体"""
         pattern = re.compile(
             r"typedef\s+struct\s*(?:\w+\s*)?\{(.*?)\}\s*(\w+);", re.DOTALL
         )
@@ -317,6 +318,89 @@ class ServiceUtil:
 
             json_obj = {"label": label, "name": struct_name, "fields": fields}
             struct_json_list.append(json_obj)
+        
+        """解析struct开头的结构体"""
+        lines_struct = input_str.splitlines()
+        in_struct = False
+        end = False
+        struct_lines = []
+
+        for line in lines_struct:
+            line = line.strip()
+            if line.startswith("struct"):
+                # 进入 struct 收集状态
+                in_struct = True
+
+            if in_struct:
+                struct_lines.append(line)
+
+            if in_struct and re.search(r"\}", line):
+                end = True
+
+            # 当这一行以分号 ';' 结尾时，说明 struct 定义结束
+            if in_struct and end and line.endswith(";"):
+                # 将所有收集的行合并成一行去解析
+                block = " ".join(struct_lines)
+                # 先简单合并多余空白
+                block = " ".join(block.split())
+
+                # 移除开头的 'struct '
+                if block.startswith("struct "):
+                    block = block[len("struct "):]
+
+                # 找到第一对花括号
+                brace_start = block.find('{')
+                if brace_start == -1:
+                    continue  # 不符合期望格式
+
+                # 在花括号之前，可能有 struct 的名字
+                name_part = block[:brace_start].strip()
+
+                # 找到与之匹配的 '}'
+                brace_end = block.find('}', brace_start)
+                if brace_end == -1:
+                    continue
+
+                fields = []
+                # 解析花括号内的所有字段
+                fields_str = block[brace_start + 1: brace_end].strip()
+                # 按分号拆分每个字段
+                field_lines = fields_str.split(';')
+                index = 1
+                for f in field_lines:
+                    if f == "":
+                        continue
+                    f = f.strip()
+                    f_list = f.split(" ")
+                    field_type = f_list[0].strip()
+                    field_name = f_list[1].strip()
+                    # 序号
+                    fields.append({"id": index, "type": field_type, "name": field_name})
+                    index += 1
+
+                # # 花括号之后到最后的结构体变量部分
+                # alias_part = block[brace_end + 1:].strip()
+                # if alias_part.endswith(';'):
+                #     alias_part = alias_part[:-1].strip()
+                # # 如果有多个结构体变量，就用逗号分隔
+                # if alias_part:
+                #     aliases = [x.strip() for x in alias_part.split(',')]
+
+                # 构建 JSON 对象
+                label = ""
+                if "request" in name_part.lower():
+                    label = "request"
+                elif "reply" in name_part.lower():
+                    label = "reply"
+
+                json_obj = {"label": label, "name": name_part, "fields": fields}
+                struct_json_list.append(json_obj)
+
+                # 重置收集状态
+                struct_lines = []
+                in_struct = False
+                end = False
+        
 
         """
         解析函数声明
