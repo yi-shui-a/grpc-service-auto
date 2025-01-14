@@ -66,7 +66,6 @@ class ServiceUtil:
         basic_info_format_list = [
             "name",
             "description",
-            "chinese_name",
             "version",
             "build_time",
             "priority_level",
@@ -81,6 +80,10 @@ class ServiceUtil:
             return
         if key == "priority_level":
             basic_info["priority_level"] = int(value)
+            return
+        if key == "chinese_name":
+            value = value.replace("\"", "")
+            basic_info["chinese_name"] = value
             return
         if key in basic_info_format_list:
             basic_info[key] = value
