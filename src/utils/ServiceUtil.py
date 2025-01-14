@@ -152,13 +152,44 @@ class ServiceUtil:
             except UnicodeDecodeError:
                 continue
 
+        """提取信息"""
+        content_lines = []
+        # 提取包含防护
+        include_guard_pattern = re.compile(
+            r"#ifndef\s+(\w+)\s+#define\s+\1", re.MULTILINE
+        )
+        include_guard_match = include_guard_pattern.search(content)
+        if include_guard_match:
+            content_lines.append(f"#ifndef {include_guard_match.group(1)}")
+            content_lines.append(f"#define {include_guard_match.group(1)}")
+
+        # 提取每对 Begin 和 End 之间的内容
+        # 使用非贪婪模式 .*? 以确保匹配到最近的 End 注释
+        section_pattern = re.compile(
+            r"/\*[-]+\s*(.*?)\s*Begin\s*[-]+\*/\s*(.*?)\s*/\*[-]+\s*\1\s*End\s*[-]+\*/",
+            re.DOTALL
+        )
+        for match in section_pattern.finditer(content):
+            content_lines.append(match.group(0))
+
+        # 提取 #endif
+        endif_pattern = re.compile(
+            r"#endif\s*//\s*(\w+)", re.MULTILINE
+        )
+        endif_match = endif_pattern.search(content)
+        if endif_match:
+            content_lines.append(f"#endif // {endif_match.group(1)}")
+
+        content_lines = "\n".join(content_lines)
+
+
         root_json_dict = dict()
 
         return_code = dict()
         """解析注释并构造字典结构。"""
         basic_info = dict()
         basic_info["owner"] = dict()
-        lines = content.splitlines()
+        lines = content_lines.splitlines()
         # 过滤掉以 "//" 开头的行
         lines = [line for line in lines if not line.strip().startswith("//")]
         # 将过滤后的行重新组合成字符串
@@ -167,116 +198,230 @@ class ServiceUtil:
         # print(lines)
         current_section = None
         operating_system_instance = dict()
+        # 各部分状态信息
+        # include_state = False
+        # service_info_state = False
+        # return_type_state = False
+        # message_info_state = False
+        # interface_declaration = False
+        # 存储解析状态的栈
+        state = []
+        include_state = "INCLUDE"
+        service_info_state = "SERVICE_INFO"
+        return_type_state = "RETURN_TYPE"
+        message_info_state = "MESSAGE_INFO"
+        interface_declaration_state = "INTERFACE_DECLARATION"
+
+        # 存储结构体内容和接口声明内容
+        message_info = []
+        interface_declaration = []
+
+        # 正则表达式模式
+        include_pattern = re.compile(
+            r"include",
+            re.MULTILINE
+        )
+
+        service_info_pattern = re.compile(
+            r"service\s*info",
+            re.MULTILINE
+        )
+
+        return_type_pattern = re.compile(
+            r"return\s*type",
+            re.MULTILINE
+        )
+
+        message_info_pattern = re.compile(
+            r"message\s*info",
+            re.MULTILINE
+        )
+
+        interface_declaration_pattern = re.compile(
+            r"interface\s*declaration",
+            re.MULTILINE
+        )
 
         line_index = 0
         while line_index < len(lines):
-            """
-            解析注释
-            """
             line = lines[line_index].strip()
-            # print(line)
-            # 解析以@开头的键值对
-            if line[:5].count("@") > 0:
-                parts = line[line.find("@") + 1 :].strip()
-                # 使用正则表达式去除空格和冒号
-                cleaned_line = re.sub(r"\s*:\s*", " ", parts)
-                # 将字符串分为两个部分
+            """获取解析状态"""
+            # begin正则表达式模式
+            begin_pattern = re.compile(
+                r"/\*[-]+\s*(.*?)\s*Begin\s*[-]+\*/",
+                re.DOTALL | re.IGNORECASE
+            )
+            begin_match = begin_pattern.search(line)
+            if begin_match:
+                begin = begin_match.group(1).strip().lower()
 
-                parts2 = cleaned_line.split(maxsplit=1)
-                # print(parts2)
-                if len(parts2) == 2:
-                    key, value = parts2
-                else:
-                    key = parts2[0]
-                    value = None
+                include_begin_match = include_pattern.search(begin)
+                service_info_begin_match = service_info_pattern.search(begin)
+                return_type_begin_match = return_type_pattern.search(begin)
+                message_info_begin_match = message_info_pattern.search(begin)
+                interface_declaration_begin_match = interface_declaration_pattern.search(begin)
 
-                if key in {
-                    "resource_requirement",
-                    "developer",
-                    "maintainer",
-                    "operating_system",
-                }:
-                    # 进入嵌套结构
-                    current_section = key
-                    if current_section in {"developer", "maintainer"}:
-                        basic_info["owner"][current_section] = {}
-                    elif current_section in {"operating_system"}:
-                        basic_info["operating_system"] = []
+                if include_begin_match:
+                    state.append(include_state)
+                elif service_info_begin_match:
+                    state.append(service_info_state)
+                elif return_type_begin_match:
+                    state.append(return_type_state)
+                elif message_info_begin_match:
+                    state.append(message_info_state)
+                elif interface_declaration_begin_match:
+                    state.append(interface_declaration_state)
+
+
+            if len(state) != 0:
+                """解析注释"""
+                state_now = state.pop()
+                state.append(state_now)
+                if state_now == service_info_state:
+                    # print(line)
+                    # 解析以@开头的键值对
+                    if line[:5].count("@") > 0:
+                        parts = line[line.find("@") + 1 :].strip()
+                        # 使用正则表达式去除空格和冒号
+                        cleaned_line = re.sub(r"\s*:\s*", " ", parts)
+                        # 将字符串分为两个部分
+
+                        parts2 = cleaned_line.split(maxsplit=1)
+                        # print(parts2)
+                        if len(parts2) == 2:
+                            key, value = parts2
+                        else:
+                            key = parts2[0]
+                            value = None
+
+                        if key in {
+                            "resource_requirement",
+                            "developer",
+                            "maintainer",
+                            "operating_system",
+                        }:
+                            # 进入嵌套结构
+                            current_section = key
+                            if current_section in {"developer", "maintainer"}:
+                                basic_info["owner"][current_section] = {}
+                            elif current_section in {"operating_system"}:
+                                basic_info["operating_system"] = []
+                            else:
+                                basic_info[current_section] = {}
+                        else:
+                            # basic_info[key] = value
+                            self.__add_basic_info_dict(basic_info, key, value)
+
+                    # 解析以+开头的嵌套键值对
+                    elif line.count("+") > 0 and current_section:
+                        nested_parts = line[1:].split(":", maxsplit=1)
+                        nested_key = nested_parts[0].strip()
+                        nested_key = nested_key.lstrip("+ ").strip()
+                        nested_value = nested_parts[1].strip() if len(nested_parts) > 1 else ""
+                        if current_section in {"developer", "maintainer"}:
+                            basic_info["owner"][current_section][nested_key] = nested_value
+                        elif current_section in {"operating_system"}:
+                            if nested_key == "name":
+                                operating_system_instance = dict()
+                                operating_system_instance[nested_key] = nested_value
+                                operating_system_instance["version"] = {}
+                                basic_info["operating_system"].append(operating_system_instance)
+                            else:
+                                basic_info["operating_system"][-1]["version"][
+                                    nested_key
+                                ] = nested_value
+
+                        else:
+                            basic_info[current_section][nested_key] = nested_value
+
+
+
+
+                """解析return_code"""
+                if state_now == return_type_state:
+
+                    if line.startswith("#define") and line.count("<") == 0:
+                        return_parts = line[7:].strip()
+                        return_parts = return_parts.split(maxsplit=1)
+                        return_key = return_parts[0].strip()
+                        try:
+                            return_value = return_parts[1].strip()
+                            # print(return_value)
+                        except IndexError:
+                            line_index += 1
+                            continue
+                        return_code[return_key] = int(return_value)
+
+
+                """解释结构体"""
+                if state_now == message_info_state:
+                    message_info.append(line)
+
+                if state_now == interface_declaration_state:
+                    interface_declaration.append(line)
+
+
+                """更新解析状态"""
+                # end正则表达式模式
+                end_pattern = re.compile(
+                    r"/\*[-]+\s*(.*?)\s*End\s*[-]+\*/",
+                    re.DOTALL | re.IGNORECASE
+                )
+                end_match = end_pattern.search(line)
+                if end_match:
+                    end = end_match.group(1).strip().lower()
+
+                    include_end_match = include_pattern.search(end)
+                    service_info_end_match = service_info_pattern.search(end)
+                    return_type_end_match = return_type_pattern.search(end)
+                    message_info_end_match = message_info_pattern.search(end)
+                    interface_declaration_end_match = interface_declaration_pattern.search(end)
+
+                    state_now = state.pop()
+
+                    if include_end_match:
+                        if state_now != include_state:
+                            print("CONTENT ERROR BETWEEN BEGIN AND AND")
+                    elif service_info_end_match:
+                        if state_now != service_info_state:
+                            print("CONTENT ERROR BETWEEN BEGIN AND AND")
+                    elif return_type_end_match:
+                        if state_now != return_type_state:
+                            print("CONTENT ERROR BETWEEN BEGIN AND AND")
+                    elif message_info_end_match:
+                        if state_now != message_info_state:
+                            print("CONTENT ERROR BETWEEN BEGIN AND AND")
+                    elif interface_declaration_end_match:
+                        if state_now != interface_declaration_state:
+                            print("CONTENT ERROR BETWEEN BEGIN AND AND")
                     else:
-                        basic_info[current_section] = {}
-                else:
-                    # basic_info[key] = value
-                    self.__add_basic_info_dict(basic_info, key, value)
+                        state.append(state_now)
 
-            # 解析以+开头的嵌套键值对
-            elif line.count("+") > 0 and current_section:
-                nested_parts = line[1:].split(":", maxsplit=1)
-                nested_key = nested_parts[0].strip()
-                nested_key = nested_key.lstrip("+ ").strip()
-                nested_value = nested_parts[1].strip() if len(nested_parts) > 1 else ""
-                if current_section in {"developer", "maintainer"}:
-                    basic_info["owner"][current_section][nested_key] = nested_value
-                elif current_section in {"operating_system"}:
-                    if nested_key == "name":
-                        operating_system_instance = dict()
-                        operating_system_instance[nested_key] = nested_value
-                        operating_system_instance["version"] = {}
-                        basic_info["operating_system"].append(operating_system_instance)
-                    else:
-                        basic_info["operating_system"][-1]["version"][
-                            nested_key
-                        ] = nested_value
 
-                else:
-                    basic_info[current_section][nested_key] = nested_value
-
-            # 解析return_code
-            elif line.startswith("#define") and line.count("<") == 0:
-                return_parts = line[7:].strip()
-                return_parts = return_parts.split(maxsplit=1)
-                return_key = return_parts[0].strip()
-                try:
-                    return_value = return_parts[1].strip()
-                    # print(return_value)
-                except IndexError:
-                    line_index += 1
-                    continue
-                return_code[return_key] = int(return_value)
-
-            # 解析结构体
-            elif line.startswith("typedef") or line.startswith("struct"):
-                break
             line_index += 1
 
-        """
-        处理代码部分可能出现的注释，并将剩余代码合成一个大字符串
-        """
-        # 处理代码部分可能出现的注释
-        for line in lines[line_index:]:
-            if line.strip().startswith("/*") and line.strip().endswith("*/"):
-                lines.remove(line)
-        # 将其余的字符串从按行转为一个大字符串
-        input_str = "\n".join(lines[line_index:])
+
+
+
+        message_info = "\n".join(message_info)
         # 删除单行注释
-        input_str = re.sub(r"//.*$", "", input_str, flags=re.MULTILINE)
+        message_info = re.sub(r"//.*$", "", message_info, flags=re.MULTILINE)
+        interface_declaration = "\n".join(interface_declaration)
+        # 删除单行注释
+        interface_declaration = re.sub(r"//.*$", "", interface_declaration, flags=re.MULTILINE)
+
+
 
         """
         解析结构体
         """
-        # current_section = None
-        # while line_index < len(lines):
-        #     line = lines[line_index].strip()
-        #
-        #     if line.startswith('typedef') or line.startswith('struct'):
-        #         current_section =
-        # 使用正则表达式提取所有结构体的名称和字段
-        # pattern = re.compile(r'typedef struct\s*\{(.*?)\}\s*(\w+);', re.DOTALL)
+
         """解析typedef struct开头的结构体"""
         pattern = re.compile(
             r"typedef\s+struct\s*(?:\w+\s*)?\{(.*?)\}\s*(\w+);", re.DOTALL
         )
 
-        matches = pattern.finditer(input_str)
+        matches = pattern.finditer(message_info)
         # print(matches)
         struct_json_list = []
 
@@ -318,9 +463,9 @@ class ServiceUtil:
 
             json_obj = {"label": label, "name": struct_name, "fields": fields}
             struct_json_list.append(json_obj)
-        
+
         """解析struct开头的结构体"""
-        lines_struct = input_str.splitlines()
+        lines_struct = message_info.splitlines()
         in_struct = False
         end = False
         struct_lines = []
@@ -400,7 +545,6 @@ class ServiceUtil:
                 struct_lines = []
                 in_struct = False
                 end = False
-        
 
         """
         解析函数声明
@@ -412,7 +556,7 @@ class ServiceUtil:
         )
 
         # 解析函数声明
-        matches = pattern.findall(input_str)
+        matches = pattern.findall(interface_declaration)
 
         # 构建JSON格式的数据
         grpc_methods = []

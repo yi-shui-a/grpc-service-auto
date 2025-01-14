@@ -11,6 +11,7 @@
 #include <sstream>
 /*------------------------  include End    -------------------------*/
 
+/*------------------------  Service Info Begin  --------------------------*/
 /**
   ******************************************************************************
   * @file    atomic_service_sf.h
@@ -63,7 +64,9 @@
         +v2:1.0.2
 
 */
+/*------------------------  Service Info End  --------------------------*/
 
+/*------------------------  Return Type Begin  --------------------------*/
 // return type of service
 #define ATOMIC_SERVICE_SUCCESS 0
 #define OperationNotPermitted 1
@@ -74,8 +77,10 @@
 #define NoSuchFile 6
 #define NoSuchDir 7
 #define DATA_ERROR 8
+/*------------------------  Return Type End  --------------------------*/
 
-/************************************** åå­æå¡ï¼atomic_service_sfï¼ task_C / Begain*******************************************/
+/*------------------------  Message Info Begin  --------------------------*/
+
 // Request /* task_C è¾å¥æ°æ® */
 typedef struct
 {
@@ -88,9 +93,6 @@ typedef struct
   std::string result;
   int return_type;
 } atomic_service_sf_task_C_Reply_st;
-/************************************** åå­æå¡ï¼atomic_service_sfï¼ task_C / END*******************************************/
-
-/************************************** åå­æå¡ï¼atomic_service_sfï¼ task_D / Begain*******************************************/
 // Request /* task_D è¾å¥æ°æ® */
 typedef struct
 {
@@ -102,13 +104,17 @@ typedef struct
   std::map<std::string, std::int32_t> string_int_map_reply;
   int return_type;
 } atomic_service_sf_task_D_Reply_st;
-/************************************** åå­æå¡ï¼atomic_service_sfï¼ task_D / END*******************************************/
 
+
+/*------------------------  Message Info End  --------------------------*/
+
+/*------------------------  Interface Declaration Begin  --------------------------*/
 
 /* ç¨æ· ä»»å¡å½æ° (ä¸åçæ¥å£å½æ°) */
 int atomic_service_fun_task_C(atomic_service_sf_task_C_Request_st *request, atomic_service_sf_task_C_Reply_st *reply);
 int atomic_service_fun_task_D(atomic_service_sf_task_D_Request_st *request, atomic_service_sf_task_D_Reply_st *reply);
 
+/*------------------------  Interface Declaration End  --------------------------*/
 
 
 /* æå¡æ¡æ¶è°ç¨æ¥å£ */
