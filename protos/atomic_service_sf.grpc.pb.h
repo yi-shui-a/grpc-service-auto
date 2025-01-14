@@ -6,22 +6,24 @@
 
 #include "atomic_service_sf.pb.h"
 
-#include <grpcpp/impl/codegen/async_stream.h>
-#include <grpcpp/impl/codegen/async_unary_call.h>
-#include <grpcpp/impl/codegen/method_handler_impl.h>
+#include <functional>
+#include <grpcpp/generic/async_generic_service.h>
+#include <grpcpp/support/async_stream.h>
+#include <grpcpp/support/async_unary_call.h>
+#include <grpcpp/impl/codegen/client_callback.h>
+#include <grpcpp/impl/codegen/client_context.h>
+#include <grpcpp/impl/codegen/completion_queue.h>
+#include <grpcpp/impl/codegen/message_allocator.h>
+#include <grpcpp/impl/codegen/method_handler.h>
 #include <grpcpp/impl/codegen/proto_utils.h>
 #include <grpcpp/impl/codegen/rpc_method.h>
+#include <grpcpp/impl/codegen/server_callback.h>
+#include <grpcpp/impl/codegen/server_callback_handlers.h>
+#include <grpcpp/impl/codegen/server_context.h>
 #include <grpcpp/impl/codegen/service_type.h>
 #include <grpcpp/impl/codegen/status.h>
 #include <grpcpp/impl/codegen/stub_options.h>
 #include <grpcpp/impl/codegen/sync_stream.h>
-
-namespace grpc {
-class CompletionQueue;
-class Channel;
-class ServerCompletionQueue;
-class ServerContext;
-}  // namespace grpc
 
 namespace atomic_service_sf_Package {
 
@@ -47,7 +49,18 @@ class atomic_service_sf_Service final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st>> PrepareAsyncatomic_service_fun_task_D(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st>>(PrepareAsyncatomic_service_fun_task_DRaw(context, request, cq));
     }
-  private:
+    class async_interface {
+     public:
+      virtual ~async_interface() {}
+      virtual void atomic_service_fun_task_C(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void atomic_service_fun_task_C(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void atomic_service_fun_task_D(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void atomic_service_fun_task_D(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+    };
+    typedef class async_interface experimental_async_interface;
+    virtual class async_interface* async() { return nullptr; }
+    class async_interface* experimental_async() { return async(); }
+   private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st>* Asyncatomic_service_fun_task_CRaw(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st>* PrepareAsyncatomic_service_fun_task_CRaw(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st>* Asyncatomic_service_fun_task_DRaw(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st& request, ::grpc::CompletionQueue* cq) = 0;
@@ -55,7 +68,7 @@ class atomic_service_sf_Service final {
   };
   class Stub final : public StubInterface {
    public:
-    Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel);
+    Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
     ::grpc::Status atomic_service_fun_task_C(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st& request, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st>> Asyncatomic_service_fun_task_C(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st>>(Asyncatomic_service_fun_task_CRaw(context, request, cq));
@@ -70,9 +83,24 @@ class atomic_service_sf_Service final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st>> PrepareAsyncatomic_service_fun_task_D(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st>>(PrepareAsyncatomic_service_fun_task_DRaw(context, request, cq));
     }
+    class async final :
+      public StubInterface::async_interface {
+     public:
+      void atomic_service_fun_task_C(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* response, std::function<void(::grpc::Status)>) override;
+      void atomic_service_fun_task_C(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void atomic_service_fun_task_D(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st* response, std::function<void(::grpc::Status)>) override;
+      void atomic_service_fun_task_D(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st* response, ::grpc::ClientUnaryReactor* reactor) override;
+     private:
+      friend class Stub;
+      explicit async(Stub* stub): stub_(stub) { }
+      Stub* stub() { return stub_; }
+      Stub* stub_;
+    };
+    class async* async() override { return &async_stub_; }
 
    private:
     std::shared_ptr< ::grpc::ChannelInterface> channel_;
+    class async async_stub_{this};
     ::grpc::ClientAsyncResponseReader< ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st>* Asyncatomic_service_fun_task_CRaw(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st>* PrepareAsyncatomic_service_fun_task_CRaw(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st>* Asyncatomic_service_fun_task_DRaw(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st& request, ::grpc::CompletionQueue* cq) override;
@@ -92,7 +120,7 @@ class atomic_service_sf_Service final {
   template <class BaseClass>
   class WithAsyncMethod_atomic_service_fun_task_C : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_atomic_service_fun_task_C() {
       ::grpc::Service::MarkMethodAsync(0);
@@ -101,7 +129,7 @@ class atomic_service_sf_Service final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status atomic_service_fun_task_C(::grpc::ServerContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* response) final override {
+    ::grpc::Status atomic_service_fun_task_C(::grpc::ServerContext* /*context*/, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st* /*request*/, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -112,7 +140,7 @@ class atomic_service_sf_Service final {
   template <class BaseClass>
   class WithAsyncMethod_atomic_service_fun_task_D : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_atomic_service_fun_task_D() {
       ::grpc::Service::MarkMethodAsync(1);
@@ -121,7 +149,7 @@ class atomic_service_sf_Service final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status atomic_service_fun_task_D(::grpc::ServerContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st* response) final override {
+    ::grpc::Status atomic_service_fun_task_D(::grpc::ServerContext* /*context*/, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st* /*request*/, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -131,9 +159,65 @@ class atomic_service_sf_Service final {
   };
   typedef WithAsyncMethod_atomic_service_fun_task_C<WithAsyncMethod_atomic_service_fun_task_D<Service > > AsyncService;
   template <class BaseClass>
+  class WithCallbackMethod_atomic_service_fun_task_C : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_atomic_service_fun_task_C() {
+      ::grpc::Service::MarkMethodCallback(0,
+          new ::grpc::internal::CallbackUnaryHandler< ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* response) { return this->atomic_service_fun_task_C(context, request, response); }));}
+    void SetMessageAllocatorFor_atomic_service_fun_task_C(
+        ::grpc::MessageAllocator< ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_atomic_service_fun_task_C() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status atomic_service_fun_task_C(::grpc::ServerContext* /*context*/, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st* /*request*/, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* atomic_service_fun_task_C(
+      ::grpc::CallbackServerContext* /*context*/, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st* /*request*/, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_atomic_service_fun_task_D : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_atomic_service_fun_task_D() {
+      ::grpc::Service::MarkMethodCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st* response) { return this->atomic_service_fun_task_D(context, request, response); }));}
+    void SetMessageAllocatorFor_atomic_service_fun_task_D(
+        ::grpc::MessageAllocator< ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_atomic_service_fun_task_D() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status atomic_service_fun_task_D(::grpc::ServerContext* /*context*/, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st* /*request*/, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* atomic_service_fun_task_D(
+      ::grpc::CallbackServerContext* /*context*/, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st* /*request*/, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st* /*response*/)  { return nullptr; }
+  };
+  typedef WithCallbackMethod_atomic_service_fun_task_C<WithCallbackMethod_atomic_service_fun_task_D<Service > > CallbackService;
+  typedef CallbackService ExperimentalCallbackService;
+  template <class BaseClass>
   class WithGenericMethod_atomic_service_fun_task_C : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_atomic_service_fun_task_C() {
       ::grpc::Service::MarkMethodGeneric(0);
@@ -142,7 +226,7 @@ class atomic_service_sf_Service final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status atomic_service_fun_task_C(::grpc::ServerContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* response) final override {
+    ::grpc::Status atomic_service_fun_task_C(::grpc::ServerContext* /*context*/, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st* /*request*/, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -150,7 +234,7 @@ class atomic_service_sf_Service final {
   template <class BaseClass>
   class WithGenericMethod_atomic_service_fun_task_D : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_atomic_service_fun_task_D() {
       ::grpc::Service::MarkMethodGeneric(1);
@@ -159,25 +243,116 @@ class atomic_service_sf_Service final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status atomic_service_fun_task_D(::grpc::ServerContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st* response) final override {
+    ::grpc::Status atomic_service_fun_task_D(::grpc::ServerContext* /*context*/, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st* /*request*/, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
   };
   template <class BaseClass>
+  class WithRawMethod_atomic_service_fun_task_C : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_atomic_service_fun_task_C() {
+      ::grpc::Service::MarkMethodRaw(0);
+    }
+    ~WithRawMethod_atomic_service_fun_task_C() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status atomic_service_fun_task_C(::grpc::ServerContext* /*context*/, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st* /*request*/, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Requestatomic_service_fun_task_C(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_atomic_service_fun_task_D : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_atomic_service_fun_task_D() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_atomic_service_fun_task_D() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status atomic_service_fun_task_D(::grpc::ServerContext* /*context*/, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st* /*request*/, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void Requestatomic_service_fun_task_D(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_atomic_service_fun_task_C : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_atomic_service_fun_task_C() {
+      ::grpc::Service::MarkMethodRawCallback(0,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->atomic_service_fun_task_C(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_atomic_service_fun_task_C() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status atomic_service_fun_task_C(::grpc::ServerContext* /*context*/, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st* /*request*/, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* atomic_service_fun_task_C(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_atomic_service_fun_task_D : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_atomic_service_fun_task_D() {
+      ::grpc::Service::MarkMethodRawCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->atomic_service_fun_task_D(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_atomic_service_fun_task_D() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status atomic_service_fun_task_D(::grpc::ServerContext* /*context*/, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st* /*request*/, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* atomic_service_fun_task_D(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
   class WithStreamedUnaryMethod_atomic_service_fun_task_C : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_atomic_service_fun_task_C() {
       ::grpc::Service::MarkMethodStreamed(0,
-        new ::grpc::internal::StreamedUnaryHandler< ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st>(std::bind(&WithStreamedUnaryMethod_atomic_service_fun_task_C<BaseClass>::Streamedatomic_service_fun_task_C, this, std::placeholders::_1, std::placeholders::_2)));
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st>* streamer) {
+                       return this->Streamedatomic_service_fun_task_C(context,
+                         streamer);
+                  }));
     }
     ~WithStreamedUnaryMethod_atomic_service_fun_task_C() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status atomic_service_fun_task_C(::grpc::ServerContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* response) final override {
+    ::grpc::Status atomic_service_fun_task_C(::grpc::ServerContext* /*context*/, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st* /*request*/, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -187,17 +362,24 @@ class atomic_service_sf_Service final {
   template <class BaseClass>
   class WithStreamedUnaryMethod_atomic_service_fun_task_D : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_atomic_service_fun_task_D() {
       ::grpc::Service::MarkMethodStreamed(1,
-        new ::grpc::internal::StreamedUnaryHandler< ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st>(std::bind(&WithStreamedUnaryMethod_atomic_service_fun_task_D<BaseClass>::Streamedatomic_service_fun_task_D, this, std::placeholders::_1, std::placeholders::_2)));
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st>* streamer) {
+                       return this->Streamedatomic_service_fun_task_D(context,
+                         streamer);
+                  }));
     }
     ~WithStreamedUnaryMethod_atomic_service_fun_task_D() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status atomic_service_fun_task_D(::grpc::ServerContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st* response) final override {
+    ::grpc::Status atomic_service_fun_task_D(::grpc::ServerContext* /*context*/, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st* /*request*/, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }

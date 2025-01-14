@@ -5,12 +5,18 @@
 #include "atomic_service_sf.pb.h"
 #include "atomic_service_sf.grpc.pb.h"
 
-#include <grpcpp/impl/codegen/async_stream.h>
-#include <grpcpp/impl/codegen/async_unary_call.h>
+#include <functional>
+#include <grpcpp/support/async_stream.h>
+#include <grpcpp/support/async_unary_call.h>
 #include <grpcpp/impl/codegen/channel_interface.h>
 #include <grpcpp/impl/codegen/client_unary_call.h>
-#include <grpcpp/impl/codegen/method_handler_impl.h>
+#include <grpcpp/impl/codegen/client_callback.h>
+#include <grpcpp/impl/codegen/message_allocator.h>
+#include <grpcpp/impl/codegen/method_handler.h>
 #include <grpcpp/impl/codegen/rpc_service_method.h>
+#include <grpcpp/impl/codegen/server_callback.h>
+#include <grpcpp/impl/codegen/server_callback_handlers.h>
+#include <grpcpp/impl/codegen/server_context.h>
 #include <grpcpp/impl/codegen/service_type.h>
 #include <grpcpp/impl/codegen/sync_stream.h>
 namespace atomic_service_sf_Package {
@@ -22,50 +28,82 @@ static const char* atomic_service_sf_Service_method_names[] = {
 
 std::unique_ptr< atomic_service_sf_Service::Stub> atomic_service_sf_Service::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
   (void)options;
-  std::unique_ptr< atomic_service_sf_Service::Stub> stub(new atomic_service_sf_Service::Stub(channel));
+  std::unique_ptr< atomic_service_sf_Service::Stub> stub(new atomic_service_sf_Service::Stub(channel, options));
   return stub;
 }
 
-atomic_service_sf_Service::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel)
-  : channel_(channel), rpcmethod_atomic_service_fun_task_C_(atomic_service_sf_Service_method_names[0], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_atomic_service_fun_task_D_(atomic_service_sf_Service_method_names[1], ::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+atomic_service_sf_Service::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
+  : channel_(channel), rpcmethod_atomic_service_fun_task_C_(atomic_service_sf_Service_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_atomic_service_fun_task_D_(atomic_service_sf_Service_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status atomic_service_sf_Service::Stub::atomic_service_fun_task_C(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st& request, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* response) {
-  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_atomic_service_fun_task_C_, context, request, response);
+  return ::grpc::internal::BlockingUnaryCall< ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_atomic_service_fun_task_C_, context, request, response);
 }
 
-::grpc::ClientAsyncResponseReader< ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st>* atomic_service_sf_Service::Stub::Asyncatomic_service_fun_task_CRaw(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st>::Create(channel_.get(), cq, rpcmethod_atomic_service_fun_task_C_, context, request, true);
+void atomic_service_sf_Service::Stub::async::atomic_service_fun_task_C(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_atomic_service_fun_task_C_, context, request, response, std::move(f));
+}
+
+void atomic_service_sf_Service::Stub::async::atomic_service_fun_task_C(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_atomic_service_fun_task_C_, context, request, response, reactor);
 }
 
 ::grpc::ClientAsyncResponseReader< ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st>* atomic_service_sf_Service::Stub::PrepareAsyncatomic_service_fun_task_CRaw(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st>::Create(channel_.get(), cq, rpcmethod_atomic_service_fun_task_C_, context, request, false);
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st, ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_atomic_service_fun_task_C_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st>* atomic_service_sf_Service::Stub::Asyncatomic_service_fun_task_CRaw(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncatomic_service_fun_task_CRaw(context, request, cq);
+  result->StartCall();
+  return result;
 }
 
 ::grpc::Status atomic_service_sf_Service::Stub::atomic_service_fun_task_D(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st& request, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st* response) {
-  return ::grpc::internal::BlockingUnaryCall(channel_.get(), rpcmethod_atomic_service_fun_task_D_, context, request, response);
+  return ::grpc::internal::BlockingUnaryCall< ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_atomic_service_fun_task_D_, context, request, response);
 }
 
-::grpc::ClientAsyncResponseReader< ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st>* atomic_service_sf_Service::Stub::Asyncatomic_service_fun_task_DRaw(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st>::Create(channel_.get(), cq, rpcmethod_atomic_service_fun_task_D_, context, request, true);
+void atomic_service_sf_Service::Stub::async::atomic_service_fun_task_D(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_atomic_service_fun_task_D_, context, request, response, std::move(f));
+}
+
+void atomic_service_sf_Service::Stub::async::atomic_service_fun_task_D(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st* request, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_atomic_service_fun_task_D_, context, request, response, reactor);
 }
 
 ::grpc::ClientAsyncResponseReader< ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st>* atomic_service_sf_Service::Stub::PrepareAsyncatomic_service_fun_task_DRaw(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderFactory< ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st>::Create(channel_.get(), cq, rpcmethod_atomic_service_fun_task_D_, context, request, false);
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st, ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_atomic_service_fun_task_D_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st>* atomic_service_sf_Service::Stub::Asyncatomic_service_fun_task_DRaw(::grpc::ClientContext* context, const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncatomic_service_fun_task_DRaw(context, request, cq);
+  result->StartCall();
+  return result;
 }
 
 atomic_service_sf_Service::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       atomic_service_sf_Service_method_names[0],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< atomic_service_sf_Service::Service, ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st>(
-          std::mem_fn(&atomic_service_sf_Service::Service::atomic_service_fun_task_C), this)));
+      new ::grpc::internal::RpcMethodHandler< atomic_service_sf_Service::Service, ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](atomic_service_sf_Service::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::atomic_service_sf_Package::atomic_service_sf_task_C_Request_st* req,
+             ::atomic_service_sf_Package::atomic_service_sf_task_C_Reply_st* resp) {
+               return service->atomic_service_fun_task_C(ctx, req, resp);
+             }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       atomic_service_sf_Service_method_names[1],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< atomic_service_sf_Service::Service, ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st>(
-          std::mem_fn(&atomic_service_sf_Service::Service::atomic_service_fun_task_D), this)));
+      new ::grpc::internal::RpcMethodHandler< atomic_service_sf_Service::Service, ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st, ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](atomic_service_sf_Service::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::atomic_service_sf_Package::atomic_service_sf_task_D_Request_st* req,
+             ::atomic_service_sf_Package::atomic_service_sf_task_D_Reply_st* resp) {
+               return service->atomic_service_fun_task_D(ctx, req, resp);
+             }, this)));
 }
 
 atomic_service_sf_Service::Service::~Service() {

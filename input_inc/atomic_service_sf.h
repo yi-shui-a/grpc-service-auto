@@ -11,6 +11,7 @@
 #include <sstream>
 /*------------------------  include End    -------------------------*/
 
+/*------------------------  Service Info Begin  --------------------------*/
 /**
   ******************************************************************************
   * @file    atomic_service_sf.h
@@ -63,7 +64,9 @@
         +v2:1.0.2
 
 */
+/*------------------------  Service Info End  --------------------------*/
 
+/*------------------------  Return Type Begin  --------------------------*/
 // return type of service
 #define ATOMIC_SERVICE_SUCCESS 0
 #define OperationNotPermitted 1
@@ -74,8 +77,10 @@
 #define NoSuchFile 6
 #define NoSuchDir 7
 #define DATA_ERROR 8
+/*------------------------  Return Type End  --------------------------*/
 
-/************************************** 原子服务（atomic_service_sf） task_C / Begain*******************************************/
+/*------------------------  Message Info Begin  --------------------------*/
+
 // Request /* task_C 输入数据 */
 typedef struct
 {
@@ -88,9 +93,6 @@ typedef struct
   std::string result;
   int return_type;
 } atomic_service_sf_task_C_Reply_st;
-/************************************** 原子服务（atomic_service_sf） task_C / END*******************************************/
-
-/************************************** 原子服务（atomic_service_sf） task_D / Begain*******************************************/
 // Request /* task_D 输入数据 */
 typedef struct
 {
@@ -102,13 +104,17 @@ typedef struct
   std::map<std::string, std::int32_t> string_int_map_reply;
   int return_type;
 } atomic_service_sf_task_D_Reply_st;
-/************************************** 原子服务（atomic_service_sf） task_D / END*******************************************/
 
+
+/*------------------------  Message Info End  --------------------------*/
+
+/*------------------------  Interface Declaration Begin  --------------------------*/
 
 /* 用户 任务函数 (不同的接口函数) */
 int atomic_service_fun_task_C(atomic_service_sf_task_C_Request_st *request, atomic_service_sf_task_C_Reply_st *reply);
 int atomic_service_fun_task_D(atomic_service_sf_task_D_Request_st *request, atomic_service_sf_task_D_Reply_st *reply);
 
+/*------------------------  Interface Declaration End  --------------------------*/
 
 
 /* 服务框架调用接口 */

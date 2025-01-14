@@ -5,379 +5,302 @@
 
 #include <algorithm>
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/stubs/port.h>
 #include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/wire_format_lite_inl.h>
+#include <google/protobuf/extension_set.h>
+#include <google/protobuf/wire_format_lite.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/generated_message_reflection.h>
 #include <google/protobuf/reflection_ops.h>
 #include <google/protobuf/wire_format.h>
-// This is a temporary google only hack
-#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
-#include "third_party/protobuf/version.h"
-#endif
 // @@protoc_insertion_point(includes)
+#include <google/protobuf/port_def.inc>
+
+PROTOBUF_PRAGMA_INIT_SEG
+
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = _pb::internal;
 
 namespace atomic_service_mbsb_Package {
-class atomic_service_mbsb_task_A_Request_stDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<atomic_service_mbsb_task_A_Request_st>
-      _instance;
-} _atomic_service_mbsb_task_A_Request_st_default_instance_;
-class atomic_service_mbsb_task_A_Reply_stDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<atomic_service_mbsb_task_A_Reply_st>
-      _instance;
-} _atomic_service_mbsb_task_A_Reply_st_default_instance_;
-class atomic_service_mbsb_task_B_Request_stDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<atomic_service_mbsb_task_B_Request_st>
-      _instance;
-} _atomic_service_mbsb_task_B_Request_st_default_instance_;
-class atomic_service_mbsb_task_B_Reply_stDefaultTypeInternal {
- public:
-  ::google::protobuf::internal::ExplicitlyConstructed<atomic_service_mbsb_task_B_Reply_st>
-      _instance;
-} _atomic_service_mbsb_task_B_Reply_st_default_instance_;
-}  // namespace atomic_service_mbsb_Package
-namespace protobuf_atomic_5fservice_5fmbsb_2eproto {
-static void InitDefaultsatomic_service_mbsb_task_A_Request_st() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  {
-    void* ptr = &::atomic_service_mbsb_Package::_atomic_service_mbsb_task_A_Request_st_default_instance_;
-    new (ptr) ::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Request_st();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Request_st::InitAsDefaultInstance();
-}
-
-::google::protobuf::internal::SCCInfo<0> scc_info_atomic_service_mbsb_task_A_Request_st =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsatomic_service_mbsb_task_A_Request_st}, {}};
-
-static void InitDefaultsatomic_service_mbsb_task_A_Reply_st() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  {
-    void* ptr = &::atomic_service_mbsb_Package::_atomic_service_mbsb_task_A_Reply_st_default_instance_;
-    new (ptr) ::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Reply_st();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Reply_st::InitAsDefaultInstance();
-}
-
-::google::protobuf::internal::SCCInfo<0> scc_info_atomic_service_mbsb_task_A_Reply_st =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsatomic_service_mbsb_task_A_Reply_st}, {}};
-
-static void InitDefaultsatomic_service_mbsb_task_B_Request_st() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  {
-    void* ptr = &::atomic_service_mbsb_Package::_atomic_service_mbsb_task_B_Request_st_default_instance_;
-    new (ptr) ::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Request_st();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Request_st::InitAsDefaultInstance();
-}
-
-::google::protobuf::internal::SCCInfo<0> scc_info_atomic_service_mbsb_task_B_Request_st =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsatomic_service_mbsb_task_B_Request_st}, {}};
-
-static void InitDefaultsatomic_service_mbsb_task_B_Reply_st() {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  {
-    void* ptr = &::atomic_service_mbsb_Package::_atomic_service_mbsb_task_B_Reply_st_default_instance_;
-    new (ptr) ::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Reply_st();
-    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
-  }
-  ::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Reply_st::InitAsDefaultInstance();
-}
-
-::google::protobuf::internal::SCCInfo<0> scc_info_atomic_service_mbsb_task_B_Reply_st =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsatomic_service_mbsb_task_B_Reply_st}, {}};
-
-void InitDefaults() {
-  ::google::protobuf::internal::InitSCC(&scc_info_atomic_service_mbsb_task_A_Request_st.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_atomic_service_mbsb_task_A_Reply_st.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_atomic_service_mbsb_task_B_Request_st.base);
-  ::google::protobuf::internal::InitSCC(&scc_info_atomic_service_mbsb_task_B_Reply_st.base);
-}
-
-::google::protobuf::Metadata file_level_metadata[4];
-
-const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-  ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Request_st, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Request_st, number1_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Request_st, number2_),
-  ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Reply_st, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Reply_st, sum_result_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Reply_st, return_type_),
-  ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Request_st, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Request_st, number1_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Request_st, number2_),
-  ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Reply_st, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Reply_st, sub_result_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Reply_st, return_type_),
-};
-static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, sizeof(::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Request_st)},
-  { 7, -1, sizeof(::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Reply_st)},
-  { 14, -1, sizeof(::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Request_st)},
-  { 21, -1, sizeof(::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Reply_st)},
-};
-
-static ::google::protobuf::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::google::protobuf::Message*>(&::atomic_service_mbsb_Package::_atomic_service_mbsb_task_A_Request_st_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&::atomic_service_mbsb_Package::_atomic_service_mbsb_task_A_Reply_st_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&::atomic_service_mbsb_Package::_atomic_service_mbsb_task_B_Request_st_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&::atomic_service_mbsb_Package::_atomic_service_mbsb_task_B_Reply_st_default_instance_),
-};
-
-void protobuf_AssignDescriptors() {
-  AddDescriptors();
-  AssignDescriptors(
-      "atomic_service_mbsb.proto", schemas, file_default_instances, TableStruct::offsets,
-      file_level_metadata, NULL, NULL);
-}
-
-void protobuf_AssignDescriptorsOnce() {
-  static ::google::protobuf::internal::once_flag once;
-  ::google::protobuf::internal::call_once(once, protobuf_AssignDescriptors);
-}
-
-void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
-void protobuf_RegisterTypes(const ::std::string&) {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 4);
-}
-
-void AddDescriptorsImpl() {
-  InitDefaults();
-  static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-      "\n\031atomic_service_mbsb.proto\022\033atomic_serv"
-      "ice_mbsb_Package\"I\n%atomic_service_mbsb_"
-      "task_A_Request_st\022\017\n\007number1\030\001 \001(\005\022\017\n\007nu"
-      "mber2\030\002 \001(\005\"N\n#atomic_service_mbsb_task_"
-      "A_Reply_st\022\022\n\nsum_result\030\001 \001(\005\022\023\n\013return"
-      "_type\030\002 \001(\005\"I\n%atomic_service_mbsb_task_"
-      "B_Request_st\022\017\n\007number1\030\001 \001(\005\022\017\n\007number2"
-      "\030\002 \001(\005\"N\n#atomic_service_mbsb_task_B_Rep"
-      "ly_st\022\022\n\nsub_result\030\001 \001(\005\022\023\n\013return_type"
-      "\030\002 \001(\0052\351\002\n\033atomic_service_mbsb_Service\022\243"
-      "\001\n\031atomic_service_fun_task_A\022B.atomic_se"
-      "rvice_mbsb_Package.atomic_service_mbsb_t"
-      "ask_A_Request_st\032@.atomic_service_mbsb_P"
-      "ackage.atomic_service_mbsb_task_A_Reply_"
-      "st\"\000\022\243\001\n\031atomic_service_fun_task_B\022B.ato"
-      "mic_service_mbsb_Package.atomic_service_"
-      "mbsb_task_B_Request_st\032@.atomic_service_"
-      "mbsb_Package.atomic_service_mbsb_task_B_"
-      "Reply_st\"\000b\006proto3"
+PROTOBUF_CONSTEXPR atomic_service_mbsb_task_A_Request_st::atomic_service_mbsb_task_A_Request_st(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.number1_)*/0
+  , /*decltype(_impl_.number2_)*/0
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct atomic_service_mbsb_task_A_Request_stDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR atomic_service_mbsb_task_A_Request_stDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~atomic_service_mbsb_task_A_Request_stDefaultTypeInternal() {}
+  union {
+    atomic_service_mbsb_task_A_Request_st _instance;
   };
-  ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 738);
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
-    "atomic_service_mbsb.proto", &protobuf_RegisterTypes);
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 atomic_service_mbsb_task_A_Request_stDefaultTypeInternal _atomic_service_mbsb_task_A_Request_st_default_instance_;
+PROTOBUF_CONSTEXPR atomic_service_mbsb_task_A_Reply_st::atomic_service_mbsb_task_A_Reply_st(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.sum_result_)*/0
+  , /*decltype(_impl_.return_type_)*/0
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct atomic_service_mbsb_task_A_Reply_stDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR atomic_service_mbsb_task_A_Reply_stDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~atomic_service_mbsb_task_A_Reply_stDefaultTypeInternal() {}
+  union {
+    atomic_service_mbsb_task_A_Reply_st _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 atomic_service_mbsb_task_A_Reply_stDefaultTypeInternal _atomic_service_mbsb_task_A_Reply_st_default_instance_;
+PROTOBUF_CONSTEXPR atomic_service_mbsb_task_B_Request_st::atomic_service_mbsb_task_B_Request_st(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.number1_)*/0
+  , /*decltype(_impl_.number2_)*/0
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct atomic_service_mbsb_task_B_Request_stDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR atomic_service_mbsb_task_B_Request_stDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~atomic_service_mbsb_task_B_Request_stDefaultTypeInternal() {}
+  union {
+    atomic_service_mbsb_task_B_Request_st _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 atomic_service_mbsb_task_B_Request_stDefaultTypeInternal _atomic_service_mbsb_task_B_Request_st_default_instance_;
+PROTOBUF_CONSTEXPR atomic_service_mbsb_task_B_Reply_st::atomic_service_mbsb_task_B_Reply_st(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.sub_result_)*/0
+  , /*decltype(_impl_.return_type_)*/0
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct atomic_service_mbsb_task_B_Reply_stDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR atomic_service_mbsb_task_B_Reply_stDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~atomic_service_mbsb_task_B_Reply_stDefaultTypeInternal() {}
+  union {
+    atomic_service_mbsb_task_B_Reply_st _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 atomic_service_mbsb_task_B_Reply_stDefaultTypeInternal _atomic_service_mbsb_task_B_Reply_st_default_instance_;
+}  // namespace atomic_service_mbsb_Package
+static ::_pb::Metadata file_level_metadata_atomic_5fservice_5fmbsb_2eproto[4];
+static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_atomic_5fservice_5fmbsb_2eproto = nullptr;
+static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_atomic_5fservice_5fmbsb_2eproto = nullptr;
+
+const uint32_t TableStruct_atomic_5fservice_5fmbsb_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Request_st, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Request_st, _impl_.number1_),
+  PROTOBUF_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Request_st, _impl_.number2_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Reply_st, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Reply_st, _impl_.sum_result_),
+  PROTOBUF_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Reply_st, _impl_.return_type_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Request_st, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Request_st, _impl_.number1_),
+  PROTOBUF_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Request_st, _impl_.number2_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Reply_st, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Reply_st, _impl_.sub_result_),
+  PROTOBUF_FIELD_OFFSET(::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Reply_st, _impl_.return_type_),
+};
+static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  { 0, -1, -1, sizeof(::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Request_st)},
+  { 8, -1, -1, sizeof(::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Reply_st)},
+  { 16, -1, -1, sizeof(::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Request_st)},
+  { 24, -1, -1, sizeof(::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Reply_st)},
+};
+
+static const ::_pb::Message* const file_default_instances[] = {
+  &::atomic_service_mbsb_Package::_atomic_service_mbsb_task_A_Request_st_default_instance_._instance,
+  &::atomic_service_mbsb_Package::_atomic_service_mbsb_task_A_Reply_st_default_instance_._instance,
+  &::atomic_service_mbsb_Package::_atomic_service_mbsb_task_B_Request_st_default_instance_._instance,
+  &::atomic_service_mbsb_Package::_atomic_service_mbsb_task_B_Reply_st_default_instance_._instance,
+};
+
+const char descriptor_table_protodef_atomic_5fservice_5fmbsb_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
+  "\n\031atomic_service_mbsb.proto\022\033atomic_serv"
+  "ice_mbsb_Package\"I\n%atomic_service_mbsb_"
+  "task_A_Request_st\022\017\n\007number1\030\001 \001(\005\022\017\n\007nu"
+  "mber2\030\002 \001(\005\"N\n#atomic_service_mbsb_task_"
+  "A_Reply_st\022\022\n\nsum_result\030\001 \001(\005\022\023\n\013return"
+  "_type\030\002 \001(\005\"I\n%atomic_service_mbsb_task_"
+  "B_Request_st\022\017\n\007number1\030\001 \001(\005\022\017\n\007number2"
+  "\030\002 \001(\005\"N\n#atomic_service_mbsb_task_B_Rep"
+  "ly_st\022\022\n\nsub_result\030\001 \001(\005\022\023\n\013return_type"
+  "\030\002 \001(\0052\351\002\n\033atomic_service_mbsb_Service\022\243"
+  "\001\n\031atomic_service_fun_task_A\022B.atomic_se"
+  "rvice_mbsb_Package.atomic_service_mbsb_t"
+  "ask_A_Request_st\032@.atomic_service_mbsb_P"
+  "ackage.atomic_service_mbsb_task_A_Reply_"
+  "st\"\000\022\243\001\n\031atomic_service_fun_task_B\022B.ato"
+  "mic_service_mbsb_Package.atomic_service_"
+  "mbsb_task_B_Request_st\032@.atomic_service_"
+  "mbsb_Package.atomic_service_mbsb_task_B_"
+  "Reply_st\"\000b\006proto3"
+  ;
+static ::_pbi::once_flag descriptor_table_atomic_5fservice_5fmbsb_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_atomic_5fservice_5fmbsb_2eproto = {
+    false, false, 738, descriptor_table_protodef_atomic_5fservice_5fmbsb_2eproto,
+    "atomic_service_mbsb.proto",
+    &descriptor_table_atomic_5fservice_5fmbsb_2eproto_once, nullptr, 0, 4,
+    schemas, file_default_instances, TableStruct_atomic_5fservice_5fmbsb_2eproto::offsets,
+    file_level_metadata_atomic_5fservice_5fmbsb_2eproto, file_level_enum_descriptors_atomic_5fservice_5fmbsb_2eproto,
+    file_level_service_descriptors_atomic_5fservice_5fmbsb_2eproto,
+};
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_atomic_5fservice_5fmbsb_2eproto_getter() {
+  return &descriptor_table_atomic_5fservice_5fmbsb_2eproto;
 }
 
-void AddDescriptors() {
-  static ::google::protobuf::internal::once_flag once;
-  ::google::protobuf::internal::call_once(once, AddDescriptorsImpl);
-}
-// Force AddDescriptors() to be called at dynamic initialization time.
-struct StaticDescriptorInitializer {
-  StaticDescriptorInitializer() {
-    AddDescriptors();
-  }
-} static_descriptor_initializer;
-}  // namespace protobuf_atomic_5fservice_5fmbsb_2eproto
+// Force running AddDescriptors() at dynamic initialization time.
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_atomic_5fservice_5fmbsb_2eproto(&descriptor_table_atomic_5fservice_5fmbsb_2eproto);
 namespace atomic_service_mbsb_Package {
 
 // ===================================================================
 
-void atomic_service_mbsb_task_A_Request_st::InitAsDefaultInstance() {
-}
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int atomic_service_mbsb_task_A_Request_st::kNumber1FieldNumber;
-const int atomic_service_mbsb_task_A_Request_st::kNumber2FieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+class atomic_service_mbsb_task_A_Request_st::_Internal {
+ public:
+};
 
-atomic_service_mbsb_task_A_Request_st::atomic_service_mbsb_task_A_Request_st()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  ::google::protobuf::internal::InitSCC(
-      &protobuf_atomic_5fservice_5fmbsb_2eproto::scc_info_atomic_service_mbsb_task_A_Request_st.base);
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Request_st)
+atomic_service_mbsb_task_A_Request_st::atomic_service_mbsb_task_A_Request_st(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Request_st)
 }
 atomic_service_mbsb_task_A_Request_st::atomic_service_mbsb_task_A_Request_st(const atomic_service_mbsb_task_A_Request_st& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::memcpy(&number1_, &from.number1_,
-    static_cast<size_t>(reinterpret_cast<char*>(&number2_) -
-    reinterpret_cast<char*>(&number1_)) + sizeof(number2_));
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  atomic_service_mbsb_task_A_Request_st* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.number1_){}
+    , decltype(_impl_.number2_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::memcpy(&_impl_.number1_, &from._impl_.number1_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.number2_) -
+    reinterpret_cast<char*>(&_impl_.number1_)) + sizeof(_impl_.number2_));
   // @@protoc_insertion_point(copy_constructor:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Request_st)
 }
 
-void atomic_service_mbsb_task_A_Request_st::SharedCtor() {
-  ::memset(&number1_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&number2_) -
-      reinterpret_cast<char*>(&number1_)) + sizeof(number2_));
+inline void atomic_service_mbsb_task_A_Request_st::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.number1_){0}
+    , decltype(_impl_.number2_){0}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
 }
 
 atomic_service_mbsb_task_A_Request_st::~atomic_service_mbsb_task_A_Request_st() {
   // @@protoc_insertion_point(destructor:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Request_st)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
 }
 
-void atomic_service_mbsb_task_A_Request_st::SharedDtor() {
+inline void atomic_service_mbsb_task_A_Request_st::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
 void atomic_service_mbsb_task_A_Request_st::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
-const ::google::protobuf::Descriptor* atomic_service_mbsb_task_A_Request_st::descriptor() {
-  ::protobuf_atomic_5fservice_5fmbsb_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_atomic_5fservice_5fmbsb_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
-}
-
-const atomic_service_mbsb_task_A_Request_st& atomic_service_mbsb_task_A_Request_st::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_atomic_5fservice_5fmbsb_2eproto::scc_info_atomic_service_mbsb_task_A_Request_st.base);
-  return *internal_default_instance();
-}
-
 
 void atomic_service_mbsb_task_A_Request_st::Clear() {
 // @@protoc_insertion_point(message_clear_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Request_st)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ::memset(&number1_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&number2_) -
-      reinterpret_cast<char*>(&number1_)) + sizeof(number2_));
-  _internal_metadata_.Clear();
+  ::memset(&_impl_.number1_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.number2_) -
+      reinterpret_cast<char*>(&_impl_.number1_)) + sizeof(_impl_.number2_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-bool atomic_service_mbsb_task_A_Request_st::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Request_st)
-  for (;;) {
-    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+const char* atomic_service_mbsb_task_A_Request_st::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
       // int32 number1 = 1;
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &number1_)));
-        } else {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.number1_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // int32 number2 = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &number2_)));
-        } else {
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _impl_.number2_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
     }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Request_st)
-  return true;
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
 failure:
-  // @@protoc_insertion_point(parse_failure:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Request_st)
-  return false;
-#undef DO_
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
 }
 
-void atomic_service_mbsb_task_A_Request_st::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Request_st)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // int32 number1 = 1;
-  if (this->number1() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->number1(), output);
-  }
-
-  // int32 number2 = 2;
-  if (this->number2() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->number2(), output);
-  }
-
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
-  }
-  // @@protoc_insertion_point(serialize_end:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Request_st)
-}
-
-::google::protobuf::uint8* atomic_service_mbsb_task_A_Request_st::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic; // Unused
+uint8_t* atomic_service_mbsb_task_A_Request_st::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Request_st)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // int32 number1 = 1;
-  if (this->number1() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->number1(), target);
+  if (this->_internal_number1() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_number1(), target);
   }
 
   // int32 number2 = 2;
-  if (this->number2() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->number2(), target);
+  if (this->_internal_number2() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(2, this->_internal_number2(), target);
   }
 
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Request_st)
   return target;
@@ -387,65 +310,45 @@ size_t atomic_service_mbsb_task_A_Request_st::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Request_st)
   size_t total_size = 0;
 
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
-  }
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
   // int32 number1 = 1;
-  if (this->number1() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->number1());
+  if (this->_internal_number1() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_number1());
   }
 
   // int32 number2 = 2;
-  if (this->number2() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->number2());
+  if (this->_internal_number2() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_number2());
   }
 
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-void atomic_service_mbsb_task_A_Request_st::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Request_st)
-  GOOGLE_DCHECK_NE(&from, this);
-  const atomic_service_mbsb_task_A_Request_st* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const atomic_service_mbsb_task_A_Request_st>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Request_st)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Request_st)
-    MergeFrom(*source);
-  }
-}
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData atomic_service_mbsb_task_A_Request_st::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    atomic_service_mbsb_task_A_Request_st::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*atomic_service_mbsb_task_A_Request_st::GetClassData() const { return &_class_data_; }
 
-void atomic_service_mbsb_task_A_Request_st::MergeFrom(const atomic_service_mbsb_task_A_Request_st& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Request_st)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
+
+void atomic_service_mbsb_task_A_Request_st::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<atomic_service_mbsb_task_A_Request_st*>(&to_msg);
+  auto& from = static_cast<const atomic_service_mbsb_task_A_Request_st&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Request_st)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.number1() != 0) {
-    set_number1(from.number1());
+  if (from._internal_number1() != 0) {
+    _this->_internal_set_number1(from._internal_number1());
   }
-  if (from.number2() != 0) {
-    set_number2(from.number2());
+  if (from._internal_number2() != 0) {
+    _this->_internal_set_number2(from._internal_number2());
   }
-}
-
-void atomic_service_mbsb_task_A_Request_st::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Request_st)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void atomic_service_mbsb_task_A_Request_st::CopyFrom(const atomic_service_mbsb_task_A_Request_st& from) {
@@ -459,190 +362,156 @@ bool atomic_service_mbsb_task_A_Request_st::IsInitialized() const {
   return true;
 }
 
-void atomic_service_mbsb_task_A_Request_st::Swap(atomic_service_mbsb_task_A_Request_st* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
 void atomic_service_mbsb_task_A_Request_st::InternalSwap(atomic_service_mbsb_task_A_Request_st* other) {
   using std::swap;
-  swap(number1_, other->number1_);
-  swap(number2_, other->number2_);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(atomic_service_mbsb_task_A_Request_st, _impl_.number2_)
+      + sizeof(atomic_service_mbsb_task_A_Request_st::_impl_.number2_)
+      - PROTOBUF_FIELD_OFFSET(atomic_service_mbsb_task_A_Request_st, _impl_.number1_)>(
+          reinterpret_cast<char*>(&_impl_.number1_),
+          reinterpret_cast<char*>(&other->_impl_.number1_));
 }
 
-::google::protobuf::Metadata atomic_service_mbsb_task_A_Request_st::GetMetadata() const {
-  protobuf_atomic_5fservice_5fmbsb_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_atomic_5fservice_5fmbsb_2eproto::file_level_metadata[kIndexInFileMessages];
+::PROTOBUF_NAMESPACE_ID::Metadata atomic_service_mbsb_task_A_Request_st::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_atomic_5fservice_5fmbsb_2eproto_getter, &descriptor_table_atomic_5fservice_5fmbsb_2eproto_once,
+      file_level_metadata_atomic_5fservice_5fmbsb_2eproto[0]);
 }
-
 
 // ===================================================================
 
-void atomic_service_mbsb_task_A_Reply_st::InitAsDefaultInstance() {
-}
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int atomic_service_mbsb_task_A_Reply_st::kSumResultFieldNumber;
-const int atomic_service_mbsb_task_A_Reply_st::kReturnTypeFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+class atomic_service_mbsb_task_A_Reply_st::_Internal {
+ public:
+};
 
-atomic_service_mbsb_task_A_Reply_st::atomic_service_mbsb_task_A_Reply_st()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  ::google::protobuf::internal::InitSCC(
-      &protobuf_atomic_5fservice_5fmbsb_2eproto::scc_info_atomic_service_mbsb_task_A_Reply_st.base);
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Reply_st)
+atomic_service_mbsb_task_A_Reply_st::atomic_service_mbsb_task_A_Reply_st(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Reply_st)
 }
 atomic_service_mbsb_task_A_Reply_st::atomic_service_mbsb_task_A_Reply_st(const atomic_service_mbsb_task_A_Reply_st& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::memcpy(&sum_result_, &from.sum_result_,
-    static_cast<size_t>(reinterpret_cast<char*>(&return_type_) -
-    reinterpret_cast<char*>(&sum_result_)) + sizeof(return_type_));
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  atomic_service_mbsb_task_A_Reply_st* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.sum_result_){}
+    , decltype(_impl_.return_type_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::memcpy(&_impl_.sum_result_, &from._impl_.sum_result_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.return_type_) -
+    reinterpret_cast<char*>(&_impl_.sum_result_)) + sizeof(_impl_.return_type_));
   // @@protoc_insertion_point(copy_constructor:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Reply_st)
 }
 
-void atomic_service_mbsb_task_A_Reply_st::SharedCtor() {
-  ::memset(&sum_result_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&return_type_) -
-      reinterpret_cast<char*>(&sum_result_)) + sizeof(return_type_));
+inline void atomic_service_mbsb_task_A_Reply_st::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.sum_result_){0}
+    , decltype(_impl_.return_type_){0}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
 }
 
 atomic_service_mbsb_task_A_Reply_st::~atomic_service_mbsb_task_A_Reply_st() {
   // @@protoc_insertion_point(destructor:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Reply_st)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
 }
 
-void atomic_service_mbsb_task_A_Reply_st::SharedDtor() {
+inline void atomic_service_mbsb_task_A_Reply_st::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
 void atomic_service_mbsb_task_A_Reply_st::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
-const ::google::protobuf::Descriptor* atomic_service_mbsb_task_A_Reply_st::descriptor() {
-  ::protobuf_atomic_5fservice_5fmbsb_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_atomic_5fservice_5fmbsb_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
-}
-
-const atomic_service_mbsb_task_A_Reply_st& atomic_service_mbsb_task_A_Reply_st::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_atomic_5fservice_5fmbsb_2eproto::scc_info_atomic_service_mbsb_task_A_Reply_st.base);
-  return *internal_default_instance();
-}
-
 
 void atomic_service_mbsb_task_A_Reply_st::Clear() {
 // @@protoc_insertion_point(message_clear_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Reply_st)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ::memset(&sum_result_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&return_type_) -
-      reinterpret_cast<char*>(&sum_result_)) + sizeof(return_type_));
-  _internal_metadata_.Clear();
+  ::memset(&_impl_.sum_result_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.return_type_) -
+      reinterpret_cast<char*>(&_impl_.sum_result_)) + sizeof(_impl_.return_type_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-bool atomic_service_mbsb_task_A_Reply_st::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Reply_st)
-  for (;;) {
-    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+const char* atomic_service_mbsb_task_A_Reply_st::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
       // int32 sum_result = 1;
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &sum_result_)));
-        } else {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.sum_result_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // int32 return_type = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &return_type_)));
-        } else {
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _impl_.return_type_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
     }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Reply_st)
-  return true;
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
 failure:
-  // @@protoc_insertion_point(parse_failure:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Reply_st)
-  return false;
-#undef DO_
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
 }
 
-void atomic_service_mbsb_task_A_Reply_st::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Reply_st)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // int32 sum_result = 1;
-  if (this->sum_result() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->sum_result(), output);
-  }
-
-  // int32 return_type = 2;
-  if (this->return_type() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->return_type(), output);
-  }
-
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
-  }
-  // @@protoc_insertion_point(serialize_end:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Reply_st)
-}
-
-::google::protobuf::uint8* atomic_service_mbsb_task_A_Reply_st::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic; // Unused
+uint8_t* atomic_service_mbsb_task_A_Reply_st::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Reply_st)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // int32 sum_result = 1;
-  if (this->sum_result() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->sum_result(), target);
+  if (this->_internal_sum_result() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_sum_result(), target);
   }
 
   // int32 return_type = 2;
-  if (this->return_type() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->return_type(), target);
+  if (this->_internal_return_type() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(2, this->_internal_return_type(), target);
   }
 
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Reply_st)
   return target;
@@ -652,65 +521,45 @@ size_t atomic_service_mbsb_task_A_Reply_st::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Reply_st)
   size_t total_size = 0;
 
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
-  }
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
   // int32 sum_result = 1;
-  if (this->sum_result() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->sum_result());
+  if (this->_internal_sum_result() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_sum_result());
   }
 
   // int32 return_type = 2;
-  if (this->return_type() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->return_type());
+  if (this->_internal_return_type() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_return_type());
   }
 
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-void atomic_service_mbsb_task_A_Reply_st::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Reply_st)
-  GOOGLE_DCHECK_NE(&from, this);
-  const atomic_service_mbsb_task_A_Reply_st* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const atomic_service_mbsb_task_A_Reply_st>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Reply_st)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Reply_st)
-    MergeFrom(*source);
-  }
-}
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData atomic_service_mbsb_task_A_Reply_st::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    atomic_service_mbsb_task_A_Reply_st::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*atomic_service_mbsb_task_A_Reply_st::GetClassData() const { return &_class_data_; }
 
-void atomic_service_mbsb_task_A_Reply_st::MergeFrom(const atomic_service_mbsb_task_A_Reply_st& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Reply_st)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
+
+void atomic_service_mbsb_task_A_Reply_st::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<atomic_service_mbsb_task_A_Reply_st*>(&to_msg);
+  auto& from = static_cast<const atomic_service_mbsb_task_A_Reply_st&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Reply_st)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.sum_result() != 0) {
-    set_sum_result(from.sum_result());
+  if (from._internal_sum_result() != 0) {
+    _this->_internal_set_sum_result(from._internal_sum_result());
   }
-  if (from.return_type() != 0) {
-    set_return_type(from.return_type());
+  if (from._internal_return_type() != 0) {
+    _this->_internal_set_return_type(from._internal_return_type());
   }
-}
-
-void atomic_service_mbsb_task_A_Reply_st::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_A_Reply_st)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void atomic_service_mbsb_task_A_Reply_st::CopyFrom(const atomic_service_mbsb_task_A_Reply_st& from) {
@@ -724,190 +573,156 @@ bool atomic_service_mbsb_task_A_Reply_st::IsInitialized() const {
   return true;
 }
 
-void atomic_service_mbsb_task_A_Reply_st::Swap(atomic_service_mbsb_task_A_Reply_st* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
 void atomic_service_mbsb_task_A_Reply_st::InternalSwap(atomic_service_mbsb_task_A_Reply_st* other) {
   using std::swap;
-  swap(sum_result_, other->sum_result_);
-  swap(return_type_, other->return_type_);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(atomic_service_mbsb_task_A_Reply_st, _impl_.return_type_)
+      + sizeof(atomic_service_mbsb_task_A_Reply_st::_impl_.return_type_)
+      - PROTOBUF_FIELD_OFFSET(atomic_service_mbsb_task_A_Reply_st, _impl_.sum_result_)>(
+          reinterpret_cast<char*>(&_impl_.sum_result_),
+          reinterpret_cast<char*>(&other->_impl_.sum_result_));
 }
 
-::google::protobuf::Metadata atomic_service_mbsb_task_A_Reply_st::GetMetadata() const {
-  protobuf_atomic_5fservice_5fmbsb_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_atomic_5fservice_5fmbsb_2eproto::file_level_metadata[kIndexInFileMessages];
+::PROTOBUF_NAMESPACE_ID::Metadata atomic_service_mbsb_task_A_Reply_st::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_atomic_5fservice_5fmbsb_2eproto_getter, &descriptor_table_atomic_5fservice_5fmbsb_2eproto_once,
+      file_level_metadata_atomic_5fservice_5fmbsb_2eproto[1]);
 }
-
 
 // ===================================================================
 
-void atomic_service_mbsb_task_B_Request_st::InitAsDefaultInstance() {
-}
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int atomic_service_mbsb_task_B_Request_st::kNumber1FieldNumber;
-const int atomic_service_mbsb_task_B_Request_st::kNumber2FieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+class atomic_service_mbsb_task_B_Request_st::_Internal {
+ public:
+};
 
-atomic_service_mbsb_task_B_Request_st::atomic_service_mbsb_task_B_Request_st()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  ::google::protobuf::internal::InitSCC(
-      &protobuf_atomic_5fservice_5fmbsb_2eproto::scc_info_atomic_service_mbsb_task_B_Request_st.base);
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Request_st)
+atomic_service_mbsb_task_B_Request_st::atomic_service_mbsb_task_B_Request_st(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Request_st)
 }
 atomic_service_mbsb_task_B_Request_st::atomic_service_mbsb_task_B_Request_st(const atomic_service_mbsb_task_B_Request_st& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::memcpy(&number1_, &from.number1_,
-    static_cast<size_t>(reinterpret_cast<char*>(&number2_) -
-    reinterpret_cast<char*>(&number1_)) + sizeof(number2_));
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  atomic_service_mbsb_task_B_Request_st* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.number1_){}
+    , decltype(_impl_.number2_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::memcpy(&_impl_.number1_, &from._impl_.number1_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.number2_) -
+    reinterpret_cast<char*>(&_impl_.number1_)) + sizeof(_impl_.number2_));
   // @@protoc_insertion_point(copy_constructor:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Request_st)
 }
 
-void atomic_service_mbsb_task_B_Request_st::SharedCtor() {
-  ::memset(&number1_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&number2_) -
-      reinterpret_cast<char*>(&number1_)) + sizeof(number2_));
+inline void atomic_service_mbsb_task_B_Request_st::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.number1_){0}
+    , decltype(_impl_.number2_){0}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
 }
 
 atomic_service_mbsb_task_B_Request_st::~atomic_service_mbsb_task_B_Request_st() {
   // @@protoc_insertion_point(destructor:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Request_st)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
 }
 
-void atomic_service_mbsb_task_B_Request_st::SharedDtor() {
+inline void atomic_service_mbsb_task_B_Request_st::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
 void atomic_service_mbsb_task_B_Request_st::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
-const ::google::protobuf::Descriptor* atomic_service_mbsb_task_B_Request_st::descriptor() {
-  ::protobuf_atomic_5fservice_5fmbsb_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_atomic_5fservice_5fmbsb_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
-}
-
-const atomic_service_mbsb_task_B_Request_st& atomic_service_mbsb_task_B_Request_st::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_atomic_5fservice_5fmbsb_2eproto::scc_info_atomic_service_mbsb_task_B_Request_st.base);
-  return *internal_default_instance();
-}
-
 
 void atomic_service_mbsb_task_B_Request_st::Clear() {
 // @@protoc_insertion_point(message_clear_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Request_st)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ::memset(&number1_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&number2_) -
-      reinterpret_cast<char*>(&number1_)) + sizeof(number2_));
-  _internal_metadata_.Clear();
+  ::memset(&_impl_.number1_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.number2_) -
+      reinterpret_cast<char*>(&_impl_.number1_)) + sizeof(_impl_.number2_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-bool atomic_service_mbsb_task_B_Request_st::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Request_st)
-  for (;;) {
-    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+const char* atomic_service_mbsb_task_B_Request_st::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
       // int32 number1 = 1;
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &number1_)));
-        } else {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.number1_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // int32 number2 = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &number2_)));
-        } else {
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _impl_.number2_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
     }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Request_st)
-  return true;
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
 failure:
-  // @@protoc_insertion_point(parse_failure:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Request_st)
-  return false;
-#undef DO_
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
 }
 
-void atomic_service_mbsb_task_B_Request_st::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Request_st)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // int32 number1 = 1;
-  if (this->number1() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->number1(), output);
-  }
-
-  // int32 number2 = 2;
-  if (this->number2() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->number2(), output);
-  }
-
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
-  }
-  // @@protoc_insertion_point(serialize_end:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Request_st)
-}
-
-::google::protobuf::uint8* atomic_service_mbsb_task_B_Request_st::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic; // Unused
+uint8_t* atomic_service_mbsb_task_B_Request_st::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Request_st)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // int32 number1 = 1;
-  if (this->number1() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->number1(), target);
+  if (this->_internal_number1() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_number1(), target);
   }
 
   // int32 number2 = 2;
-  if (this->number2() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->number2(), target);
+  if (this->_internal_number2() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(2, this->_internal_number2(), target);
   }
 
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Request_st)
   return target;
@@ -917,65 +732,45 @@ size_t atomic_service_mbsb_task_B_Request_st::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Request_st)
   size_t total_size = 0;
 
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
-  }
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
   // int32 number1 = 1;
-  if (this->number1() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->number1());
+  if (this->_internal_number1() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_number1());
   }
 
   // int32 number2 = 2;
-  if (this->number2() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->number2());
+  if (this->_internal_number2() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_number2());
   }
 
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-void atomic_service_mbsb_task_B_Request_st::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Request_st)
-  GOOGLE_DCHECK_NE(&from, this);
-  const atomic_service_mbsb_task_B_Request_st* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const atomic_service_mbsb_task_B_Request_st>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Request_st)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Request_st)
-    MergeFrom(*source);
-  }
-}
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData atomic_service_mbsb_task_B_Request_st::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    atomic_service_mbsb_task_B_Request_st::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*atomic_service_mbsb_task_B_Request_st::GetClassData() const { return &_class_data_; }
 
-void atomic_service_mbsb_task_B_Request_st::MergeFrom(const atomic_service_mbsb_task_B_Request_st& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Request_st)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
+
+void atomic_service_mbsb_task_B_Request_st::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<atomic_service_mbsb_task_B_Request_st*>(&to_msg);
+  auto& from = static_cast<const atomic_service_mbsb_task_B_Request_st&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Request_st)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.number1() != 0) {
-    set_number1(from.number1());
+  if (from._internal_number1() != 0) {
+    _this->_internal_set_number1(from._internal_number1());
   }
-  if (from.number2() != 0) {
-    set_number2(from.number2());
+  if (from._internal_number2() != 0) {
+    _this->_internal_set_number2(from._internal_number2());
   }
-}
-
-void atomic_service_mbsb_task_B_Request_st::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Request_st)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void atomic_service_mbsb_task_B_Request_st::CopyFrom(const atomic_service_mbsb_task_B_Request_st& from) {
@@ -989,190 +784,156 @@ bool atomic_service_mbsb_task_B_Request_st::IsInitialized() const {
   return true;
 }
 
-void atomic_service_mbsb_task_B_Request_st::Swap(atomic_service_mbsb_task_B_Request_st* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
 void atomic_service_mbsb_task_B_Request_st::InternalSwap(atomic_service_mbsb_task_B_Request_st* other) {
   using std::swap;
-  swap(number1_, other->number1_);
-  swap(number2_, other->number2_);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(atomic_service_mbsb_task_B_Request_st, _impl_.number2_)
+      + sizeof(atomic_service_mbsb_task_B_Request_st::_impl_.number2_)
+      - PROTOBUF_FIELD_OFFSET(atomic_service_mbsb_task_B_Request_st, _impl_.number1_)>(
+          reinterpret_cast<char*>(&_impl_.number1_),
+          reinterpret_cast<char*>(&other->_impl_.number1_));
 }
 
-::google::protobuf::Metadata atomic_service_mbsb_task_B_Request_st::GetMetadata() const {
-  protobuf_atomic_5fservice_5fmbsb_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_atomic_5fservice_5fmbsb_2eproto::file_level_metadata[kIndexInFileMessages];
+::PROTOBUF_NAMESPACE_ID::Metadata atomic_service_mbsb_task_B_Request_st::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_atomic_5fservice_5fmbsb_2eproto_getter, &descriptor_table_atomic_5fservice_5fmbsb_2eproto_once,
+      file_level_metadata_atomic_5fservice_5fmbsb_2eproto[2]);
 }
-
 
 // ===================================================================
 
-void atomic_service_mbsb_task_B_Reply_st::InitAsDefaultInstance() {
-}
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int atomic_service_mbsb_task_B_Reply_st::kSubResultFieldNumber;
-const int atomic_service_mbsb_task_B_Reply_st::kReturnTypeFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+class atomic_service_mbsb_task_B_Reply_st::_Internal {
+ public:
+};
 
-atomic_service_mbsb_task_B_Reply_st::atomic_service_mbsb_task_B_Reply_st()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  ::google::protobuf::internal::InitSCC(
-      &protobuf_atomic_5fservice_5fmbsb_2eproto::scc_info_atomic_service_mbsb_task_B_Reply_st.base);
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Reply_st)
+atomic_service_mbsb_task_B_Reply_st::atomic_service_mbsb_task_B_Reply_st(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Reply_st)
 }
 atomic_service_mbsb_task_B_Reply_st::atomic_service_mbsb_task_B_Reply_st(const atomic_service_mbsb_task_B_Reply_st& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::memcpy(&sub_result_, &from.sub_result_,
-    static_cast<size_t>(reinterpret_cast<char*>(&return_type_) -
-    reinterpret_cast<char*>(&sub_result_)) + sizeof(return_type_));
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  atomic_service_mbsb_task_B_Reply_st* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.sub_result_){}
+    , decltype(_impl_.return_type_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::memcpy(&_impl_.sub_result_, &from._impl_.sub_result_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.return_type_) -
+    reinterpret_cast<char*>(&_impl_.sub_result_)) + sizeof(_impl_.return_type_));
   // @@protoc_insertion_point(copy_constructor:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Reply_st)
 }
 
-void atomic_service_mbsb_task_B_Reply_st::SharedCtor() {
-  ::memset(&sub_result_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&return_type_) -
-      reinterpret_cast<char*>(&sub_result_)) + sizeof(return_type_));
+inline void atomic_service_mbsb_task_B_Reply_st::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.sub_result_){0}
+    , decltype(_impl_.return_type_){0}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
 }
 
 atomic_service_mbsb_task_B_Reply_st::~atomic_service_mbsb_task_B_Reply_st() {
   // @@protoc_insertion_point(destructor:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Reply_st)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
 }
 
-void atomic_service_mbsb_task_B_Reply_st::SharedDtor() {
+inline void atomic_service_mbsb_task_B_Reply_st::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
 void atomic_service_mbsb_task_B_Reply_st::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
-const ::google::protobuf::Descriptor* atomic_service_mbsb_task_B_Reply_st::descriptor() {
-  ::protobuf_atomic_5fservice_5fmbsb_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_atomic_5fservice_5fmbsb_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
-}
-
-const atomic_service_mbsb_task_B_Reply_st& atomic_service_mbsb_task_B_Reply_st::default_instance() {
-  ::google::protobuf::internal::InitSCC(&protobuf_atomic_5fservice_5fmbsb_2eproto::scc_info_atomic_service_mbsb_task_B_Reply_st.base);
-  return *internal_default_instance();
-}
-
 
 void atomic_service_mbsb_task_B_Reply_st::Clear() {
 // @@protoc_insertion_point(message_clear_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Reply_st)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ::memset(&sub_result_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&return_type_) -
-      reinterpret_cast<char*>(&sub_result_)) + sizeof(return_type_));
-  _internal_metadata_.Clear();
+  ::memset(&_impl_.sub_result_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.return_type_) -
+      reinterpret_cast<char*>(&_impl_.sub_result_)) + sizeof(_impl_.return_type_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-bool atomic_service_mbsb_task_B_Reply_st::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Reply_st)
-  for (;;) {
-    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+const char* atomic_service_mbsb_task_B_Reply_st::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
       // int32 sub_result = 1;
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &sub_result_)));
-        } else {
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.sub_result_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
+        continue;
       // int32 return_type = 2;
-      case 2: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
-
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &return_type_)));
-        } else {
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _impl_.return_type_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
           goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, _internal_metadata_.mutable_unknown_fields()));
-        break;
-      }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
     }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Reply_st)
-  return true;
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
 failure:
-  // @@protoc_insertion_point(parse_failure:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Reply_st)
-  return false;
-#undef DO_
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
 }
 
-void atomic_service_mbsb_task_B_Reply_st::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Reply_st)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // int32 sub_result = 1;
-  if (this->sub_result() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->sub_result(), output);
-  }
-
-  // int32 return_type = 2;
-  if (this->return_type() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->return_type(), output);
-  }
-
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
-  }
-  // @@protoc_insertion_point(serialize_end:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Reply_st)
-}
-
-::google::protobuf::uint8* atomic_service_mbsb_task_B_Reply_st::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  (void)deterministic; // Unused
+uint8_t* atomic_service_mbsb_task_B_Reply_st::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Reply_st)
-  ::google::protobuf::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // int32 sub_result = 1;
-  if (this->sub_result() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->sub_result(), target);
+  if (this->_internal_sub_result() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_sub_result(), target);
   }
 
   // int32 return_type = 2;
-  if (this->return_type() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->return_type(), target);
+  if (this->_internal_return_type() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(2, this->_internal_return_type(), target);
   }
 
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Reply_st)
   return target;
@@ -1182,65 +943,45 @@ size_t atomic_service_mbsb_task_B_Reply_st::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Reply_st)
   size_t total_size = 0;
 
-  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
-  }
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
   // int32 sub_result = 1;
-  if (this->sub_result() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->sub_result());
+  if (this->_internal_sub_result() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_sub_result());
   }
 
   // int32 return_type = 2;
-  if (this->return_type() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->return_type());
+  if (this->_internal_return_type() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_return_type());
   }
 
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-void atomic_service_mbsb_task_B_Reply_st::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Reply_st)
-  GOOGLE_DCHECK_NE(&from, this);
-  const atomic_service_mbsb_task_B_Reply_st* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const atomic_service_mbsb_task_B_Reply_st>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Reply_st)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Reply_st)
-    MergeFrom(*source);
-  }
-}
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData atomic_service_mbsb_task_B_Reply_st::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    atomic_service_mbsb_task_B_Reply_st::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*atomic_service_mbsb_task_B_Reply_st::GetClassData() const { return &_class_data_; }
 
-void atomic_service_mbsb_task_B_Reply_st::MergeFrom(const atomic_service_mbsb_task_B_Reply_st& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Reply_st)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
+
+void atomic_service_mbsb_task_B_Reply_st::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<atomic_service_mbsb_task_B_Reply_st*>(&to_msg);
+  auto& from = static_cast<const atomic_service_mbsb_task_B_Reply_st&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Reply_st)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.sub_result() != 0) {
-    set_sub_result(from.sub_result());
+  if (from._internal_sub_result() != 0) {
+    _this->_internal_set_sub_result(from._internal_sub_result());
   }
-  if (from.return_type() != 0) {
-    set_return_type(from.return_type());
+  if (from._internal_return_type() != 0) {
+    _this->_internal_set_return_type(from._internal_return_type());
   }
-}
-
-void atomic_service_mbsb_task_B_Reply_st::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:atomic_service_mbsb_Package.atomic_service_mbsb_task_B_Reply_st)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void atomic_service_mbsb_task_B_Reply_st::CopyFrom(const atomic_service_mbsb_task_B_Reply_st& from) {
@@ -1254,40 +995,43 @@ bool atomic_service_mbsb_task_B_Reply_st::IsInitialized() const {
   return true;
 }
 
-void atomic_service_mbsb_task_B_Reply_st::Swap(atomic_service_mbsb_task_B_Reply_st* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
 void atomic_service_mbsb_task_B_Reply_st::InternalSwap(atomic_service_mbsb_task_B_Reply_st* other) {
   using std::swap;
-  swap(sub_result_, other->sub_result_);
-  swap(return_type_, other->return_type_);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(atomic_service_mbsb_task_B_Reply_st, _impl_.return_type_)
+      + sizeof(atomic_service_mbsb_task_B_Reply_st::_impl_.return_type_)
+      - PROTOBUF_FIELD_OFFSET(atomic_service_mbsb_task_B_Reply_st, _impl_.sub_result_)>(
+          reinterpret_cast<char*>(&_impl_.sub_result_),
+          reinterpret_cast<char*>(&other->_impl_.sub_result_));
 }
 
-::google::protobuf::Metadata atomic_service_mbsb_task_B_Reply_st::GetMetadata() const {
-  protobuf_atomic_5fservice_5fmbsb_2eproto::protobuf_AssignDescriptorsOnce();
-  return ::protobuf_atomic_5fservice_5fmbsb_2eproto::file_level_metadata[kIndexInFileMessages];
+::PROTOBUF_NAMESPACE_ID::Metadata atomic_service_mbsb_task_B_Reply_st::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_atomic_5fservice_5fmbsb_2eproto_getter, &descriptor_table_atomic_5fservice_5fmbsb_2eproto_once,
+      file_level_metadata_atomic_5fservice_5fmbsb_2eproto[3]);
 }
-
 
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace atomic_service_mbsb_Package
-namespace google {
-namespace protobuf {
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Request_st* Arena::CreateMaybeMessage< ::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Request_st >(Arena* arena) {
-  return Arena::CreateInternal< ::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Request_st >(arena);
+PROTOBUF_NAMESPACE_OPEN
+template<> PROTOBUF_NOINLINE ::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Request_st*
+Arena::CreateMaybeMessage< ::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Request_st >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Request_st >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Reply_st* Arena::CreateMaybeMessage< ::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Reply_st >(Arena* arena) {
-  return Arena::CreateInternal< ::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Reply_st >(arena);
+template<> PROTOBUF_NOINLINE ::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Reply_st*
+Arena::CreateMaybeMessage< ::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Reply_st >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::atomic_service_mbsb_Package::atomic_service_mbsb_task_A_Reply_st >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Request_st* Arena::CreateMaybeMessage< ::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Request_st >(Arena* arena) {
-  return Arena::CreateInternal< ::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Request_st >(arena);
+template<> PROTOBUF_NOINLINE ::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Request_st*
+Arena::CreateMaybeMessage< ::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Request_st >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Request_st >(arena);
 }
-template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Reply_st* Arena::CreateMaybeMessage< ::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Reply_st >(Arena* arena) {
-  return Arena::CreateInternal< ::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Reply_st >(arena);
+template<> PROTOBUF_NOINLINE ::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Reply_st*
+Arena::CreateMaybeMessage< ::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Reply_st >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::atomic_service_mbsb_Package::atomic_service_mbsb_task_B_Reply_st >(arena);
 }
-}  // namespace protobuf
-}  // namespace google
+PROTOBUF_NAMESPACE_CLOSE
 
 // @@protoc_insertion_point(global_scope)
+#include <google/protobuf/port_undef.inc>
