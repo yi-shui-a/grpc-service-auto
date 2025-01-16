@@ -1,1 +1,11 @@
 bin/*
+atom_service/*
+atom_json/*
+IDL_inc/*
+Json/*
+json_client/*
+json_server/*
+objs/*
+protos/*
+rpc_client_inc/*
+rpc_server_inc/*
