@@ -102,7 +102,7 @@ class Server:
         # 将原子服务的json作为一个service的dict变量，全部传入
         for service in info["services"]:
             with open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../Json/{service}.json",
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_json/{service}.json",
                 "r",
             ) as file:
                 # data = json.loads(file.read())

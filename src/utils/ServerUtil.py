@@ -33,6 +33,12 @@ class ServerUtil:
             broadcast_port=self._server.get_broadcast_port(),
         )
 
+        # 确保目录存在
+        os.makedirs(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../server_src/",
+            exist_ok=True,
+        )
+
         # 将res_str写入框架内的cpp文件中，同名不同路径
         with open(
             f"{os.path.dirname(os.path.abspath(__file__))}/../../server_src/{self._server._async_server_name}.cpp",
@@ -60,6 +66,12 @@ class ServerUtil:
             password=self._server.get_password(),
             broadcast_address=self._server.get_broadcast_address(),
             broadcast_port=self._server.get_broadcast_port(),
+        )
+
+        # 确保目录存在
+        os.makedirs(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../server_src/",
+            exist_ok=True,
         )
 
         # 将res_str写入框架内的cpp文件中，同名不同路径

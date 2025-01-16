@@ -49,11 +49,13 @@ if __name__ == "__main__":
 
     # 创建一个server
     serverA = Server()
-    with open(f"{os.path.dirname(os.path.abspath(__file__))}/user_info.json", "r") as file:
+    with open(
+        f"{os.path.dirname(os.path.abspath(__file__))}/user_info.json", "r"
+    ) as file:
         user_info = json.loads(file.read())
     serverA.set_info_from_user(user_info)
     serverA.saveServerJson()
     serverUtilA = ServerUtil(serverA)
-    serverUtilA.compileDemo(filename="time_test")
+    # serverUtilA.compileDemo(filename="time_test")
     serverUtilA.generateSyncServer()
     serverUtilA.compileSyncServer()

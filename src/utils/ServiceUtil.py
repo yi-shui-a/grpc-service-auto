@@ -82,7 +82,7 @@ class ServiceUtil:
             basic_info["priority_level"] = int(value)
             return
         if key == "chinese_name":
-            value = value.replace("\"", "")
+            value = value.replace('"', "")
             basic_info["chinese_name"] = value
             return
         if key in basic_info_format_list:
@@ -170,21 +170,18 @@ class ServiceUtil:
         # 使用非贪婪模式 .*? 以确保匹配到最近的 End 注释
         section_pattern = re.compile(
             r"/\*[-]+\s*(.*?)\s*Begin\s*[-]+\*/\s*(.*?)\s*/\*[-]+\s*\1\s*End\s*[-]+\*/",
-            re.DOTALL
+            re.DOTALL,
         )
         for match in section_pattern.finditer(content):
             content_lines.append(match.group(0))
 
         # 提取 #endif
-        endif_pattern = re.compile(
-            r"#endif\s*//\s*(\w+)", re.MULTILINE
-        )
+        endif_pattern = re.compile(r"#endif\s*//\s*(\w+)", re.MULTILINE)
         endif_match = endif_pattern.search(content)
         if endif_match:
             content_lines.append(f"#endif // {endif_match.group(1)}")
 
         content_lines = "\n".join(content_lines)
-
 
         root_json_dict = dict()
 
@@ -220,29 +217,16 @@ class ServiceUtil:
         interface_declaration = []
 
         # 正则表达式模式
-        include_pattern = re.compile(
-            r"include",
-            re.MULTILINE
-        )
+        include_pattern = re.compile(r"include", re.MULTILINE)
 
-        service_info_pattern = re.compile(
-            r"service\s*info",
-            re.MULTILINE
-        )
+        service_info_pattern = re.compile(r"service\s*info", re.MULTILINE)
 
-        return_type_pattern = re.compile(
-            r"return\s*type",
-            re.MULTILINE
-        )
+        return_type_pattern = re.compile(r"return\s*type", re.MULTILINE)
 
-        message_info_pattern = re.compile(
-            r"message\s*info",
-            re.MULTILINE
-        )
+        message_info_pattern = re.compile(r"message\s*info", re.MULTILINE)
 
         interface_declaration_pattern = re.compile(
-            r"interface\s*declaration",
-            re.MULTILINE
+            r"interface\s*declaration", re.MULTILINE
         )
 
         line_index = 0
@@ -251,8 +235,7 @@ class ServiceUtil:
             """获取解析状态"""
             # begin正则表达式模式
             begin_pattern = re.compile(
-                r"/\*[-]+\s*(.*?)\s*Begin\s*[-]+\*/",
-                re.DOTALL | re.IGNORECASE
+                r"/\*[-]+\s*(.*?)\s*Begin\s*[-]+\*/", re.DOTALL | re.IGNORECASE
             )
             begin_match = begin_pattern.search(line)
             if begin_match:
@@ -262,7 +245,9 @@ class ServiceUtil:
                 service_info_begin_match = service_info_pattern.search(begin)
                 return_type_begin_match = return_type_pattern.search(begin)
                 message_info_begin_match = message_info_pattern.search(begin)
-                interface_declaration_begin_match = interface_declaration_pattern.search(begin)
+                interface_declaration_begin_match = (
+                    interface_declaration_pattern.search(begin)
+                )
 
                 if include_begin_match:
                     state.append(include_state)
@@ -274,7 +259,6 @@ class ServiceUtil:
                     state.append(message_info_state)
                 elif interface_declaration_begin_match:
                     state.append(interface_declaration_state)
-
 
             if len(state) != 0:
                 """解析注释"""
@@ -320,15 +304,21 @@ class ServiceUtil:
                         nested_parts = line[1:].split(":", maxsplit=1)
                         nested_key = nested_parts[0].strip()
                         nested_key = nested_key.lstrip("+ ").strip()
-                        nested_value = nested_parts[1].strip() if len(nested_parts) > 1 else ""
+                        nested_value = (
+                            nested_parts[1].strip() if len(nested_parts) > 1 else ""
+                        )
                         if current_section in {"developer", "maintainer"}:
-                            basic_info["owner"][current_section][nested_key] = nested_value
+                            basic_info["owner"][current_section][
+                                nested_key
+                            ] = nested_value
                         elif current_section in {"operating_system"}:
                             if nested_key == "name":
                                 operating_system_instance = dict()
                                 operating_system_instance[nested_key] = nested_value
                                 operating_system_instance["version"] = {}
-                                basic_info["operating_system"].append(operating_system_instance)
+                                basic_info["operating_system"].append(
+                                    operating_system_instance
+                                )
                             else:
                                 basic_info["operating_system"][-1]["version"][
                                     nested_key
@@ -336,9 +326,6 @@ class ServiceUtil:
 
                         else:
                             basic_info[current_section][nested_key] = nested_value
-
-
-
 
                 """解析return_code"""
                 if state_now == return_type_state:
@@ -355,7 +342,6 @@ class ServiceUtil:
                             continue
                         return_code[return_key] = int(return_value)
 
-
                 """解释结构体"""
                 if state_now == message_info_state:
                     message_info.append(line)
@@ -363,12 +349,10 @@ class ServiceUtil:
                 if state_now == interface_declaration_state:
                     interface_declaration.append(line)
 
-
                 """更新解析状态"""
                 # end正则表达式模式
                 end_pattern = re.compile(
-                    r"/\*[-]+\s*(.*?)\s*End\s*[-]+\*/",
-                    re.DOTALL | re.IGNORECASE
+                    r"/\*[-]+\s*(.*?)\s*End\s*[-]+\*/", re.DOTALL | re.IGNORECASE
                 )
                 end_match = end_pattern.search(line)
                 if end_match:
@@ -378,7 +362,9 @@ class ServiceUtil:
                     service_info_end_match = service_info_pattern.search(end)
                     return_type_end_match = return_type_pattern.search(end)
                     message_info_end_match = message_info_pattern.search(end)
-                    interface_declaration_end_match = interface_declaration_pattern.search(end)
+                    interface_declaration_end_match = (
+                        interface_declaration_pattern.search(end)
+                    )
 
                     state_now = state.pop()
 
@@ -400,20 +386,16 @@ class ServiceUtil:
                     else:
                         state.append(state_now)
 
-
             line_index += 1
-
-
-
 
         message_info = "\n".join(message_info)
         # 删除单行注释
         message_info = re.sub(r"//.*$", "", message_info, flags=re.MULTILINE)
         interface_declaration = "\n".join(interface_declaration)
         # 删除单行注释
-        interface_declaration = re.sub(r"//.*$", "", interface_declaration, flags=re.MULTILINE)
-
-
+        interface_declaration = re.sub(
+            r"//.*$", "", interface_declaration, flags=re.MULTILINE
+        )
 
         """
         解析结构体
@@ -494,10 +476,10 @@ class ServiceUtil:
 
                 # 移除开头的 'struct '
                 if block.startswith("struct "):
-                    block = block[len("struct "):]
+                    block = block[len("struct ") :]
 
                 # 找到第一对花括号
-                brace_start = block.find('{')
+                brace_start = block.find("{")
                 if brace_start == -1:
                     continue  # 不符合期望格式
 
@@ -505,15 +487,15 @@ class ServiceUtil:
                 name_part = block[:brace_start].strip()
 
                 # 找到与之匹配的 '}'
-                brace_end = block.find('}', brace_start)
+                brace_end = block.find("}", brace_start)
                 if brace_end == -1:
                     continue
 
                 fields = []
                 # 解析花括号内的所有字段
-                fields_str = block[brace_start + 1: brace_end].strip()
+                fields_str = block[brace_start + 1 : brace_end].strip()
                 # 按分号拆分每个字段
-                field_lines = fields_str.split(';')
+                field_lines = fields_str.split(";")
                 index = 1
                 for f in field_lines:
                     if f == "":
@@ -593,9 +575,15 @@ class ServiceUtil:
 
         # 保存json到Json文件夹
 
+        # 确保目录存在
+        os.makedirs(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_json/",
+            exist_ok=True,
+        )
+
         json_info = self._service.to_dict()
         with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../Json/{self._service._base_info.getName()}.json",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_json/{self._service._base_info.getName()}.json",
             "w",
         ) as file:
             json.dump(json_info, file, indent=4)
@@ -722,8 +710,12 @@ class ServiceUtil:
             res_str = res_str + input_src_fun_str + "\n\n"
 
         # 将res_str写入框架内的cpp文件中，同名不同路径
-        if not os.path.isdir( f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}"):
-            os.makedirs( f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}")
+        if not os.path.isdir(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}"
+        ):
+            os.makedirs(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}"
+            )
 
         with open(
             f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}/{self._service._base_info.getName()}.cpp",
@@ -775,9 +767,13 @@ class ServiceUtil:
         lines.insert(endif_index, res_str + "\n")
 
         # 将修改后的内容写回文件
-        if not os.path.isdir(f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}"):
-            os.makedirs(f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}")
-        
+        if not os.path.isdir(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}"
+        ):
+            os.makedirs(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}"
+            )
+
         with open(
             f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}/{self._service._base_info.getName()}.h",
             "w",
@@ -800,63 +796,6 @@ class ServiceUtil:
 
     # def generateAsynServerFile(self):
     #     pass
-
-    # def _correctJson(self):
-    #     res_dict =dict()
-    #     res_dict[self._service._base_info.getName()] = dict()
-    #     res_dict[self._service._base_info.getName()]["name"] = self._service._base_info.getName() +"service"
-    #     res_dict[self._service._base_info.getName()]["description"] = self._service._base_info.getDescription()
-    #     res_dict[self._service._base_info.getName()]["developer"] = dict()
-    #     res_dict[self._service._base_info.getName()]["developer"]["name"] = self._service._owner.get_developer().get_name()
-    #     res_dict[self._service._base_info.getName()]["developer"]["email"] = self._service._owner.get_developer().get_email()
-    #     res_dict[self._service._base_info.getName()]["version"] = self._service._base_info.getVersion()
-    #     res_dict[self._service._base_info.getName()]["build_time"] = self._service._base_info.getBuildTime()
-    #     res_dict[self._service._base_info.getName()]["priority_level"] = self._service._base_info.getPriorityLevel()
-    #     res_dict[self._service._base_info.getName()]["resource_requirements"] = dict()
-    #     res_dict[self._service._base_info.getName()]["resource_requirements"]["cpu_architecture"] = self._service._resource_requirement.get_cpu_architecture()
-    #     res_dict[self._service._base_info.getName()]["resource_requirements"]["hard_disk"] = self._service._resource_requirement.get_hard_disk()
-    #     res_dict[self._service._base_info.getName()]["resource_requirements"]["memory"] = self._service._resource_requirement.get_memory_size()
-    #     res_dict["implement_rpc"]= dict()
-    #     res_dict["implement_rpc"]["syntax"] = "proto3"
-    #     res_dict["implement_rpc"]["package"] = self._service._base_info.getName() + "_Package"
-    #     res_dict["implement_rpc"]["service_name"] = self._service._base_info.getName() + "_Service"
-    #     res_dict["implement_rpc"]["request"] = self._service._service_methods[0]._requestMsg.get_name()
-    #     res_dict["implement_rpc"]["reply"] = self._service._service_methods[0]._responseMsg.get_name()
-    #     res_dict["implement_rpc"]["atom_interface"] = self._service._service_methods[0]._name +"_func"
-    #     res_dict["implement_rpc"]["atom_name"] = self._service._base_info.getName()
-
-    #     res_dict["messages"] =list()
-    #     res_dict["messages"].append(self._service._service_methods[0]._requestMsg.to_dict())
-    #     res_dict["messages"].append(self._service._service_methods[0]._responseMsg.to_dict())
-    #     res_dict["messages"][0]["lable"] = res_dict["messages"][0]["label"]
-    #     del res_dict["messages"][0]["label"]
-    #     res_dict["messages"][1]["lable"] = res_dict["messages"][1]["label"]
-    #     del res_dict["messages"][1]["label"]
-    #     for field in res_dict["messages"][0]["fields"]:
-    #         field["type"] = field["type"].replace("std::","")
-    #         if field["type"] == "int":
-    #             field["type"] = "int32"
-    #     for field in res_dict["messages"][1]["fields"]:
-    #         field["type"] = field["type"].replace("std::","")
-    #         if field["type"] == "int":
-    #             field["type"] = "int32"
-
-    #     res_dict["services"] =list()
-    #     temp_dict =dict()
-    #     temp_dict["name"] = self._service._base_info.getName() +"_Service"
-    #     temp_dict["methods"] = list()
-    #     temp_dict["methods"].append(self._service._service_methods[0].to_dict())
-    #     temp_dict["methods"][0]["category"] = "user_management"
-    #     temp_dict["methods"][0]["requestType"] = temp_dict["methods"][0]["requestMsg"]
-    #     temp_dict["methods"][0]["responseType"] = temp_dict["methods"][0]["responseMsg"]
-    #     del temp_dict["methods"][0]["requestMsg"]
-    #     del temp_dict["methods"][0]["responseMsg"]
-    #     res_dict["services"].append(temp_dict)
-
-    #     # 保存json到Json文件夹
-    #     with open(f"../../Json/{self._service._base_info.getName()}.json", 'w') as file:
-    #         json.dump(res_dict, file, indent=4)
-    #         print(f"../../Json/{self._service._base_info.getName()}.json generated successfully!")
 
 
 if __name__ == "__main__":

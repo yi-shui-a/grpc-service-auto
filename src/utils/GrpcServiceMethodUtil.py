@@ -44,7 +44,7 @@ class GrpcServiceMethodUtil:
         self.__service_name_interface = self.__service_name + "_interface"
 
     def add_info_to_json(self):
-        file_path = f"{os.path.dirname(os.path.abspath(__file__))}/../../Json/{self.__service_name}.json"
+        file_path = f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_json/{self.__service_name}.json"
         try:
             # 检查文件是否存在
             if not os.path.exists(file_path):
@@ -67,12 +67,12 @@ class GrpcServiceMethodUtil:
         # data["grpc_info"]["name_interface"] = self.__service_name_interface
 
         with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../Json/{self.__service_name}.json",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_json/{self.__service_name}.json",
             "w",
         ) as file:
             file.write(json.dumps(data, indent=4))
         print(
-            f"add grpc info to {os.path.dirname(os.path.abspath(__file__))}/../../Json/{self.__service_name}.json successfully!"
+            f"add grpc info to {os.path.dirname(os.path.abspath(__file__))}/../../atom_json/{self.__service_name}.json successfully!"
         )
 
     def generateProtoFile(self):
@@ -90,6 +90,12 @@ class GrpcServiceMethodUtil:
             service_name_service=self.__service_name_service,
             messages=self._messages,
             methods=self._service_methods,
+        )
+
+        # 确保目录存在
+        os.makedirs(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../protos/",
+            exist_ok=True,
         )
 
         # 将res_str写入框架内的cpp文件中，同名不同路径
@@ -154,6 +160,12 @@ class GrpcServiceMethodUtil:
             methods=self._service_methods,
         )
 
+        # 确保目录存在
+        os.makedirs(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_server_inc/",
+            exist_ok=True,
+        )
+
         # 将res_str写入框架内的cpp文件中，同名不同路径
         with open(
             f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_server_inc/{self.__service_name}_impl.h",
@@ -180,6 +192,12 @@ class GrpcServiceMethodUtil:
             service_name_interface=self.__service_name_interface,
             messages=self._messages,
             methods=self._service_methods,
+        )
+
+        # 确保目录存在
+        os.makedirs(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_client_inc/",
+            exist_ok=True,
         )
 
         # 将res_str写入框架内的cpp文件中，同名不同路径
