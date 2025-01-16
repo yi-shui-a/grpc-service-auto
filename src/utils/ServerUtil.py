@@ -129,6 +129,7 @@ class ServerUtil:
             f"SERVICE={self._get_name_list()}",
             f"SERVER={self._server._sync_server_name}",
         ]
+
         try:
             # 调用make命令，并等待其完成
             result = subprocess.run(
