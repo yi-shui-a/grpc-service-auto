@@ -4,7 +4,7 @@
 #include <thread>
 #include <grpcpp/grpcpp.h>
 #include "../protos/atomic_service_sf.grpc.pb.h"
-#include "../atom_inc/atomic_service_sf.h"
+#include "../atom_service/atomic_service_sf/atomic_service_sf.h"
 
 
 void atomic_service_fun_task_C_func(atomic_service_sf_task_C_Request_st* request, atomic_service_sf_task_C_Reply_st* reply);

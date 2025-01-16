@@ -10,9 +10,8 @@ BUILD_DIR := build
 # 头文件目录
 IDL_INC := ../../../IDL_inc
 RPC_CLIENT_INC := ../../../rpc_client_inc
-ATOM_INC := ../../../atom_inc
+ATOM_SERVICE :=../../../atom_service
 PROTOS :=../../../protos
-ATOM_SRC :=../../../atom_src
 RPC_SERVER_INC :=../../../rpc_server_inc
 
 # gRPC 和 Protobuf 头文件路径
@@ -42,13 +41,14 @@ SERVER ?= default
 $(shell mkdir -p $(BUILD_DIR))
 $(shell mkdir -p $(BIN_DIR))
 
+SERVICES = $(SERVICE)
 
 # 头文件列表
-ATOM_INCS = $(addprefix $(ATOM_INC)/, $(addsuffix .h, $(SERVICE)))
-ATOM_SRCS = $(addprefix $(ATOM_SRC)/, $(addsuffix .cpp, $(SERVICE)))
+ATOM_INCS = $(foreach svc,$(SERVICES),$(ATOM_SERVICE)/$(svc)/$(svc).h)
+ATOM_SRCS = $(foreach svc,$(SERVICES),$(ATOM_SERVICE)/$(svc)/$(svc).cpp)
 SERVER_SRCS = $(addprefix $(SERVER_SRC)/, $(addsuffix .cpp, $(SERVER)))
-IDL_INCS = $(addprefix $(IDL_INC)/, $(addsuffix.h, $(TOPIC)))
-IDL_SRCS = $(addprefix $(IDL_INC)/, $(addsuffix.c, $(TOPIC)))
+IDL_INCS = $(addprefix $(IDL_INC)/, $(addsuffix .h, $(TOPIC)))
+IDL_SRCS = $(addprefix $(IDL_INC)/, $(addsuffix .c, $(TOPIC)))
 PROTO_SRCS = $(addprefix $(PROTOS)/, $(addsuffix .pb.cc, $(SERVICE))) \
              $(addprefix $(PROTOS)/, $(addsuffix .grpc.pb.cc, $(SERVICE)))
 PROTO_INCS = $(addprefix $(PROTOS)/, $(addsuffix .pb.h, $(SERVICE))) \
@@ -79,9 +79,9 @@ $(BIN_DIR)/%: $(BUILD_DIR)/%_server.o $(ATOM_OBJS) $(PROTO_OBJS) $(IDL_OBJS)
 
 
 # 编译原子服务源文件
-$(BUILD_DIR)/%_atom.o: $(ATOM_SRC)/%.cpp $(ATOM_INC)/%.h
+$(BUILD_DIR)/%_atom.o: $(ATOM_SERVICE)/*/%.cpp $(ATOM_SERVICE)/*/%.h
 	@echo ">>>>[INFO] Compiling $<..."
-	$(CXX) $(CXXFLAGS) -I$(ATOM_INC) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I$(ATOM_SERVICE) -c $< -o $@
 
 # 编译 Protobuf 生成的源文件
 $(BUILD_DIR)/%_pb.o: $(PROTOS)/%.pb.cc $(PROTOS)/%.pb.h
@@ -100,7 +100,7 @@ $(BUILD_DIR)/%_idl.o: $(IDL_INC)/%.c
 # 编译服务器源文件
 $(BUILD_DIR)/%_server.o: $(SERVER_SRC)/%.cpp $(ATOM_INCS) $(IDL_INCS) $(RPC_CLIENT_INCS)
 	@echo ">>>>[INFO] Compiling $<..."
-	$(CXX) $(CXXFLAGS) -I$(IDL_INC) -I$(RPC_CLIENT_INC) -I$(ATOM_INC) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I$(IDL_INC) -I$(RPC_CLIENT_INC) -I$(ATOM_SERVICE) -c $< -o $@
 
 # 清理所有生成的文件
 clean:

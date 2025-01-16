@@ -8,7 +8,7 @@
 
 #include "../rpc_client_inc/atomic_service_mbsb_client.h"
 
-#include "../atom_inc/atomic_service_mbsb.h"
+#include "../atom_service/atomic_service_mbsb/atomic_service_mbsb.h"
 
 using grpc::Channel;
 using grpc::ClientContext;

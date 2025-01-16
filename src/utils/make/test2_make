@@ -6,8 +6,7 @@ LDFLAGS = $(shell pkg-config --libs protobuf grpc++ grpc) -pthread
 
 # 目录定义
 BASE_DIR = ../../../
-ATOM_INC = $(BASE_DIR)atom_inc
-ATOM_SRC = $(BASE_DIR)atom_src
+ATOM_SERVICE_DIR = $(BASE_DIR)atom_service
 PROTOS = $(BASE_DIR)protos
 RPC_CLIENT_INC = $(BASE_DIR)rpc_client_inc
 RPC_SERVER_INC = $(BASE_DIR)rpc_server_inc
@@ -26,23 +25,30 @@ $(shell mkdir -p $(BIN_DIR))
 SERVICE ?= default_service
 SERVER ?= default_server
 
-# 基于 SERVICE 和 SERVER 生成源文件和头文件列表
-ATOM_INCS = $(addprefix $(ATOM_INC)/, $(addsuffix .h, $(SERVICE)))
-ATOM_SRCS = $(addprefix $(ATOM_SRC)/, $(addsuffix .cpp, $(SERVICE)))
-PROTO_SRCS = $(addprefix $(PROTOS)/, $(addsuffix .pb.cc, $(SERVICE))) \
-             $(addprefix $(PROTOS)/, $(addsuffix .grpc.pb.cc, $(SERVICE)))
-PROTO_INCS = $(addprefix $(PROTOS)/, $(addsuffix .pb.h, $(SERVICE))) \
-             $(addprefix $(PROTOS)/, $(addsuffix .grpc.pb.h, $(SERVICE)))
+# 支持多个 SERVICE，使用空格分隔
+SERVICES = $(SERVICE)
+
+# 基于 SERVICES 生成 ATOM_INCS 和 ATOM_SRCS
+ATOM_INCS = $(foreach svc,$(SERVICES),$(ATOM_SERVICE_DIR)/$(svc)/$(svc).h)
+ATOM_SRCS = $(foreach svc,$(SERVICES),$(ATOM_SERVICE_DIR)/$(svc)/$(svc).cpp)
+
+# Protobuf 生成的源文件
+PROTO_SRCS = $(addprefix $(PROTOS)/, $(addsuffix .pb.cc, $(SERVICES))) \
+             $(addprefix $(PROTOS)/, $(addsuffix .grpc.pb.cc, $(SERVICES)))
+PROTO_INCS = $(addprefix $(PROTOS)/, $(addsuffix .pb.h, $(SERVICES))) \
+             $(addprefix $(PROTOS)/, $(addsuffix .grpc.pb.h, $(SERVICES)))
+
+# 服务器源文件
 SERVER_SRCS = $(addprefix $(SERVER_SRC)/, $(addsuffix .cpp, $(SERVER)))
 
-ATOM_OBJS = $(addprefix $(OBJS_DIR)/, $(addsuffix _atom.o, $(SERVICE)))
-PROTO_OBJS = $(addprefix $(OBJS_DIR)/, $(addsuffix _pb.o, $(SERVICE))) \
-             $(addprefix $(OBJS_DIR)/, $(addsuffix _grpc_pb.o, $(SERVICE)))
+# 生成对象文件列表
+ATOM_OBJS = $(foreach svc,$(SERVICES),$(OBJS_DIR)/$(svc)_atom.o)
+PROTO_OBJS = $(foreach svc,$(SERVICES),$(OBJS_DIR)/$(svc)_pb.o $(OBJS_DIR)/$(svc)_grpc_pb.o)
 SERVER_OBJS = $(addprefix $(OBJS_DIR)/, $(addsuffix _server.o, $(SERVER)))
 
 # RPC 客户端和服务器头文件
-RPC_CLIENT_INCS = $(addprefix $(RPC_CLIENT_INC)/, $(addsuffix _client.h, $(SERVICE)))
-RPC_SERVER_INCS = $(addprefix $(RPC_SERVER_INC)/, $(addsuffix _impl.h, $(SERVICE)))
+RPC_CLIENT_INCS = $(foreach svc,$(SERVICES),$(RPC_CLIENT_INC)/$(svc)_client.h)
+RPC_SERVER_INCS = $(foreach svc,$(SERVICES),$(RPC_SERVER_INC)/$(svc)_impl.h)
 
 # 所有对象文件
 ALL_OBJS = $(ATOM_OBJS) $(PROTO_OBJS) $(SERVER_OBJS)
@@ -52,7 +58,7 @@ EXECUTABLES = $(addprefix $(BIN_DIR)/, $(SERVER))
 
 # 编译所有目标
 all: $(EXECUTABLES)
-	@echo "SERVICE: $(SERVICE)"
+	@echo "SERVICES: $(SERVICES)"
 	@echo "ATOM_SRCS: $(ATOM_SRCS)"
 	@echo "PROTO_SRCS: $(PROTO_SRCS)"
 	@echo "ATOM_OBJS: $(ATOM_OBJS)"
@@ -69,9 +75,9 @@ $(BIN_DIR)/%: $(OBJS_DIR)/%_server.o $(ATOM_OBJS) $(PROTO_OBJS)
 	$(CXX) $(CXXFLAGS) $^ $(LDFLAGS) -o $@
 
 # 编译原子服务源文件
-$(OBJS_DIR)/%_atom.o: $(ATOM_SRC)/%.cpp $(ATOM_INC)/%.h
+$(OBJS_DIR)/%_atom.o: $(ATOM_SERVICE_DIR)/*/%.cpp $(ATOM_SERVICE_DIR)/*/%.h
 	@echo ">>>>[INFO] Compiling $<..."
-	$(CXX) $(CXXFLAGS) -I$(ATOM_INC) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I$(ATOM_SERVICE_DIR) -c $< -o $@
 
 # 编译 Protobuf 生成的源文件
 $(OBJS_DIR)/%_pb.o: $(PROTOS)/%.pb.cc $(PROTOS)/%.pb.h
@@ -85,7 +91,7 @@ $(OBJS_DIR)/%_grpc_pb.o: $(PROTOS)/%.grpc.pb.cc $(PROTOS)/%.grpc.pb.h $(PROTOS)/
 # 编译服务器源文件
 $(OBJS_DIR)/%_server.o: $(SERVER_SRC)/%.cpp $(ATOM_INCS) $(RPC_SERVER_INCS) $(RPC_CLIENT_INCS)
 	@echo ">>>>[INFO] Compiling $<..."
-	$(CXX) $(CXXFLAGS) -I$(ATOM_INC) -I$(RPC_SERVER_INC) -I$(RPC_CLIENT_INC) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I$(ATOM_SERVICE_DIR) -I$(RPC_SERVER_INC) -I$(RPC_CLIENT_INC) -c $< -o $@
 
 # 清理目标
 clean:

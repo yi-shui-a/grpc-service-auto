@@ -722,13 +722,16 @@ class ServiceUtil:
             res_str = res_str + input_src_fun_str + "\n\n"
 
         # 将res_str写入框架内的cpp文件中，同名不同路径
+        if not os.path.isdir( f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}"):
+            os.makedirs( f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}")
+
         with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_src/{self._service._base_info.getName()}.cpp",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}/{self._service._base_info.getName()}.cpp",
             "w",
         ) as file:
             file.write(res_str)
         print(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_src/{self._service._base_info.getName()}.cpp generated successfully!"
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}/{self._service._base_info.getName()}.cpp generated successfully!"
         )
 
     def _loadHpp(self, hppFileName, encodings=None):
@@ -772,13 +775,16 @@ class ServiceUtil:
         lines.insert(endif_index, res_str + "\n")
 
         # 将修改后的内容写回文件
+        if not os.path.isdir(f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}"):
+            os.makedirs(f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}")
+        
         with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_inc/{self._service._base_info.getName()}.h",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}/{self._service._base_info.getName()}.h",
             "w",
         ) as file:
             file.writelines(lines)
         print(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_inc/{self._service._base_info.getName()}.h generated successfully!"
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}/{self._service._base_info.getName()}.h generated successfully!"
         )
 
     # def generateSyncServerFile(self):
