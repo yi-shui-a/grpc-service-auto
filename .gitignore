@@ -9,3 +9,6 @@ objs/*
 protos/*
 rpc_client_inc/*
 rpc_server_inc/*
+
+src/utils/__pycache__/*
+src/utils/config/__pycache__/*
