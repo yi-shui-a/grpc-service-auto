@@ -3,11 +3,11 @@ import sys
 import json
 import os
 
-from src.utils.ServiceUtil import ServiceUtil
-from src.utils.GrpcServiceMethodUtil import GrpcServiceMethodUtil
-from src.utils.ServerUtil import ServerUtil
-from src.utils.Server import Server
-from src.utils.Util import Util
+from src.scripts.ServiceUtil import ServiceUtil
+from src.scripts.GrpcServiceMethodUtil import GrpcServiceMethodUtil
+from src.scripts.ServerUtil import ServerUtil
+from src.scripts.Server import Server
+from src.scripts.Util import Util
 
 if __name__ == "__main__":
 

@@ -1,5 +1,5 @@
 bin/*
-atom_service/*
+atom_service/**
 atom_json/*
 IDL_inc/*
 Json/*
@@ -10,5 +10,5 @@ protos/*
 rpc_client_inc/*
 rpc_server_inc/*
 server_src/*
-src/utils/__pycache__/*
-src/utils/config/__pycache__/*
+src/scripts/__pycache__/*
+src/scripts/config/__pycache__/*

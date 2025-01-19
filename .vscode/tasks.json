@@ -5,7 +5,7 @@
         {
             "label": "Build",   // 任务的标签，用于在 Visual Studio Code 中显示
             "type": "shell",   // 任务类型为 shell 命令
-            "command": "make -C /root/grpc-generate-server/src/utils/make/ -f DDS_client_make SERVICE=\"atomic_service_mbsb atomic_service_sf\" TOPIC=example SERVER=client_formal_demo_with_dds_debug",   // 要执行的命令
+            "command": "make -C /root/grpc-generate-server/src/scripts/make/ -f DDS_client_make SERVICE=\"atomic_service_mbsb atomic_service_sf\" TOPIC=example SERVER=client_formal_demo_with_dds_debug",   // 要执行的命令
             "group": {   // 任务分组信息
                 "kind": "build",   // 将任务分组为构建类型
                 "isDefault": true   // 设置为默认任务
