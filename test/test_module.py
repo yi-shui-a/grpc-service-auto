@@ -15,10 +15,10 @@ if __name__ == "__main__":
     serviceUtilsB = ServiceUtil()
     # start = time.time()
     serviceUtilsA.parseHpp(
-        f"{os.path.dirname(os.path.abspath(__file__))}/input_inc/atomic_service_mbsb.h"
+        f"{os.path.dirname(os.path.abspath(__file__))}/input_include/atomic_service_mbsb.h"
     )
     serviceUtilsB.parseHpp(
-        f"{os.path.dirname(os.path.abspath(__file__))}/input_inc/atomic_service_sf.h"
+        f"{os.path.dirname(os.path.abspath(__file__))}/input_include/atomic_service_sf.h"
     )
     # end1 = time.time()
     serviceUtilsA.parseCpp(

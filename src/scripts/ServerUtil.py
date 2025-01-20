@@ -18,7 +18,7 @@ class ServerUtil:
         # 定义模板
         proto_template = Template(
             open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/asyn_server_template.j2"
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../src/templates/asyn_server_template.j2"
             ).read()
         )
 
@@ -53,7 +53,7 @@ class ServerUtil:
         # 定义模板
         proto_template = Template(
             open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/sync_server_template.j2"
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../src/templates/sync_server_template.j2"
             ).read()
         )
 

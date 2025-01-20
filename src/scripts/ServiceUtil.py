@@ -676,12 +676,12 @@ class ServiceUtil:
         # 定义模板
         input_src_header_template = Template(
             open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/input_src_header_template.j2"
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../src/templates/input_src_header_template.j2"
             ).read()
         )
         input_src_fun_template = Template(
             open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/input_src_fun_template.j2"
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../src/templates/input_src_fun_template.j2"
             ).read()
         )
 
@@ -738,9 +738,9 @@ class ServiceUtil:
                 continue
 
         # 定义模板
-        input_inc_fun_template = Template(
+        input_include_fun_template = Template(
             open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/input_inc_fun_template.j2"
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../src/templates/input_include_fun_template.j2"
             ).read()
         )
         # 渲染模板
@@ -749,7 +749,7 @@ class ServiceUtil:
             func_name = method._name + "_func"
             request_type = method._requestMsg.get_name()
             reply_type = method._responseMsg.get_name()
-            res_str += input_inc_fun_template.render(
+            res_str += input_include_fun_template.render(
                 func_name=func_name, request_type=request_type, reply_type=reply_type
             )
 
@@ -784,7 +784,7 @@ class ServiceUtil:
         )
 
     # def generateSyncServerFile(self):
-    #     proto_template = Template(open(f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/ClientMain_template.j2").read())
+    #     proto_template = Template(open(f"{os.path.dirname(os.path.abspath(__file__))}/../../src/templates/ClientMain_template.j2").read())
 
     #     res_str = proto_template.render(service_name = self.__service_name, service_name_package = self.__service_name_package, service_name_service = self.__service_name_service, service_name_interface=self.__service_name_interface, messages = self._messages, methods = self._service_methods)
 
@@ -810,11 +810,15 @@ if __name__ == "__main__":
     # serviceUtils.parseHpp("D:\ZT\长安望江_服务化\code_demo\grpc-generate-server\\test\\atom_service_mbsb.h")
     # print("\n\n\n\n")
     # print(json.dumps(serviceUtils._service.to_dict(), indent=4))
-    serviceUtilsA.parseHpp("/root/grpc-generate-server/input_inc/atomic_service_mbsb.h")
+    serviceUtilsA.parseHpp(
+        "/root/grpc-generate-server/input_include/atomic_service_mbsb.h"
+    )
     serviceUtilsA.parseCpp(
         "/root/grpc-generate-server/input_src/atomic_service_mbsb.cpp"
     )
-    serviceUtilsB.parseHpp("/root/grpc-generate-server/input_inc/atomic_service_sf.h")
+    serviceUtilsB.parseHpp(
+        "/root/grpc-generate-server/input_include/atomic_service_sf.h"
+    )
     serviceUtilsB.parseCpp("/root/grpc-generate-server/input_src/atomic_service_sf.c")
 
     # serviceUtilsA._correctJson()

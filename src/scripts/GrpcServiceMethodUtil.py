@@ -81,7 +81,7 @@ class GrpcServiceMethodUtil:
         # 定义模板
         proto_template = Template(
             open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/proto_template.j2"
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../src/templates/proto_template.j2"
             ).read()
         )
 
@@ -147,7 +147,7 @@ class GrpcServiceMethodUtil:
         # Example: Read from inputFilrName and write to outputFilr
         proto_template = Template(
             open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/server_impl_template.j2"
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../src/templates/server_impl_template.j2"
             ).read()
         )
 
@@ -181,7 +181,7 @@ class GrpcServiceMethodUtil:
         # Example: Read from inputFilrName and write to outputFilr
         proto_template = Template(
             open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../Jinja2/client_impl_template.j2"
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../src/templates/client_impl_template.j2"
             ).read()
         )
 
