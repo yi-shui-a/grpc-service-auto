@@ -1,32 +1,33 @@
 import re
 import json
 from collections import defaultdict
-
+from abc import abstractmethod
 from jinja2 import Template
 import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-import AtomService
-import OperatingSystem
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
+from AtomService import AtomService
+from entity.OperatingSystem import OperatingSystem
 from config.types import cpp_types
 
 
-class ServiceUtil:
+class AtomServiceUtil:
     def __init__(self):
-        self._service = AtomService.AtomService()
-        self._service_method_fun: str = []
-        self.__operating_system = OperatingSystem.OperatingSystem()
-        self.__language = ""
+        pass
+        # self._service_method_fun: str = []
+        # self.__operating_system: OperatingSystem = OperatingSystem()
+        # self.__language: str = ""
 
     # @staticmethod
     # def generate_service_class_name(service_name: str) -> str:
     #     return f"{service_name.title()}Service"
 
-    def __type_convert(self):
+    @staticmethod
+    def __type_convert(atom_service: AtomService):
         # 修改数据类型
         # 删除std::
-        for message in self._service._messages:
+        for message in atom_service._messages:
             for field in message._fields:
                 # field._type_proto为赋值时，才进行此操作
                 if field._type_proto != "":
@@ -62,7 +63,8 @@ class ServiceUtil:
                         field._value = cpp_types.get(match.group(2), match.group(2))
                         field._type_proto = f"map<{field._key}, {field._value}>"
 
-    def __add_basic_info_dict(self, basic_info, key, value):
+    @staticmethod
+    def __add_basic_info_dict(basic_info, key, value):
         basic_info_format_list = [
             "name",
             "description",
@@ -89,7 +91,10 @@ class ServiceUtil:
             basic_info[key] = value
             return
 
-    def __extract_functions(self, file_content):
+    # 获取CPP文件中完整的函数体组成的列表
+    @staticmethod
+    def __extract_functions(file_content):
+        # # content是CPP文件中删去注释后的所有内容
         # 匹配函数头部的正则表达式：支持类名、指针、引用、模板等复杂返回类型
         func_pattern = re.compile(
             r"\b[\w\s\*&<>:,\[\]]+\b\s+\w+\s*\([^)]*\)\s*{", re.MULTILINE
@@ -117,14 +122,91 @@ class ServiceUtil:
 
         return functions
 
-    def parseCpp(self, fileName, encodings=None) -> list:
+    @staticmethod
+    def _load_cpp(atom_service: AtomService, cpp_file_name, encodings=None):
+        if encodings is None:
+            encodings = ["utf-8", "gbk", "latin1"]
+
+        for encoding in encodings:
+            try:
+                with open(cpp_file_name, "r", encoding=encoding) as file:
+                    content = file.read()
+            except UnicodeDecodeError:
+                continue
+
+        # 定义正则表达式模式来匹配函数
+        # function_pattern = re.compile(r'(\w+\s+\w+\s*\(.*?\)\s*\{.*?\})', re.DOTALL)
+
+        # 查找所有匹配的函数
+        # self._service_method_fun = function_pattern.findall(content)
+
+        # 定义模板
+        input_src_header_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/input_src_header_template.j2"
+            ).read()
+        )
+        input_src_fun_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/input_src_fun_template.j2"
+            ).read()
+        )
+
+        # 渲染模板
+        res_str = ""
+        input_src_header_str = input_src_header_template.render(
+            service_name=atom_service._base_info.get_name()
+        )
+        # 添加模版内容
+        res_str = res_str + input_src_header_str + "\n\n"
+
+        # for string in self._service_method_fun:
+        #     res_str = res_str + string + "\n\n"
+
+        # 添加原CPP文件
+        res_str = res_str + content
+
+        # 添加封装后的方法
+        for method in atom_service._service_methods:
+            func_name = method._name + "_func"
+            request_type = method._requestMsg.get_name()
+            reply_type = method._responseMsg.get_name()
+            prim_func_name = method._name
+
+            input_src_fun_str = input_src_fun_template.render(
+                func_name=func_name,
+                request_type=request_type,
+                reply_type=reply_type,
+                prim_func_name=prim_func_name,
+            )
+            res_str = res_str + input_src_fun_str + "\n\n"
+
+        # 将res_str写入框架内的cpp文件中，同名不同路径
+        if not os.path.isdir(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_src"
+        ):
+            os.makedirs(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_src"
+            )
+
+        with open(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_src/{atom_service._base_info.get_name()}.cpp",
+            "w",
+        ) as file:
+            file.write(res_str)
+        print(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_src/{atom_service._base_info.get_name()}.cpp generated successfully!"
+        )
+
+    @staticmethod
+    def parseCpp(atom_service: AtomService, file_name: str, encodings=None):
         # TODO: Parse the given C++ file and extract the necessary information
         if encodings is None:
             encodings = ["utf-8", "gbk", "latin1"]
 
         for encoding in encodings:
             try:
-                with open(fileName, "r", encoding=encoding) as file:
+                with open(file_name, "r", encoding=encoding) as file:
                     content = file.read()
             except UnicodeDecodeError:
                 continue
@@ -133,16 +215,15 @@ class ServiceUtil:
         content = re.sub(r"//.*$", "", content, flags=re.MULTILINE)
 
         # 正则表达式匹配函数定义
-        # function_pattern = re.compile(r'(\w+\s+\w+\s*\([^)]*\)\s*\{[^}]*\})', re.DOTALL)
-        # self._service_method_fun = function_pattern.findall(content)
-        self._service_method_fun = self.__extract_functions(content)
-        # print(self._service_method_fun)
+        # content是CPP文件中删去注释后的所有内容
+        # self._service_method_fun = self.__extract_functions(content)
         # 将解析的文件导入到框架内
-        self._loadCpp(fileName)
+        AtomServiceUtil._load_cpp(atom_service, file_name)
 
         # return self._service_method_fun
 
-    def parseHpp(self, fileName, encodings=None):
+    @staticmethod
+    def parseHpp(file_name, encodings=None) -> AtomService:
         # TODO: Parse the given C++ header file and extract the necessary information
 
         if encodings is None:
@@ -150,7 +231,7 @@ class ServiceUtil:
 
         for encoding in encodings:
             try:
-                with open(fileName, "r", encoding=encoding) as file:
+                with open(file_name, "r", encoding=encoding) as file:
                     content = file.read()
             except UnicodeDecodeError:
                 continue
@@ -297,7 +378,9 @@ class ServiceUtil:
                                 basic_info[current_section] = {}
                         else:
                             # basic_info[key] = value
-                            self.__add_basic_info_dict(basic_info, key, value)
+                            AtomServiceUtil.__add_basic_info_dict(
+                                basic_info, key, value
+                            )
 
                     # 解析以+开头的嵌套键值对
                     elif line.count("+") > 0 and current_section:
@@ -567,172 +650,65 @@ class ServiceUtil:
 
         # print(json.dumps(root_json_dict, indent=4))
         # 根据dict创建对象
-        self._service = AtomService.AtomService()
-        self._service.set_info(root_json_dict)
-
+        # 创建一个AtomService变量
+        atom_service = AtomService()
+        atom_service.set_info(root_json_dict)
+        # print(json.dumps(atom_service.to_dict(), indent=4))
         # 整理message数据类型
-        self.__type_convert()
+        AtomServiceUtil.__type_convert(atom_service)
 
         # 保存json到Json文件夹
-
         # 确保目录存在
         os.makedirs(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_json/",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}",
             exist_ok=True,
         )
 
-        json_info = self._service.to_dict()
+        json_info = atom_service.to_dict()
+
         with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_json/{self._service._base_info.getName()}.json",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/{atom_service._base_info.get_name()}.json",
             "w",
         ) as file:
             json.dump(json_info, file, indent=4)
             # print(root_json_dict)
-        # 将解析的文件导入到框架内
-        self._loadHpp(fileName)
+        # 将解析前的原文件再次导入到框架内
+        AtomServiceUtil._loadHpp(atom_service, file_name)
 
-    def loadJson(self, fileName):
-        # TODO: Load the given JSON file and populate the service object with the extracted information
-        with open(fileName, "r") as file:
-            data = json.load(file)
-            self._service.set_info(data)
+        return atom_service
 
-    def writeCpp(self, fileName):
-        # TODO: Write the  C++ code to the given file From Web_UI_tools
-        # The generated code should include the AXservice and OperatingSystem classes,
-        # and should use the extracted information to populate the objects
+    # @staticmethod
+    # def load_json(file_name) -> AtomService:
+    #     # TODO: Load the given JSON file and populate the service object with the extracted information
+    #     with open(file_name, "r") as file:
+    #         data = json.load(file)
+    #         return AtomService().set_info(data)
 
-        # Example:
-        # #include "AXservice.h"
-        # #include "OperatingSystem.h"
-        #
-        # AXservice axService;
-        # OperatingSystem operatingSystem;
-        #
-        # // Populate AXservice and OperatingSystem objects with the extracted information
-        # axService.setInfo(extractedAXserviceInfo);
-        # operatingSystem.setInfo(extractedOperatingSystemInfo);
-        pass
+    # def generateCode(self, cppFileName, hppFileName, jsonFileName):
+    #     # TODO: Generate the C++ code based on the extracted information from the C++ files, JSON file, and language
+    #     print("C++ code generated successfully!")
 
-    def writeHpp(self, fileName):
-        # TODO: Write the  C++ header file to the given file From Web_UI_tools
-        # The generated code should include the AXservice and OperatingSystem classes
+    @staticmethod
+    def _loadHpp(atom_service: AtomService, hpp_file_name: str, encodings=None):
+        """
+        This function reads a C++ header file, identifies the service methods, and generates
+        a new C++ header file with additional function declarations for each method.
 
-        # Example:
-        # // AXservice.h
-        # #ifndef AXSERVICE_H
-        # #define AXSERVICE_H
-        #
-        # #include <iostream>
-        #
-        # class AXservice {
-        # public:
-        #     void setInfo(const std::string& name, const std::string& description, const std::string& version,
-        #                 const std::string& buildTime, int priortyLevel, const std::string& license,
-        #                 const std::string& servicePath);
-        #
-        #     std::string toString() const;
-        # private:
-        #     std::string name;
-        #     std::string description;
-        #     std::string version;
-        #     std::string buildTime;
-        #     int priortyLevel;
-        pass
+        Parameters:
+        - atom_service (AtomService): An instance of the AtomService class representing the service.
+        - hpp_file_name (str): The name of the C++ header file to be processed.
+        - encodings (list, optional): A list of encodings to try when reading the file. Defaults to ["utf-8", "gbk", "latin1"].
 
-    def generateJson(self, jsonFileName):
-        # TODO: Generate the JSON file from UI_tools
-        data = {
-            "baseinfo": "***",
-            "owner": "***",
-            "resource_requirement": "***",
-            "operating_system": "***",
-        }
-        with open(jsonFileName, "w") as file:
-            json.dump(data, file, indent=4)
-        print("JSON file generated successfully!")
-
-    def generateCode(self, cppFileName, hppFileName, jsonFileName):
-        # TODO: Generate the C++ code based on the extracted information from the C++ files, JSON file, and language
-        print("C++ code generated successfully!")
-
-    def _loadCpp(self, cppFileName, encodings=None):
+        Returns:
+        None. The function prints a success message if the new C++ header file is generated successfully.
+        """
         if encodings is None:
             encodings = ["utf-8", "gbk", "latin1"]
 
+        # 读取原文件
         for encoding in encodings:
             try:
-                with open(cppFileName, "r", encoding=encoding) as file:
-                    content = file.read()
-            except UnicodeDecodeError:
-                continue
-
-        # 定义正则表达式模式来匹配函数
-        # function_pattern = re.compile(r'(\w+\s+\w+\s*\(.*?\)\s*\{.*?\})', re.DOTALL)
-
-        # 查找所有匹配的函数
-        # self._service_method_fun = function_pattern.findall(content)
-
-        # 定义模板
-        input_src_header_template = Template(
-            open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../src/templates/input_src_header_template.j2"
-            ).read()
-        )
-        input_src_fun_template = Template(
-            open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../src/templates/input_src_fun_template.j2"
-            ).read()
-        )
-
-        # 渲染模板
-        res_str = ""
-        input_src_header_str = input_src_header_template.render(
-            service_name=self._service._base_info.getName()
-        )
-        res_str = res_str + input_src_header_str + "\n\n"
-
-        for string in self._service_method_fun:
-            res_str = res_str + string + "\n\n"
-
-        for method in self._service._service_methods:
-            func_name = method._name + "_func"
-            request_type = method._requestMsg.get_name()
-            reply_type = method._responseMsg.get_name()
-            prim_func_name = method._name
-
-            input_src_fun_str = input_src_fun_template.render(
-                func_name=func_name,
-                request_type=request_type,
-                reply_type=reply_type,
-                prim_func_name=prim_func_name,
-            )
-            res_str = res_str + input_src_fun_str + "\n\n"
-
-        # 将res_str写入框架内的cpp文件中，同名不同路径
-        if not os.path.isdir(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}"
-        ):
-            os.makedirs(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}"
-            )
-
-        with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}/{self._service._base_info.getName()}.cpp",
-            "w",
-        ) as file:
-            file.write(res_str)
-        print(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}/{self._service._base_info.getName()}.cpp generated successfully!"
-        )
-
-    def _loadHpp(self, hppFileName, encodings=None):
-        if encodings is None:
-            encodings = ["utf-8", "gbk", "latin1"]
-
-        for encoding in encodings:
-            try:
-                with open(hppFileName, "r", encoding=encoding) as file:
+                with open(hpp_file_name, "r", encoding=encoding) as file:
                     lines = file.readlines()
             except UnicodeDecodeError:
                 continue
@@ -740,12 +716,12 @@ class ServiceUtil:
         # 定义模板
         input_include_fun_template = Template(
             open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../src/templates/input_include_fun_template.j2"
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/input_include_fun_template.j2"
             ).read()
         )
         # 渲染模板
         res_str = ""
-        for method in self._service._service_methods:
+        for method in atom_service._service_methods:
             func_name = method._name + "_func"
             request_type = method._requestMsg.get_name()
             reply_type = method._responseMsg.get_name()
@@ -768,58 +744,44 @@ class ServiceUtil:
 
         # 将修改后的内容写回文件
         if not os.path.isdir(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}"
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_include"
         ):
             os.makedirs(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}"
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_include"
             )
 
         with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}/{self._service._base_info.getName()}.h",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_include/{atom_service._base_info.get_name()}.h",
             "w",
         ) as file:
             file.writelines(lines)
         print(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_service/{self._service._base_info.getName()}/{self._service._base_info.getName()}.h generated successfully!"
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_include/{atom_service._base_info.get_name()}.h generated successfully!"
         )
 
-    # def generateSyncServerFile(self):
-    #     proto_template = Template(open(f"{os.path.dirname(os.path.abspath(__file__))}/../../src/templates/ClientMain_template.j2").read())
 
-    #     res_str = proto_template.render(service_name = self.__service_name, service_name_package = self.__service_name_package, service_name_service = self.__service_name_service, service_name_interface=self.__service_name_interface, messages = self._messages, methods = self._service_methods)
-
-    #     # 将res_str写入框架内的cpp文件中，同名不同路径
-    #     with open(f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_server_inc/{self.__service_name}_impl.h", 'w') as file:
-    #         file.write(res_str)
-    #     print(f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_server_inc/{self.__service_name}_impl.h generated successfully!")
-    #     pass
-
-    # def generateAsynServerFile(self):
-    #     pass
-
-
-if __name__ == "__main__":
-    serviceUtils = ServiceUtil()
-    # serviceUtils.parseHpp("test/atom_service_mbsb.h")
-    # serviceUtils.parseHpp("D:\ZT\长安望江_服务化\code_demo\grpc-generate-server\\test\\atom_service_mbsb.h")
-    # print("\n\n\n\n")
-    # print(json.dumps(serviceUtils._service.to_dict(), indent=4))
-    serviceUtilsA = ServiceUtil()
-    serviceUtilsB = ServiceUtil()
-    # serviceUtils.parseHpp("test/atom_service_mbsb.h")
-    # serviceUtils.parseHpp("D:\ZT\长安望江_服务化\code_demo\grpc-generate-server\\test\\atom_service_mbsb.h")
-    # print("\n\n\n\n")
-    # print(json.dumps(serviceUtils._service.to_dict(), indent=4))
-    serviceUtilsA.parseHpp(
-        "/root/grpc-generate-server/input_include/atomic_service_mbsb.h"
-    )
-    serviceUtilsA.parseCpp(
-        "/root/grpc-generate-server/input_src/atomic_service_mbsb.cpp"
-    )
-    serviceUtilsB.parseHpp(
-        "/root/grpc-generate-server/input_include/atomic_service_sf.h"
-    )
-    serviceUtilsB.parseCpp("/root/grpc-generate-server/input_src/atomic_service_sf.c")
-
-    # serviceUtilsA._correctJson()
-    # serviceUtilsB._correctJson()
+# if __name__ == "__main__":
+# serviceUtils = ServiceUtil()
+# serviceUtils.parseHpp("test/atom_service_mbsb.h")
+# serviceUtils.parseHpp("D:\ZT\长安望江_服务化\code_demo\grpc-generate-server\\test\\atom_service_mbsb.h")
+# print("\n\n\n\n")
+# print(json.dumps(serviceUtils._service.to_dict(), indent=4))
+# serviceUtilsA = ServiceUtil()
+# serviceUtilsB = ServiceUtil()
+# serviceUtils.parseHpp("test/atom_service_mbsb.h")
+# serviceUtils.parseHpp("D:\ZT\长安望江_服务化\code_demo\grpc-generate-server\\test\\atom_service_mbsb.h")
+# print("\n\n\n\n")
+# print(json.dumps(serviceUtils._service.to_dict(), indent=4))
+# serviceUtilsA.parseHpp(
+#     "/root/grpc-generate-server/input_include/atomic_service_mbsb.h"
+# )
+# serviceUtilsA.parseCpp(
+#     "/root/grpc-generate-server/input_src/atomic_service_mbsb.cpp"
+# )
+# serviceUtilsB.parseHpp(
+#     "/root/grpc-generate-server/input_include/atomic_service_sf.h"
+# )
+# serviceUtilsB.parseCpp("/root/grpc-generate-server/input_src/atomic_service_sf.c")
+#
+# serviceUtilsA._correctJson()
+# serviceUtilsB._correctJson()

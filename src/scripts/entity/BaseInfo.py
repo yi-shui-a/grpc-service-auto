@@ -1,60 +1,60 @@
 class BaseInfo:
     def __init__(self):
-        self.__name = ""
-        self.__chinese_name = ""
-        self.__description = ""
-        self.__version = ""
-        self.__build_time = ""
-        self.__priority_level = ""
-        self.__license = ""
-        self.__service_path = ""
+        self.__name: str = ""
+        self.__chinese_name: str = ""
+        self.__description: str = ""
+        self.__version: str = ""
+        self.__build_time: str = ""
+        self.__priority_level: str = ""
+        self.__license: str = ""
+        self.__service_path: str = ""
 
-    def getName(self):
+    def get_name(self):
         return self.__name
 
-    def setName(self, name):
+    def set_name(self, name):
         self.__name = name
 
-    def getChineseName(self):
+    def get_chinese_name(self):
         return self.__chinese_name
 
-    def setChineseName(self, chinese_name):
+    def set_chinese_name(self, chinese_name):
         self.__chinese_name = chinese_name
 
-    def getDescription(self):
+    def get_description(self):
         return self.__description
 
-    def setDescription(self, description):
+    def set_description(self, description):
         self.__description = description
 
-    def getVersion(self):
+    def get_version(self):
         return self.__version
 
-    def setVersion(self, version):
+    def set_version(self, version):
         self.__version = version
 
-    def getBuildTime(self):
+    def get_build_time(self):
         return self.__build_time
 
-    def setBuildTime(self, build_time):
+    def setB_build_time(self, build_time):
         self.__build_time = build_time
 
-    def getPriorityLevel(self):
+    def get_priority_level(self):
         return self.__priority_level
 
-    def setPriorityLevel(self, priority_level):
+    def set_priority_level(self, priority_level):
         self.__priority_level = priority_level
 
-    def getLicense(self):
+    def get_license(self):
         return self.__license
 
-    def setLicense(self, license):
+    def set_license(self, license):
         self.__license = license
 
-    def getServicePath(self):
+    def get_service_path(self):
         return self.__service_path
 
-    def setServicePath(self, service_path):
+    def set_service_path(self, service_path):
         self.__service_path = service_path
 
     def set_info(self, info):
@@ -67,14 +67,23 @@ class BaseInfo:
         self.__license = info.get("license", "")
         self.__service_path = info.get("service_path", "")
 
-    def set_all_info(self, name: str, chinese_name: str, description: str, version: str, build_time: str,
-                     priority_level: int, license: str, service_path: str):
+    def set_all_info(
+        self,
+        name: str,
+        chinese_name: str,
+        description: str,
+        version: str,
+        build_time: str,
+        priority_level: int,
+        license: str,
+        service_path: str,
+    ):
         self.__name = name
         self.__chinese_name = chinese_name
         self.__description = description
         self.__version = version
         self.__build_time = build_time
-        self.__priorty_level = priority_level
+        self.__priority_level = priority_level
         self.__license = license
         self.__service_path = service_path
 
@@ -96,5 +105,14 @@ class BaseInfo:
 
 if __name__ == "__main__":
     baseInfo = BaseInfo()
-    baseInfo.set_all_info("AXService", "AXService", "AXService", "1.0.0", "2022-01-01", 1, "MIT", "servicePath")
+    baseInfo.set_all_info(
+        "AXService",
+        "AXService",
+        "AXService",
+        "1.0.0",
+        "2022-01-01",
+        1,
+        "MIT",
+        "servicePath",
+    )
     print(baseInfo)

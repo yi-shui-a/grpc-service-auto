@@ -2,14 +2,14 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-import Maintainer
-import Developer
+from Maintainer import Maintainer
+from Developer import Developer
 
 
 class Owner:
     def __init__(self):
-        self.__maintainer = Maintainer.Maintainer()
-        self.__developer = Developer.Developer()
+        self.__maintainer: Maintainer = Maintainer()
+        self.__developer: Developer = Developer()
 
     def get_maintainer(self):
         return self.__maintainer
@@ -33,8 +33,8 @@ class Owner:
 
     def to_dict(self):
         res_dict = dict()
-        res_dict['maintainer'] = self.__maintainer.to_dict()
-        res_dict['developer'] = self.__developer.to_dict()
+        res_dict["maintainer"] = self.__maintainer.to_dict()
+        res_dict["developer"] = self.__developer.to_dict()
         return res_dict
 
     def __str__(self) -> str:

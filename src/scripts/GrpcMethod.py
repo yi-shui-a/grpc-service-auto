@@ -1,19 +1,18 @@
-
 import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-import Message
-import Capabilities
-import ServiceMethod
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from entity.Message import Message
+from entity.Capabilities import Capabilities
+from ServiceMethod import ServiceMethod
 
 
-class GrpcMethod(ServiceMethod.ServiceMethod):
+class GrpcMethod(ServiceMethod):
     def __init__(self, return_code=None, messages=None):
-        super().__init__(return_code,messages)
-        self._requestMsg = Message.Message()
-        self._responseMsg = Message.Message()
-        self._capabilities = Capabilities.Capabilities()
+        super().__init__(return_code, messages)
+        self._requestMsg: Message = Message()
+        self._responseMsg: Message = Message()
+        self._capabilities: Capabilities = Capabilities()
 
     def set_info(self, info):
         super().set_info(info)
@@ -23,7 +22,6 @@ class GrpcMethod(ServiceMethod.ServiceMethod):
                 self._requestMsg = message
             elif message._name == info["responseMsg"]:
                 self._responseMsg = message
-
 
     def to_dict(self):
         res_dict = dict()

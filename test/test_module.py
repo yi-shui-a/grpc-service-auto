@@ -3,13 +3,31 @@ import sys
 import json
 import os
 
-from src.scripts.ServiceUtil import ServiceUtil
-from src.scripts.GrpcServiceMethodUtil import GrpcServiceMethodUtil
-from src.scripts.ServerUtil import ServerUtil
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
+
+from src.scripts.util.AtomServiceUtil import AtomServiceUtil
+from src.scripts.util.GrpcMethodUtil import GrpcMethodUtil
+from src.scripts.util.ServerUtil import ServerUtil
 from src.scripts.Server import Server
-from src.scripts.Util import Util
+from src.scripts.util.Util import Util
 
 if __name__ == "__main__":
+    serviceA = AtomServiceUtil.parseHpp(
+        f"{os.path.dirname(os.path.abspath(__file__))}/../example/mbsb/atomic_service_mbsb.h"
+    )
+    serviceB = AtomServiceUtil.parseHpp(
+        f"{os.path.dirname(os.path.abspath(__file__))}/../example/sf/atomic_service_sf.h"
+    )
+    AtomServiceUtil.parseCpp(
+        serviceA,
+        f"{os.path.dirname(os.path.abspath(__file__))}/../example/mbsb/atomic_service_mbsb.cpp",
+    )
+    AtomServiceUtil.parseCpp(
+        serviceA,
+        f"{os.path.dirname(os.path.abspath(__file__))}/../example/sf/atomic_service_sf.c",
+    )
+
+    exit(1)
 
     serviceUtilsA = ServiceUtil()
     serviceUtilsB = ServiceUtil()
@@ -32,8 +50,8 @@ if __name__ == "__main__":
     # print(".h parse time: ",(end1-start)*1000/2)
     # print(".cpp parse time: ",(end2-end1)*1000/2)
 
-    methodUtilsA = GrpcServiceMethodUtil()
-    methodUtilsB = GrpcServiceMethodUtil()
+    methodUtilsA = GrpcMethodUtil()
+    methodUtilsB = GrpcMethodUtil()
     methodUtilsA.set_service_method_util(serviceUtilsA._service)
     methodUtilsB.set_service_method_util(serviceUtilsB._service)
     methodUtilsA.generateProtoFile()

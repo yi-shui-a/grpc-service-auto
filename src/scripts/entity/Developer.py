@@ -1,7 +1,7 @@
 class Developer:
     def __init__(self):
-        self.__name = ""
-        self.__email = ""
+        self.__name: str = ""
+        self.__email: str = ""
 
     def get_name(self):
         return self.__name

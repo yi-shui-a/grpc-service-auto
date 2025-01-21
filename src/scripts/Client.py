@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 
 class Client:
-    def __init__(self, server):
+    def __init__(self):
         self._name: str = ""
         self._dds_topic: List[str] = []
         self._services: List[dict] = []

@@ -3,7 +3,7 @@ import os
 from jinja2 import Template
 import subprocess
 
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
 from Client import Client
 
 

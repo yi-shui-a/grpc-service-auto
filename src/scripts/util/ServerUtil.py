@@ -4,12 +4,12 @@ from jinja2 import Template
 import subprocess
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-import Server
+from Server import Server
 
 
 class ServerUtil:
     def __init__(self, server):
-        self._server: Server.Server = server
+        self._server: Server = server
 
     # def generateServerJson(self):
     #     pass

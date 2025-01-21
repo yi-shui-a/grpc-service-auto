@@ -5,14 +5,10 @@ db/client/**
 
 src/scripts/__pycache__/**
 src/scripts/config/__pycache__/**
+src/scripts/entity/__pycache__/**
+src/scripts/util/__pycache__/**
 
 
-atom_service/**
-atom_json/*
-IDL_inc/*
-Json/*
-json_client/*
-json_server/*
 objs/*
 protos/*
 rpc_client_inc/*

@@ -4,7 +4,8 @@ from typing import List
 import json
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-import AtomService
+from AtomService import AtomService
+from util.Config import Config
 
 
 class Server:
@@ -17,7 +18,13 @@ class Server:
         self._password: str = ""
         self._broadcast_address: str = ""
         self._broadcast_port: str = ""
-        self._heartbeat_interal = 30
+        try:
+            # 尝试从 Config 中获取 heartbeat_interal 属性
+            self._heartbeat_interal = Config.heartbeat_interal
+        except AttributeError:
+            raise AttributeError(
+                "heartbeat_interal attribute is missing from Config class"
+            )
 
         self._async_server_name: str = ""
         self._sync_server_name: str = ""

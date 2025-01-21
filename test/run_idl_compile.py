@@ -1,4 +1,4 @@
-from src.scripts.Util import Util
+from scripts.util.Util import Util
 
 Util.compile_idl("src/idl/example.idl")
 Util.compile_dds("server_src/dds_publisher_formal_demo.cpp")

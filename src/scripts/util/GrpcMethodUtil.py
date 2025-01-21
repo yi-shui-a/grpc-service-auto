@@ -5,24 +5,24 @@ import re
 import json
 import subprocess
 
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-import ServiceMethod
-import OperatingSystem
-import AtomService
-import Message
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
+from ServiceMethod import ServiceMethod
+from entity.OperatingSystem import OperatingSystem
+from AtomService import AtomService
+from entity.Message import Message
 from config.types import cpp_types
 
 
-class GrpcServiceMethodUtil:
+class GrpcMethodUtil:
     def __init__(self):
         self.__service_name: str = None
-        self.__operating_system: OperatingSystem.OperatingSystem = None
-        self._service_methods: ServiceMethod.ServiceMethod = None
-        self._messages: Message.Message = None
-        self.__language = ""
+        self.__operating_system: OperatingSystem = None
+        self._service_methods: ServiceMethod = None
+        self._messages: Message = None
+        self.__language: str = ""
 
-    def set_service_method_util(self, service: AtomService.AtomService):
-        self.__service_name = service._base_info.getName()
+    def set_service_method_util(self, service: AtomService):
+        self.__service_name = service._base_info.get_name()
         self.__operating_system = service._operating_systems
         self._service_methods = service._service_methods
         self._messages = service._messages
