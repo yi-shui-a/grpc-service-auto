@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package {{service_name_package}};
+package {{grpc_service_package}};
 
 
 {% for message in messages %}
@@ -13,7 +13,7 @@ message {{message._name}} {
 {% endfor %}
 
 
-service {{service_name_service}} {
+service {{grpc_service_name}} {
     {% for method in methods %}
     rpc {{method._name}} ({{method._requestMsg._name}}) returns ({{method._responseMsg._name}}) {}
     {% endfor %}

@@ -24,181 +24,6 @@ class AtomServiceUtil:
     #     return f"{service_name.title()}Service"
 
     @staticmethod
-    def __type_convert(atom_service: AtomService):
-        # 修改数据类型
-        # 删除std::
-        for message in atom_service._messages:
-            for field in message._fields:
-                # field._type_proto为赋值时，才进行此操作
-                if field._type_proto != "":
-                    continue
-
-                # 为 _type_proto 赋值
-                field._type_proto = cpp_types.get(field._type, field._type)
-                # 去除命名空间标示符
-                if field._type_proto.count("std::") > 0:
-                    field._type_proto = field._type_proto.replace("std::", "")
-
-                # 数组转为repeated
-                # vector
-                if field._type_proto.count("vector") > 0:
-                    field._repeated = True
-                    # 使用正则表达式提取类型
-                    match = re.search(r"vector<(\w+)>", field._type_proto)
-                    temp_str = cpp_types.get(match.group(1), match.group(1))
-                    if match:
-                        field._type_proto = "repeated " + temp_str
-
-                # []
-                if field._name.count("[") > 0 and field._name.count("]") > 0:
-                    field._repeated = True
-                    field._type_proto = "repeated " + field._type_proto
-
-                # map中的数据类型处理
-                if field._type_proto.count("map") > 0:
-                    field._map = True
-                    match = re.search(r"map<(\w+),\s*(\w+)>", field._type_proto)
-                    if match:
-                        field._key = cpp_types.get(match.group(1), match.group(1))
-                        field._value = cpp_types.get(match.group(2), match.group(2))
-                        field._type_proto = f"map<{field._key}, {field._value}>"
-
-    @staticmethod
-    def __add_basic_info_dict(basic_info, key, value):
-        basic_info_format_list = [
-            "name",
-            "description",
-            "version",
-            "build_time",
-            "priority_level",
-            "license",
-            "operating_system",
-        ]
-        if key == "file":
-            basic_info["name"] = value.split(".")[0]
-            return
-        if key == "date":
-            basic_info["build_time"] = value
-            return
-        if key == "priority_level":
-            basic_info["priority_level"] = int(value)
-            return
-        if key == "chinese_name":
-            value = value.replace('"', "")
-            basic_info["chinese_name"] = value
-            return
-        if key in basic_info_format_list:
-            basic_info[key] = value
-            return
-
-    # 获取CPP文件中完整的函数体组成的列表
-    @staticmethod
-    def __extract_functions(file_content):
-        # # content是CPP文件中删去注释后的所有内容
-        # 匹配函数头部的正则表达式：支持类名、指针、引用、模板等复杂返回类型
-        func_pattern = re.compile(
-            r"\b[\w\s\*&<>:,\[\]]+\b\s+\w+\s*\([^)]*\)\s*{", re.MULTILINE
-        )
-
-        functions = []
-        stack = []  # 用于处理嵌套大括号
-        start = 0  # 用于记录函数起始位置
-
-        # 找到所有函数头部位置
-        for match in func_pattern.finditer(file_content):
-            if not stack:  # 新函数起始
-                start = match.start()
-            stack.append("{")
-
-            # 向后扫描，找到完整函数体
-            for i in range(match.end(), len(file_content)):
-                if file_content[i] == "{":
-                    stack.append("{")
-                elif file_content[i] == "}":
-                    stack.pop()
-                    if not stack:  # 栈为空，函数结束
-                        functions.append(file_content[start : i + 1])
-                        break
-
-        return functions
-
-    @staticmethod
-    def _load_cpp(atom_service: AtomService, cpp_file_name, encodings=None):
-        if encodings is None:
-            encodings = ["utf-8", "gbk", "latin1"]
-
-        for encoding in encodings:
-            try:
-                with open(cpp_file_name, "r", encoding=encoding) as file:
-                    content = file.read()
-            except UnicodeDecodeError:
-                continue
-
-        # 定义正则表达式模式来匹配函数
-        # function_pattern = re.compile(r'(\w+\s+\w+\s*\(.*?\)\s*\{.*?\})', re.DOTALL)
-
-        # 查找所有匹配的函数
-        # self._service_method_fun = function_pattern.findall(content)
-
-        # 定义模板
-        input_src_header_template = Template(
-            open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/input_src_header_template.j2"
-            ).read()
-        )
-        input_src_fun_template = Template(
-            open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/input_src_fun_template.j2"
-            ).read()
-        )
-
-        # 渲染模板
-        res_str = ""
-        input_src_header_str = input_src_header_template.render(
-            service_name=atom_service._base_info.get_name()
-        )
-        # 添加模版内容
-        res_str = res_str + input_src_header_str + "\n\n"
-
-        # for string in self._service_method_fun:
-        #     res_str = res_str + string + "\n\n"
-
-        # 添加原CPP文件
-        res_str = res_str + content
-
-        # 添加封装后的方法
-        for method in atom_service._service_methods:
-            func_name = method._name + "_func"
-            request_type = method._requestMsg.get_name()
-            reply_type = method._responseMsg.get_name()
-            prim_func_name = method._name
-
-            input_src_fun_str = input_src_fun_template.render(
-                func_name=func_name,
-                request_type=request_type,
-                reply_type=reply_type,
-                prim_func_name=prim_func_name,
-            )
-            res_str = res_str + input_src_fun_str + "\n\n"
-
-        # 将res_str写入框架内的cpp文件中，同名不同路径
-        if not os.path.isdir(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_src"
-        ):
-            os.makedirs(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_src"
-            )
-
-        with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_src/{atom_service._base_info.get_name()}.cpp",
-            "w",
-        ) as file:
-            file.write(res_str)
-        print(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_src/{atom_service._base_info.get_name()}.cpp generated successfully!"
-        )
-
-    @staticmethod
     def parseCpp(atom_service: AtomService, file_name: str, encodings=None):
         # TODO: Parse the given C++ file and extract the necessary information
         if encodings is None:
@@ -677,17 +502,6 @@ class AtomServiceUtil:
 
         return atom_service
 
-    # @staticmethod
-    # def load_json(file_name) -> AtomService:
-    #     # TODO: Load the given JSON file and populate the service object with the extracted information
-    #     with open(file_name, "r") as file:
-    #         data = json.load(file)
-    #         return AtomService().set_info(data)
-
-    # def generateCode(self, cppFileName, hppFileName, jsonFileName):
-    #     # TODO: Generate the C++ code based on the extracted information from the C++ files, JSON file, and language
-    #     print("C++ code generated successfully!")
-
     @staticmethod
     def _loadHpp(atom_service: AtomService, hpp_file_name: str, encodings=None):
         """
@@ -758,6 +572,193 @@ class AtomServiceUtil:
         print(
             f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_include/{atom_service._base_info.get_name()}.h generated successfully!"
         )
+
+    @staticmethod
+    def _load_cpp(atom_service: AtomService, cpp_file_name, encodings=None):
+        if encodings is None:
+            encodings = ["utf-8", "gbk", "latin1"]
+
+        for encoding in encodings:
+            try:
+                with open(cpp_file_name, "r", encoding=encoding) as file:
+                    content = file.read()
+            except UnicodeDecodeError:
+                continue
+
+        # 删除带有include引用库语句的代码行
+        content = re.sub(
+            r'^\s*#include\s*[<"].*?[>"]\s*$', "", content, flags=re.MULTILINE
+        )
+
+        content = content + "\n\n\n"
+
+        # 定义模板
+        input_src_header_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/input_src_header_template.j2"
+            ).read()
+        )
+        input_src_fun_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/input_src_fun_template.j2"
+            ).read()
+        )
+
+        # 渲染模板
+        res_str = ""
+        input_src_header_str = input_src_header_template.render(
+            service_name=atom_service._base_info.get_name()
+        )
+        # 添加模版内容
+        res_str = res_str + input_src_header_str + "\n\n"
+
+        # for string in self._service_method_fun:
+        #     res_str = res_str + string + "\n\n"
+
+        # 添加原CPP文件
+        res_str = res_str + content
+
+        # 添加封装后的方法
+        for method in atom_service._service_methods:
+            func_name = method._name + "_func"
+            request_type = method._requestMsg.get_name()
+            reply_type = method._responseMsg.get_name()
+            prim_func_name = method._name
+
+            input_src_fun_str = input_src_fun_template.render(
+                func_name=func_name,
+                request_type=request_type,
+                reply_type=reply_type,
+                prim_func_name=prim_func_name,
+            )
+            res_str = res_str + input_src_fun_str + "\n\n"
+
+        # 将res_str写入框架内的cpp文件中，同名不同路径
+        if not os.path.isdir(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_src"
+        ):
+            os.makedirs(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_src"
+            )
+
+        with open(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_src/{atom_service._base_info.get_name()}.cpp",
+            "w",
+        ) as file:
+            file.write(res_str)
+        print(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_src/{atom_service._base_info.get_name()}.cpp generated successfully!"
+        )
+
+    @staticmethod
+    def __type_convert(atom_service: AtomService):
+        # 修改数据类型
+        # 删除std::
+        for message in atom_service._messages:
+            for field in message._fields:
+                # field._type_proto为赋值时，才进行此操作
+                if field._type_proto != "":
+                    continue
+
+                # 为 _type_proto 赋值
+                field._type_proto = cpp_types.get(field._type, field._type)
+                # 去除命名空间标示符
+                if field._type_proto.count("std::") > 0:
+                    field._type_proto = field._type_proto.replace("std::", "")
+
+                # 数组转为repeated
+                # vector
+                if field._type_proto.count("vector") > 0:
+                    field._repeated = True
+                    # 使用正则表达式提取类型
+                    match = re.search(r"vector<(\w+)>", field._type_proto)
+                    temp_str = cpp_types.get(match.group(1), match.group(1))
+                    if match:
+                        field._type_proto = "repeated " + temp_str
+
+                # []
+                if field._name.count("[") > 0 and field._name.count("]") > 0:
+                    field._repeated = True
+                    field._type_proto = "repeated " + field._type_proto
+
+                # map中的数据类型处理
+                if field._type_proto.count("map") > 0:
+                    field._map = True
+                    match = re.search(r"map<(\w+),\s*(\w+)>", field._type_proto)
+                    if match:
+                        field._key = cpp_types.get(match.group(1), match.group(1))
+                        field._value = cpp_types.get(match.group(2), match.group(2))
+                        field._type_proto = f"map<{field._key}, {field._value}>"
+
+    @staticmethod
+    def __add_basic_info_dict(basic_info, key, value):
+        basic_info_format_list = [
+            "name",
+            "description",
+            "version",
+            "build_time",
+            "priority_level",
+            "license",
+            "operating_system",
+        ]
+        if key == "file":
+            basic_info["name"] = value.split(".")[0]
+            return
+        if key == "date":
+            basic_info["build_time"] = value
+            return
+        if key == "priority_level":
+            basic_info["priority_level"] = int(value)
+            return
+        if key == "chinese_name":
+            value = value.replace('"', "")
+            basic_info["chinese_name"] = value
+            return
+        if key in basic_info_format_list:
+            basic_info[key] = value
+            return
+
+    # 获取CPP文件中完整的函数体组成的列表
+    @staticmethod
+    def __extract_functions(file_content):
+        # # content是CPP文件中删去注释后的所有内容
+        # 匹配函数头部的正则表达式：支持类名、指针、引用、模板等复杂返回类型
+        func_pattern = re.compile(
+            r"\b[\w\s\*&<>:,\[\]]+\b\s+\w+\s*\([^)]*\)\s*{", re.MULTILINE
+        )
+
+        functions = []
+        stack = []  # 用于处理嵌套大括号
+        start = 0  # 用于记录函数起始位置
+
+        # 找到所有函数头部位置
+        for match in func_pattern.finditer(file_content):
+            if not stack:  # 新函数起始
+                start = match.start()
+            stack.append("{")
+
+            # 向后扫描，找到完整函数体
+            for i in range(match.end(), len(file_content)):
+                if file_content[i] == "{":
+                    stack.append("{")
+                elif file_content[i] == "}":
+                    stack.pop()
+                    if not stack:  # 栈为空，函数结束
+                        functions.append(file_content[start : i + 1])
+                        break
+
+        return functions
+
+    # @staticmethod
+    # def load_json(file_name) -> AtomService:
+    #     # TODO: Load the given JSON file and populate the service object with the extracted information
+    #     with open(file_name, "r") as file:
+    #         data = json.load(file)
+    #         return AtomService().set_info(data)
+
+    # def generateCode(self, cppFileName, hppFileName, jsonFileName):
+    #     # TODO: Generate the C++ code based on the extracted information from the C++ files, JSON file, and language
+    #     print("C++ code generated successfully!")
 
 
 # if __name__ == "__main__":

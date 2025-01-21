@@ -8,43 +8,27 @@ import subprocess
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
 from ServiceMethod import ServiceMethod
 from entity.OperatingSystem import OperatingSystem
-from AtomService import AtomService
 from entity.Message import Message
+from AtomService import AtomService
 from config.types import cpp_types
 
 
 class GrpcMethodUtil:
+    grpc_service_name_suffix = "_Service"
+    grpc_service_package_suffix = "_Package"
+    grpc_service_interface_suffix = "_Interface"
+
     def __init__(self):
-        self.__service_name: str = None
-        self.__operating_system: OperatingSystem = None
-        self._service_methods: ServiceMethod = None
-        self._messages: Message = None
-        self.__language: str = ""
+        pass
+        # self.__service_name: str = None
+        # self.__operating_system: OperatingSystem = None
+        # self._service_methods: ServiceMethod = None
+        # self._messages: Message = None
+        # self.__language: str = ""
 
-    def set_service_method_util(self, service: AtomService):
-        self.__service_name = service._base_info.get_name()
-        self.__operating_system = service._operating_systems
-        self._service_methods = service._service_methods
-        self._messages = service._messages
-        self._generate_info()
-
-    def _check_situation(self) -> bool:
-        if (
-            self.__service_name == None
-            or self.__operating_system == None
-            or self._service_methods == None
-            or self._messages == None
-        ):
-            return False
-        return True
-
-    def _generate_info(self):
-        self.__service_name_service = self.__service_name + "_Service"
-        self.__service_name_package = self.__service_name + "_Package"
-        self.__service_name_interface = self.__service_name + "_interface"
-
-    def add_info_to_json(self):
-        file_path = f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_json/{self.__service_name}.json"
+    @staticmethod
+    def add_info_to_json(atom_service: AtomService):
+        file_path = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/{atom_service._base_info.get_name()}.json"
         try:
             # 检查文件是否存在
             if not os.path.exists(file_path):
@@ -60,52 +44,63 @@ class GrpcMethodUtil:
             print(f"Error decoding JSON: {e}")
             return None
         data["grpc_info"] = {}
-        data["grpc_info"]["name"] = self.__service_name
+        data["grpc_info"]["name"] = atom_service._base_info.get_name()
         data["grpc_info"]["description"] = ""
-        data["grpc_info"]["name_package"] = self.__service_name_package
-        data["grpc_info"]["name_service"] = self.__service_name_service
-        # data["grpc_info"]["name_interface"] = self.__service_name_interface
+        data["grpc_info"]["name_package"] = (
+            atom_service._base_info.get_name()
+            + GrpcMethodUtil.grpc_service_package_suffix
+        )
+        data["grpc_info"]["name_service"] = (
+            atom_service._base_info.get_name() + GrpcMethodUtil.grpc_service_name_suffix
+        )
+        # data["grpc_info"]["name_interface"] = (
+        #     atom_service._base_info.get_name()
+        #     + GrpcMethodUtil.grpc_service_interface_suffix
+        # )
 
         with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_json/{self.__service_name}.json",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/{atom_service._base_info.get_name()}.json",
             "w",
         ) as file:
             file.write(json.dumps(data, indent=4))
         print(
-            f"add grpc info to {os.path.dirname(os.path.abspath(__file__))}/../../atom_json/{self.__service_name}.json successfully!"
+            f"add grpc info to {os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/{atom_service._base_info.get_name()}.json successfully!"
         )
 
-    def generateProtoFile(self):
+    @staticmethod
+    def generateProtoFile(atom_service: AtomService):
         # TODO: Read the input file and extract the necessary information
         # Example: Read from inputFilrName and write to outputFilrName
         # 定义模板
         proto_template = Template(
             open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../src/templates/proto_template.j2"
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/proto_template.j2"
             ).read()
         )
 
         res_str = proto_template.render(
-            service_name_package=self.__service_name_package,
-            service_name_service=self.__service_name_service,
-            messages=self._messages,
-            methods=self._service_methods,
+            grpc_service_package=atom_service._base_info.get_name()
+            + GrpcMethodUtil.grpc_service_package_suffix,
+            grpc_service_name=atom_service._base_info.get_name()
+            + GrpcMethodUtil.grpc_service_name_suffix,
+            messages=atom_service._messages,
+            methods=atom_service._service_methods,
         )
 
         # 确保目录存在
         os.makedirs(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../protos/",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/protos/",
             exist_ok=True,
         )
 
         # 将res_str写入框架内的cpp文件中，同名不同路径
         with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../protos/{self.__service_name}.proto",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/protos/{atom_service._base_info.get_name()}.proto",
             "w",
         ) as file:
             file.write(res_str)
         print(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../protos/{self.__service_name}.proto generated successfully!"
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/protos/{atom_service._base_info.get_name()}.proto generated successfully!"
         )
 
     def generateGrpcFile(self):
@@ -209,3 +204,29 @@ class GrpcMethodUtil:
         print(
             f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_client_inc/{self.__service_name}_client.h generated successfully!"
         )
+
+    # def set_service_method_util(self, service: AtomService):
+    #     self.__service_name = service._base_info.get_name()
+    #     self.__operating_system = service._operating_systems
+    #     self._service_methods = service._service_methods
+    #     self._messages = service._messages
+    #     self._generate_info()
+
+    # def _check_situation(self) -> bool:
+    #     if (
+    #         self.__service_name == None
+    #         or self.__operating_system == None
+    #         or self._service_methods == None
+    #         or self._messages == None
+    #     ):
+    #         return False
+    #     return True
+
+    # @staticmethod
+    # def initial_info(atom_service: AtomService):
+    #     pass
+
+    # def _generate_info(self):
+    #     self.__service_name_service = self.__service_name + "_Service"
+    #     self.__service_name_package = self.__service_name + "_Package"
+    #     self.__service_name_interface = self.__service_name + "_Interface"

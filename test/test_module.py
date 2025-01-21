@@ -23,9 +23,12 @@ if __name__ == "__main__":
         f"{os.path.dirname(os.path.abspath(__file__))}/../example/mbsb/atomic_service_mbsb.cpp",
     )
     AtomServiceUtil.parseCpp(
-        serviceA,
+        serviceB,
         f"{os.path.dirname(os.path.abspath(__file__))}/../example/sf/atomic_service_sf.c",
     )
+
+    GrpcMethodUtil.generateProtoFile(serviceA)
+    GrpcMethodUtil.generateProtoFile(serviceB)
 
     exit(1)
 
