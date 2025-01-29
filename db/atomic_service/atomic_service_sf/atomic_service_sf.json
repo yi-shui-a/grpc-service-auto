@@ -1,0 +1,192 @@
+{
+    "basic_info": {
+        "name": "atomic_service_sf",
+        "chinese_name": "",
+        "description": "",
+        "version": "V1.0.2",
+        "build_time": "2024-09-30T09-21-21",
+        "priority_level": -999,
+        "license": "",
+        "service_path": "",
+        "owner": {
+            "maintainer": {
+                "name": "IronMan",
+                "email": "ironman@PNUI.com"
+            },
+            "developer": {
+                "name": "yishui",
+                "email": "yishui@atomic_service_fwgz.com"
+            }
+        },
+        "resource_requirement": {
+            "cpu_architecture": "x86_64",
+            "memory": "4GB",
+            "hard_disk": "50GB"
+        },
+        "operating_system": [
+            {
+                "os_name": "Linux",
+                "os_version": {
+                    "v1": "5.13.0-117-generic",
+                    "v2": "5.14.0-117-generic"
+                }
+            },
+            {
+                "os_name": "SylixOS",
+                "os_version": {
+                    "v1": "1.0.0",
+                    "v2": "1.0.2"
+                }
+            }
+        ]
+    },
+    "return_code": {
+        "ATOMIC_SERVICE_SUCCESS": 0,
+        "OperationNotPermitted": 1,
+        "InterruptedSystemCall": 2,
+        "NoSuchDeviceORAddress": 3,
+        "ArgumentListTooLong": 4,
+        "InvalidArgument": 5,
+        "NoSuchFile": 6,
+        "NoSuchDir": 7,
+        "DATA_ERROR": 8
+    },
+    "messages": [
+        {
+            "name": "atomic_service_sf_task_C_Request_st",
+            "label": "request",
+            "description": "",
+            "fields": [
+                {
+                    "id": 1,
+                    "name": "name",
+                    "description": "",
+                    "type": "std::string",
+                    "type_proto": "string",
+                    "repeated": false,
+                    "map": false,
+                    "key": "",
+                    "value": "",
+                    "chinese_name": ""
+                },
+                {
+                    "id": 2,
+                    "name": "title",
+                    "description": "",
+                    "type": "std::string",
+                    "type_proto": "string",
+                    "repeated": false,
+                    "map": false,
+                    "key": "",
+                    "value": "",
+                    "chinese_name": ""
+                }
+            ]
+        },
+        {
+            "name": "atomic_service_sf_task_C_Reply_st",
+            "label": "reply",
+            "description": "",
+            "fields": [
+                {
+                    "id": 1,
+                    "name": "result",
+                    "description": "",
+                    "type": "std::string",
+                    "type_proto": "string",
+                    "repeated": false,
+                    "map": false,
+                    "key": "",
+                    "value": "",
+                    "chinese_name": ""
+                },
+                {
+                    "id": 2,
+                    "name": "return_type",
+                    "description": "",
+                    "type": "int",
+                    "type_proto": "int32",
+                    "repeated": false,
+                    "map": false,
+                    "key": "",
+                    "value": "",
+                    "chinese_name": ""
+                }
+            ]
+        },
+        {
+            "name": "atomic_service_sf_task_D_Request_st",
+            "label": "request",
+            "description": "",
+            "fields": [
+                {
+                    "id": 1,
+                    "name": "int_array",
+                    "description": "",
+                    "type": "std::vector<int32_t>",
+                    "type_proto": "repeated int32",
+                    "repeated": true,
+                    "map": false,
+                    "key": "",
+                    "value": "",
+                    "chinese_name": ""
+                }
+            ]
+        },
+        {
+            "name": "atomic_service_sf_task_D_Reply_st",
+            "label": "reply",
+            "description": "",
+            "fields": [
+                {
+                    "id": 1,
+                    "name": "string_int_map_reply",
+                    "description": "",
+                    "type": "std::map<std::string, std::int32_t>",
+                    "type_proto": "map<string, int32>",
+                    "repeated": false,
+                    "map": true,
+                    "key": "string",
+                    "value": "int32",
+                    "chinese_name": ""
+                },
+                {
+                    "id": 2,
+                    "name": "return_type",
+                    "description": "",
+                    "type": "int",
+                    "type_proto": "int32",
+                    "repeated": false,
+                    "map": false,
+                    "key": "",
+                    "value": "",
+                    "chinese_name": ""
+                }
+            ]
+        }
+    ],
+    "grpc_methods": [
+        {
+            "name": "atomic_service_fun_task_C",
+            "description": "ccccc",
+            "requestMsg": "atomic_service_sf_task_C_Request_st",
+            "responseMsg": "atomic_service_sf_task_C_Reply_st",
+            "capabilities": {
+                "read": true,
+                "write": false,
+                "delete": false
+            }
+        },
+        {
+            "name": "atomic_service_fun_task_D",
+            "description": "ccccc",
+            "requestMsg": "atomic_service_sf_task_D_Request_st",
+            "responseMsg": "atomic_service_sf_task_D_Reply_st",
+            "capabilities": {
+                "read": true,
+                "write": false,
+                "delete": false
+            }
+        }
+    ]
+}

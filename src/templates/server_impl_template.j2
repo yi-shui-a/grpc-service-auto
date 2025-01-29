@@ -4,7 +4,7 @@
 #include <thread>
 #include <grpcpp/grpcpp.h>
 #include "../protos/{{ service_name|lower }}.grpc.pb.h"
-#include "../atom_service/{{ service_name|lower }}/{{ service_name|lower }}.h"
+#include "../atomic_include/{{ service_name|lower }}.h"
 
 {% for method in methods %}
 void {{ method._name }}_func({{ method._requestMsg._name }}* request, {{ method._responseMsg._name }}* reply);

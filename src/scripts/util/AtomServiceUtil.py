@@ -650,6 +650,11 @@ class AtomServiceUtil:
             f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_src/{atom_service._base_info.get_name()}.cpp generated successfully!"
         )
 
+    # @staticmethod
+    # def compile_atomic_src(atom_service: AtomService):
+
+    #     pass
+
     @staticmethod
     def __type_convert(atom_service: AtomService):
         # 修改数据类型

@@ -30,6 +30,18 @@ if __name__ == "__main__":
     GrpcMethodUtil.generateProtoFile(serviceA)
     GrpcMethodUtil.generateProtoFile(serviceB)
 
+    GrpcMethodUtil.generateProtoCmakeLists(serviceA)
+    GrpcMethodUtil.generateProtoCmakeLists(serviceB)
+
+    GrpcMethodUtil.compileProtoFile(serviceA)
+    GrpcMethodUtil.compileProtoFile(serviceB)
+
+    GrpcMethodUtil.generateServerImpl(serviceA)
+    GrpcMethodUtil.generateServerImpl(serviceB)
+
+    GrpcMethodUtil.generateStubImpl(serviceA)
+    GrpcMethodUtil.generateStubImpl(serviceB)
+
     exit(1)
 
     serviceUtilsA = ServiceUtil()

@@ -3,7 +3,9 @@ import sys
 import os
 import re
 import json
+import shutil
 import subprocess
+
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
 from ServiceMethod import ServiceMethod
@@ -103,107 +105,170 @@ class GrpcMethodUtil:
             f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/protos/{atom_service._base_info.get_name()}.proto generated successfully!"
         )
 
-    def generateGrpcFile(self):
-        # 定义make命令及其参数
-        make_command = [
-            "make",
-            "-C",
-            f"{os.path.dirname(os.path.abspath(__file__))}/make/",
-            "-f",
-            "proto_make",
-            f"PROTO={self.__service_name}.proto",
-        ]
+    @staticmethod
+    def generateProtoCmakeLists(atom_service: AtomService):
+        # 生成编译proto文件的cmakelist文件
+        # 定义模板
+        proto_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/proto_compile_cmake_template.j2"
+            ).read()
+        )
+        res_str = proto_template.render(service_name=atom_service._base_info.get_name())
+
+        # 确保目录存在
+        os.makedirs(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/protos/",
+            exist_ok=True,
+        )
+
+        # 将res_str写入框架内的cpp文件中，同名不同路径
+        with open(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/protos/CMakeLists.txt",
+            "w",
+        ) as file:
+            file.write(res_str)
+        print(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/protos/CMakeLists.txt generated successfully!"
+        )
+
+    @staticmethod
+    def compileProtoFile(atom_service: AtomService):
+        """
+        自动生成 Protobuf 和 gRPC 文件的 Python 函数。
+
+        :param proto_dir: .proto 文件所在的目录路径
+        """
+        proto_dir = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/protos/"
+
+        # 判断是否存在该文件
+        if not os.path.exists(proto_dir + "CMakeLists.txt"):
+            print("CMakeLists.txt文件不存在")
+        if not os.path.exists(
+            proto_dir + f"{atom_service._base_info.get_name()}.proto"
+        ):
+            print(f"{atom_service._base_info.get_name()}.proto文件不存在")
+
+        # 创建 build 目录
+        build_dir = os.path.join(proto_dir, "build")
+        # 准备 build 目录：如果目录已存在，则清空目录内容；否则创建空目录。
+        if os.path.exists(build_dir):
+            print(f"清空 build 目录：{build_dir}")
+            # 删除目录中的所有内容
+            for item in os.listdir(build_dir):
+                item_path = os.path.join(build_dir, item)
+                if os.path.isfile(item_path) or os.path.islink(item_path):
+                    os.unlink(item_path)  # 删除文件或符号链接
+                elif os.path.isdir(item_path):
+                    shutil.rmtree(item_path)  # 删除子目录
+        else:
+            print(f"创建 build 目录：{build_dir}")
+            os.makedirs(build_dir)
+
+        # 运行编译程序
         try:
-            # 调用make命令，并等待其完成
-            result = subprocess.run(
-                make_command,
-                check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-            )
+            # 进入 build 目录
+            os.chdir(build_dir)
+            # 运行 cmake
+            print("运行 cmake...")
+            subprocess.run(["cmake", ".."], check=True)
 
-            # 如果make命令成功执行，则打印其输出
-            if result.stdout:
-                print("Make Output:\n", result.stdout)
+            # 运行 make
+            print("运行 make...")
+            subprocess.run(["make"], check=True)
 
+            print("文件生成成功！")
         except subprocess.CalledProcessError as e:
-            # 如果make命令失败，则捕获异常并打印错误信息
-            print("Make failed with error:", e)
-            print("Error Output:\n", e.stderr)
+            print(f"错误：命令执行失败。{e}")
+        finally:
+            # 返回原始目录
+            os.chdir(proto_dir)
 
-    def generateLibFile(self, inputFilrName, outputFilrName):
+        # 删除 build 目录
+        if os.path.exists(build_dir):
+            print(f"删除 build 目录：{build_dir}")
+            shutil.rmtree(build_dir)
+
+    @staticmethod
+    def generateServerImpl(atom_service: AtomService):
         # TODO: Read the input file and extract the necessary information
-        # Example: Read from inputFilrName and write to outputFilrName
+        # Example: Read from inputFilrName and write to outputFilr
+        service_name = atom_service._base_info.get_name()
+        proto_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/server_impl_template.j2"
+            ).read()
+        )
+
+        res_str = proto_template.render(
+            service_name=service_name,
+            service_name_package=service_name
+            + GrpcMethodUtil.grpc_service_package_suffix,
+            service_name_service=service_name + GrpcMethodUtil.grpc_service_name_suffix,
+            service_name_interface=service_name
+            + GrpcMethodUtil.grpc_service_interface_suffix,
+            messages=atom_service._messages,
+            methods=atom_service._service_methods,
+        )
+
+        # 确保目录存在
+        os.makedirs(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_server_impl/",
+            exist_ok=True,
+        )
+
+        # 将res_str写入框架内的cpp文件中，同名不同路径
+        with open(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_server_impl/{service_name}_sync_server_impl.cpp",
+            "w",
+        ) as file:
+            file.write(res_str)
+        print(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_server_impl/{service_name}_sync_server_impl.cpp generated successfully!"
+        )
+
+    @staticmethod
+    def generateStubImpl(atom_service: AtomService):
+        # TODO: Read the input file and extract the necessary information
+        # Example: Read from inputFilrName and write to outputFilr
+        service_name = atom_service._base_info.get_name()
+        proto_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/client_impl_template.j2"
+            ).read()
+        )
+
+        res_str = proto_template.render(
+            service_name=service_name,
+            service_name_package=service_name
+            + GrpcMethodUtil.grpc_service_package_suffix,
+            service_name_service=service_name + GrpcMethodUtil.grpc_service_name_suffix,
+            service_name_interface=service_name
+            + GrpcMethodUtil.grpc_service_interface_suffix,
+            messages=atom_service._messages,
+            methods=atom_service._service_methods,
+        )
+
+        # 确保目录存在
+        os.makedirs(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_client_impl/",
+            exist_ok=True,
+        )
+
+        # 将res_str写入框架内的cpp文件中，同名不同路径
+        with open(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_client_impl/{service_name}_sync_client_impl.cpp",
+            "w",
+        ) as file:
+            file.write(res_str)
+        print(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_client_impl/{service_name}_sync_client_impl.cpp generated successfully!"
+        )
+
+    @staticmethod
+    def compileServerImpl(atom_service: AtomService):
+        service_name = atom_service._base_info.get_name()
         pass
-
-    def generateServerImpl(self):
-        # TODO: Read the input file and extract the necessary information
-        # Example: Read from inputFilrName and write to outputFilr
-        proto_template = Template(
-            open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../src/templates/server_impl_template.j2"
-            ).read()
-        )
-
-        res_str = proto_template.render(
-            service_name=self.__service_name,
-            service_name_package=self.__service_name_package,
-            service_name_service=self.__service_name_service,
-            service_name_interface=self.__service_name_interface,
-            messages=self._messages,
-            methods=self._service_methods,
-        )
-
-        # 确保目录存在
-        os.makedirs(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_server_inc/",
-            exist_ok=True,
-        )
-
-        # 将res_str写入框架内的cpp文件中，同名不同路径
-        with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_server_inc/{self.__service_name}_impl.h",
-            "w",
-        ) as file:
-            file.write(res_str)
-        print(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_server_inc/{self.__service_name}_impl.h generated successfully!"
-        )
-
-    def generateStubImpl(self):
-        # TODO: Read the input file and extract the necessary information
-        # Example: Read from inputFilrName and write to outputFilr
-        proto_template = Template(
-            open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../src/templates/client_impl_template.j2"
-            ).read()
-        )
-
-        res_str = proto_template.render(
-            service_name=self.__service_name,
-            service_name_package=self.__service_name_package,
-            service_name_service=self.__service_name_service,
-            service_name_interface=self.__service_name_interface,
-            messages=self._messages,
-            methods=self._service_methods,
-        )
-
-        # 确保目录存在
-        os.makedirs(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_client_inc/",
-            exist_ok=True,
-        )
-
-        # 将res_str写入框架内的cpp文件中，同名不同路径
-        with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_client_inc/{self.__service_name}_client.h",
-            "w",
-        ) as file:
-            file.write(res_str)
-        print(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../rpc_client_inc/{self.__service_name}_client.h generated successfully!"
-        )
 
     # def set_service_method_util(self, service: AtomService):
     #     self.__service_name = service._base_info.get_name()

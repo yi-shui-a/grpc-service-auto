@@ -5,7 +5,7 @@
 #include <grpcpp/grpcpp.h>
 #include "../protos/{{ service_name|lower }}.grpc.pb.h"
 #include "../protos/{{ service_name|lower }}.pb.h"
-#include "../atom_service/{{ service_name|lower }}/{{ service_name|lower }}.h"
+#include "../atomic_include/{{ service_name|lower }}.h"
 class {{ service_name_service }}_Client {
 public:
     {{ service_name_service }}_Client(std::shared_ptr<::grpc::Channel> channel)

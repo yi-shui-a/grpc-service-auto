@@ -1,7 +1,7 @@
-db/atomic_json/**
-db/atomic_service/**
-db/server/**
-db/client/**
+# db/atomic_json/**
+# db/atomic_service/**
+# db/server/**
+# db/client/**
 
 src/scripts/__pycache__/**
 src/scripts/config/__pycache__/**
