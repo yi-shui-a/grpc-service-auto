@@ -3,7 +3,7 @@
 #include <string>
 #include <thread>
 #include <grpcpp/grpcpp.h>
-#include "../protos/{{ service_name|lower }}.grpc.pb.h"
+#include "../protos/{{ service_name| lower }}.grpc.pb.h"
 #include "../atomic_include/{{ service_name|lower }}.h"
 
 {% for method in methods %}

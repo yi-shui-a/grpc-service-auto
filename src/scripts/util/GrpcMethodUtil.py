@@ -76,7 +76,7 @@ class GrpcMethodUtil:
         # 定义模板
         proto_template = Template(
             open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/proto_template.j2"
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/proto_process_template/proto_template.j2"
             ).read()
         )
 
@@ -111,7 +111,7 @@ class GrpcMethodUtil:
         # 定义模板
         proto_template = Template(
             open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/proto_compile_cmake_template.j2"
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/proto_process_template/proto_compile_cmake_template.j2"
             ).read()
         )
         res_str = proto_template.render(service_name=atom_service._base_info.get_name())
@@ -196,7 +196,7 @@ class GrpcMethodUtil:
         service_name = atom_service._base_info.get_name()
         proto_template = Template(
             open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/server_impl_template.j2"
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/sync_impl_process_template/sync_server_impl_template.j2"
             ).read()
         )
 
@@ -234,7 +234,7 @@ class GrpcMethodUtil:
         service_name = atom_service._base_info.get_name()
         proto_template = Template(
             open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/client_impl_template.j2"
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/sync_impl_process_template/sync_client_impl_template.j2"
             ).read()
         )
 

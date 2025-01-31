@@ -530,7 +530,7 @@ class AtomServiceUtil:
         # 定义模板
         input_include_fun_template = Template(
             open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/input_include_fun_template.j2"
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/input_process_template/input_include_fun_template.j2"
             ).read()
         )
         # 渲染模板
@@ -595,12 +595,12 @@ class AtomServiceUtil:
         # 定义模板
         input_src_header_template = Template(
             open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/input_src_header_template.j2"
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/input_process_template/input_src_header_template.j2"
             ).read()
         )
         input_src_fun_template = Template(
             open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/input_src_fun_template.j2"
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/input_process_template/input_src_fun_template.j2"
             ).read()
         )
 
