@@ -3,9 +3,60 @@ import os
 from jinja2 import Template
 import subprocess
 from typing import List
+import shutil
 
 
 class Util(object):
+
+    @staticmethod
+    def compileCmakeProject(
+        cmake_dir: str, cpp_file_name: str, cpp_file_type: str = "cpp"
+    ):
+        # 判断是否存在该文件
+        if not os.path.exists(cmake_dir + "CMakeLists.txt"):
+            print(cmake_dir + "CMakeLists.txt文件不存在")
+        if not os.path.exists(cmake_dir + f"{cpp_file_name}.{cpp_file_type}"):
+            print(cmake_dir + f"{cpp_file_name}.{cpp_file_type}文件不存在")
+
+        # 创建 build 目录
+        build_dir = os.path.join(cmake_dir, "build")
+        # 准备 build 目录：如果目录已存在，则清空目录内容；否则创建空目录。
+        if os.path.exists(build_dir):
+            print(f"清空 build 目录：{build_dir}")
+            # 删除目录中的所有内容
+            for item in os.listdir(build_dir):
+                item_path = os.path.join(build_dir, item)
+                if os.path.isfile(item_path) or os.path.islink(item_path):
+                    os.unlink(item_path)  # 删除文件或符号链接
+                elif os.path.isdir(item_path):
+                    shutil.rmtree(item_path)  # 删除子目录
+        else:
+            print(f"创建 build 目录：{build_dir}")
+            os.makedirs(build_dir)
+
+        # 运行编译程序
+        try:
+            # 进入 build 目录
+            os.chdir(build_dir)
+            # 运行 cmake
+            print("运行 cmake...")
+            subprocess.run(["cmake", ".."], check=True)
+
+            # 运行 make
+            print("运行 make...")
+            subprocess.run(["make"], check=True)
+
+            print("文件生成成功！")
+        except subprocess.CalledProcessError as e:
+            print(f"错误：命令执行失败。{e}")
+        finally:
+            # 返回原始目录
+            os.chdir(cmake_dir)
+
+        # 删除 build 目录
+        if os.path.exists(build_dir):
+            print(f"删除 build 目录：{build_dir}")
+            shutil.rmtree(build_dir)
 
     @staticmethod
     def compile_idl(file_path: str):

@@ -3,8 +3,6 @@ import sys
 import os
 import re
 import json
-import shutil
-import subprocess
 
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
@@ -13,14 +11,19 @@ from entity.OperatingSystem import OperatingSystem
 from entity.Message import Message
 from AtomService import AtomService
 from config.types import cpp_types
+from util.Util import Util
 
 
 class GrpcMethodUtil:
     grpc_service_name_suffix = "_Service"
     grpc_service_package_suffix = "_Package"
     grpc_service_interface_suffix = "_Interface"
+
     grpc_service_sync_server_impl_suffix = "_sync_server_impl"
     grpc_service_sync_client_impl_suffix = "_sync_client_impl"
+
+    grpc_service_async_server_impl_suffix = "_async_server_impl"
+    grpc_service_async_client_impl_suffix = "_async_client_impl"
 
     def __init__(self):
         pass
@@ -32,7 +35,8 @@ class GrpcMethodUtil:
 
     @staticmethod
     def add_info_to_json(atom_service: AtomService):
-        file_path = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/{atom_service._base_info.get_name()}.json"
+        service_name = atom_service._base_info.get_name()
+        file_path = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/{service_name}.json"
         try:
             # 检查文件是否存在
             if not os.path.exists(file_path):
@@ -48,27 +52,37 @@ class GrpcMethodUtil:
             print(f"Error decoding JSON: {e}")
             return None
         data["grpc_info"] = {}
-        data["grpc_info"]["name"] = atom_service._base_info.get_name()
+        data["grpc_info"]["name"] = service_name
         data["grpc_info"]["description"] = ""
         data["grpc_info"]["name_package"] = (
-            atom_service._base_info.get_name()
-            + GrpcMethodUtil.grpc_service_package_suffix
+            service_name + GrpcMethodUtil.grpc_service_package_suffix
         )
         data["grpc_info"]["name_service"] = (
-            atom_service._base_info.get_name() + GrpcMethodUtil.grpc_service_name_suffix
+            service_name + GrpcMethodUtil.grpc_service_name_suffix
         )
-        # data["grpc_info"]["name_interface"] = (
-        #     atom_service._base_info.get_name()
-        #     + GrpcMethodUtil.grpc_service_interface_suffix
-        # )
+        data["grpc_info"]["name_interface"] = (
+            service_name + GrpcMethodUtil.grpc_service_interface_suffix
+        )
+        data["grpc_info"]["sync_server_impl"] = (
+            service_name + GrpcMethodUtil.grpc_service_sync_server_impl_suffix
+        )
+        data["grpc_info"]["sync_client_impl"] = (
+            service_name + GrpcMethodUtil.grpc_service_sync_client_impl_suffix
+        )
+        data["grpc_info"]["async_server_impl"] = (
+            service_name + GrpcMethodUtil.grpc_service_async_server_impl_suffix
+        )
+        data["grpc_info"]["async_client_impl"] = (
+            service_name + GrpcMethodUtil.grpc_service_async_client_impl_suffix
+        )
 
         with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/{atom_service._base_info.get_name()}.json",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/{service_name}.json",
             "w",
         ) as file:
             file.write(json.dumps(data, indent=4))
         print(
-            f"add grpc info to {os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/{atom_service._base_info.get_name()}.json successfully!"
+            f"add grpc info to {os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/{service_name}.json successfully!"
         )
 
     @staticmethod
@@ -144,9 +158,7 @@ class GrpcMethodUtil:
         service_name = atom_service._base_info.get_name()
         proto_dir = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/protos/"
 
-        GrpcMethodUtil.compileCmakeProject(
-            proto_dir, service_name, cpp_file_type="proto"
-        )
+        Util.compileCmakeProject(proto_dir, service_name, cpp_file_type="proto")
 
     @staticmethod
     def generateServerImpl(atom_service: AtomService):
@@ -195,7 +207,7 @@ class GrpcMethodUtil:
             ).read()
         )
         res_str = proto_template.render(
-            progject_name=service_name
+            project_name=service_name
             + GrpcMethodUtil.grpc_service_sync_server_impl_suffix,
             service_name=service_name,
         )
@@ -221,7 +233,7 @@ class GrpcMethodUtil:
         service_name = atom_service._base_info.get_name()
         server_impl_dir = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_server_impl/"
 
-        GrpcMethodUtil.compileCmakeProject(
+        Util.compileCmakeProject(
             server_impl_dir,
             service_name + GrpcMethodUtil.grpc_service_sync_server_impl_suffix,
             cpp_file_type="cpp",
@@ -274,7 +286,7 @@ class GrpcMethodUtil:
             ).read()
         )
         res_str = proto_template.render(
-            progject_name=service_name
+            project_name=service_name
             + GrpcMethodUtil.grpc_service_sync_client_impl_suffix,
             service_name=service_name,
         )
@@ -300,61 +312,11 @@ class GrpcMethodUtil:
         service_name = atom_service._base_info.get_name()
         server_impl_dir = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_client_impl/"
 
-        GrpcMethodUtil.compileCmakeProject(
+        Util.compileCmakeProject(
             server_impl_dir,
-            service_name + GrpcMethodUtil.grpc_service_sync_server_impl_suffix,
+            service_name + GrpcMethodUtil.grpc_service_sync_client_impl_suffix,
             cpp_file_type="cpp",
         )
-
-    @staticmethod
-    def compileCmakeProject(
-        cmake_dir: str, cpp_file_name: str, cpp_file_type: str = "cpp"
-    ):
-        # 判断是否存在该文件
-        if not os.path.exists(cmake_dir + "CMakeLists.txt"):
-            print("CMakeLists.txt文件不存在")
-        if not os.path.exists(cmake_dir + f"{cpp_file_name}.{cpp_file_type}"):
-            print(f"{cpp_file_name}.{cpp_file_type}文件不存在")
-
-        # 创建 build 目录
-        build_dir = os.path.join(cmake_dir, "build")
-        # 准备 build 目录：如果目录已存在，则清空目录内容；否则创建空目录。
-        if os.path.exists(build_dir):
-            print(f"清空 build 目录：{build_dir}")
-            # 删除目录中的所有内容
-            for item in os.listdir(build_dir):
-                item_path = os.path.join(build_dir, item)
-                if os.path.isfile(item_path) or os.path.islink(item_path):
-                    os.unlink(item_path)  # 删除文件或符号链接
-                elif os.path.isdir(item_path):
-                    shutil.rmtree(item_path)  # 删除子目录
-        else:
-            print(f"创建 build 目录：{build_dir}")
-            os.makedirs(build_dir)
-
-        # 运行编译程序
-        try:
-            # 进入 build 目录
-            os.chdir(build_dir)
-            # 运行 cmake
-            print("运行 cmake...")
-            subprocess.run(["cmake", ".."], check=True)
-
-            # 运行 make
-            print("运行 make...")
-            subprocess.run(["make"], check=True)
-
-            print("文件生成成功！")
-        except subprocess.CalledProcessError as e:
-            print(f"错误：命令执行失败。{e}")
-        finally:
-            # 返回原始目录
-            os.chdir(cmake_dir)
-
-        # 删除 build 目录
-        if os.path.exists(build_dir):
-            print(f"删除 build 目录：{build_dir}")
-            shutil.rmtree(build_dir)
 
     # def set_service_method_util(self, service: AtomService):
     #     self.__service_name = service._base_info.get_name()

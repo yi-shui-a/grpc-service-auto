@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 # 设置项目名称
-project({{progject_name}})
+project({{project_name}})
 
 # 设置 C++ 标准
 set(CMAKE_CXX_STANDARD 11)
@@ -37,18 +37,18 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/../atomic_src ${PROJECT_BINARY_DIR}/atomi
 
 
 # 指定源文件
-set(SOURCE_FILES {{progject_name}}.cpp)
+set(SOURCE_FILES {{project_name}}.cpp)
 
 # 确保 SOURCE_FILES 变量不为空
 if(NOT SOURCE_FILES)
-    message(FATAL_ERROR "No source files found for {{progject_name}}.")
+    message(FATAL_ERROR "No source files found for {{project_name}}.")
 endif()
 
 # 生成动态链接库
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 
-# 显式声明 {{progject_name}} 依赖于 {{service_name}}
-# 确保了在构建 {{progject_name}} 之前，{{service_name}} 已经构建完成
+# 显式声明 {{project_name}} 依赖于 {{service_name}}
+# 确保了在构建 {{project_name}} 之前，{{service_name}} 已经构建完成
 add_dependencies(${PROJECT_NAME} {{service_name}})
 
 # 链接 {{service_name}} 静态库

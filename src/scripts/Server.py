@@ -19,11 +19,11 @@ class Server:
         self._broadcast_address: str = ""
         self._broadcast_port: str = ""
         try:
-            # 尝试从 Config 中获取 heartbeat_interal 属性
-            self._heartbeat_interal = Config.heartbeat_interal
+            # 尝试从 Config 中获取 heartbeat_interval 属性
+            self._heartbeat_interal = Config().heartbeat_interval
         except AttributeError:
             raise AttributeError(
-                "heartbeat_interal attribute is missing from Config class"
+                "heartbeat_interval attribute is missing from Config class"
             )
 
         self._async_server_name: str = ""
@@ -72,26 +72,35 @@ class Server:
         self._broadcast_port = broadcast_port
 
     def add_service(self, service: str):
-        self._services.append(service)
+        # 将一个service的数据以dict的形式传给server
+        with open(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../db/atomic_service/{service}/{service}.json",
+            "r",
+        ) as file:
+            self._services.append(json.loads(file.read()))
 
     def delete_service(self, service: str):
-        try:
-            self._services.remove(service)
-        except ValueError as e:
-            print(f"Error: {e}")
+        # 创建一个新的列表，用于存储不需要删除的元素
+        new_services = []
+        found = False
+        # 遍历原列表中的每个元素
+        for s in self._services:
+            # 检查当前元素的 "basic_info" 中的 "name" 是否等于要删除的服务名称
+            if s["basic_info"]["name"] == service:
+                found = True
+            else:
+                # 如果不等于，则将该元素添加到新列表中
+                new_services.append(s)
+        # 如果找到了要删除的服务，则更新原列表
+        if found:
+            self._services = new_services
+        else:
+            # 如果未找到，则输出错误信息
             print(f"Service '{service}' not found in the list.")
-        except Exception as e:
-            print(f"An unexpected error occurred: {e}")
 
     def set_service(self, old_service: str, new_service: str):
-        for service in self._services:
-            if service == old_service:
-                service = new_service
-                break
-
-    def set_file_name(self):
-        self._async_server_name = f"{self._name}_async_server"
-        self._sync_server_name = f"{self._name}_sync_server"
+        self.delete_service(old_service)
+        self.add_service(new_service)
 
     # 使用用户输入数据加载Server
     def set_info_from_user(self, info: dict):
@@ -102,16 +111,10 @@ class Server:
         self._password = info.get("password", "")
         self._broadcast_address = info.get("broadcast_address", "")
         self._broadcast_port = info.get("broadcast_port", "")
-        self._heartbeat_interal = info.get.get("heartbeat_interval", "")
-        self.set_file_name()
+        self._heartbeat_interal = info.get("heartbeat_interval", "")
         # 将原子服务的json作为一个service的dict变量，全部传入
         for service in info["services"]:
-            with open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../atom_json/{service}.json",
-                "r",
-            ) as file:
-                # data = json.loads(file.read())
-                self.add_service(json.loads(file.read()))
+            self.add_service(service)
 
     # 加载json_client
     def set_info(self, info):
@@ -147,9 +150,25 @@ class Server:
         res_dict["services"] = self._services
         return res_dict
 
-    def saveServerJson(
-        self, path=f"{os.path.dirname(os.path.abspath(__file__))}/../../json_server/"
-    ):
+    def saveServerJson(self):
+        """
+        保存服务器信息的 JSON 文件。此函数标志着一个服务器的生成。
+
+        此方法将服务器的相关信息序列化为 JSON 格式，并将其保存到指定的文件路径中。
+        具体步骤包括：
+        1. 构建服务器信息文件存储的目录路径。
+        2. 确保该目录存在，如果不存在则创建。
+        3. 构建完整的 JSON 文件路径。
+        4. 将服务器对象转换为字典，并写入 JSON 文件。
+        5. 成功保存后打印成功消息；若过程中发生异常，则捕获并打印错误信息。
+
+        参数:
+            无
+
+        返回:
+            无
+        """
+        path = f"{os.path.dirname(os.path.abspath(__file__))}/../../db/server/{self.get_name()}/"
         try:
             # 确保目录存在
             os.makedirs(path, exist_ok=True)

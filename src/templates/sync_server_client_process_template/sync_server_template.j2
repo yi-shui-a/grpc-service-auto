@@ -16,7 +16,7 @@
 
 #include <nlohmann/json.hpp>
 {% for service in services %}
-#include "../rpc_server_inc/{{ service["grpc_info"]["name"] }}_impl.h"
+#include "../../../atomic_service/{{service["grpc_info"]["name"]}}/sync_server_impl/{{ service["grpc_info"]["sync_server_impl"] }}.cpp"
 {% endfor %}
 using json = nlohmann::json;
 

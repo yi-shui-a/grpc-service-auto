@@ -1,5 +1,6 @@
 import json
 from typing import Any, Dict
+import os
 
 
 class Config:
@@ -11,7 +12,10 @@ class Config:
             cls._instance = super().__new__(cls)
         return cls._instance
 
-    def __init__(self, config_file: str = "../config/config.json"):
+    def __init__(
+        self,
+        config_file: str = f"{os.path.dirname(os.path.abspath(__file__))}/../config/config.json",
+    ):
         # 如果配置数据已经加载，则不再重复加载
         if not hasattr(self, "_config_loaded"):
             self._load_config(config_file)
