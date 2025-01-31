@@ -92,19 +92,17 @@ class Server:
     def set_file_name(self):
         self._async_server_name = f"{self._name}_async_server"
         self._sync_server_name = f"{self._name}_sync_server"
-        self._async_client_name = f"{self._name}_async_client"
-        self._sync_client_name = f"{self._name}_sync_client"
 
     # 使用用户输入数据加载Server
-    def set_info_from_user(self, info):
-        self._name = info["name"]
-        self._ip = info["ip"]
-        self._port = info["port"]
-        self._username = info["username"]
-        self._password = info["password"]
-        self._broadcast_address = info["broadcast_address"]
-        self._broadcast_port = info["broadcast_port"]
-        self._heartbeat_interal = info["heartbeat_interal"]
+    def set_info_from_user(self, info: dict):
+        self._name = info.get("name", "")
+        self._ip = info.get("ip", "")
+        self._port = info.get("port", "")
+        self._username = info.get("username", "")
+        self._password = info.get("password", "")
+        self._broadcast_address = info.get("broadcast_address", "")
+        self._broadcast_port = info.get("broadcast_port", "")
+        self._heartbeat_interal = info.get.get("heartbeat_interval", "")
         self.set_file_name()
         # 将原子服务的json作为一个service的dict变量，全部传入
         for service in info["services"]:
@@ -117,17 +115,17 @@ class Server:
 
     # 加载json_client
     def set_info(self, info):
-        self._name = info["name"]
-        self._ip = info["ip"]
-        self._port = info["port"]
-        self._username = info["username"]
-        self._password = info["password"]
-        self._broadcast_address = info["broadcast_address"]
-        self._broadcast_port = info["broadcast_port"]
-        self._heartbeat_interal = info["heartbeat_interal"]
+        self._name = info.get("name", "")
+        self._ip = info.get("ip", "")
+        self._port = info.get("port", "")
+        self._username = info.get("username", "")
+        self._password = info.get("password", "")
+        self._broadcast_address = info.get("broadcast_address", "")
+        self._broadcast_port = info.get("broadcast_port", "")
+        self._heartbeat_interal = info.get.get("heartbeat_interval", "")
 
-        self._async_server_name = info["async_server_name"]
-        self._sync_server_name = info["sync_server_name"]
+        self._async_server_name = info.get("async_server_name", "")
+        self._sync_server_name = info.get("sync_server_name", "")
 
         for service in info["services"]:
             self.add_service(service)

@@ -7,9 +7,3 @@ src/scripts/config/__pycache__/**
 src/scripts/entity/__pycache__/**
 src/scripts/util/__pycache__/**
 
-
-objs/*
-protos/*
-rpc_client_inc/*
-rpc_server_inc/*
-server_src/*

@@ -19,6 +19,8 @@ class GrpcMethodUtil:
     grpc_service_name_suffix = "_Service"
     grpc_service_package_suffix = "_Package"
     grpc_service_interface_suffix = "_Interface"
+    grpc_service_sync_server_impl_suffix = "_sync_server_impl"
+    grpc_service_sync_client_impl_suffix = "_sync_client_impl"
 
     def __init__(self):
         pass
@@ -139,55 +141,12 @@ class GrpcMethodUtil:
 
         :param proto_dir: .proto 文件所在的目录路径
         """
+        service_name = atom_service._base_info.get_name()
         proto_dir = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/protos/"
 
-        # 判断是否存在该文件
-        if not os.path.exists(proto_dir + "CMakeLists.txt"):
-            print("CMakeLists.txt文件不存在")
-        if not os.path.exists(
-            proto_dir + f"{atom_service._base_info.get_name()}.proto"
-        ):
-            print(f"{atom_service._base_info.get_name()}.proto文件不存在")
-
-        # 创建 build 目录
-        build_dir = os.path.join(proto_dir, "build")
-        # 准备 build 目录：如果目录已存在，则清空目录内容；否则创建空目录。
-        if os.path.exists(build_dir):
-            print(f"清空 build 目录：{build_dir}")
-            # 删除目录中的所有内容
-            for item in os.listdir(build_dir):
-                item_path = os.path.join(build_dir, item)
-                if os.path.isfile(item_path) or os.path.islink(item_path):
-                    os.unlink(item_path)  # 删除文件或符号链接
-                elif os.path.isdir(item_path):
-                    shutil.rmtree(item_path)  # 删除子目录
-        else:
-            print(f"创建 build 目录：{build_dir}")
-            os.makedirs(build_dir)
-
-        # 运行编译程序
-        try:
-            # 进入 build 目录
-            os.chdir(build_dir)
-            # 运行 cmake
-            print("运行 cmake...")
-            subprocess.run(["cmake", ".."], check=True)
-
-            # 运行 make
-            print("运行 make...")
-            subprocess.run(["make"], check=True)
-
-            print("文件生成成功！")
-        except subprocess.CalledProcessError as e:
-            print(f"错误：命令执行失败。{e}")
-        finally:
-            # 返回原始目录
-            os.chdir(proto_dir)
-
-        # 删除 build 目录
-        if os.path.exists(build_dir):
-            print(f"删除 build 目录：{build_dir}")
-            shutil.rmtree(build_dir)
+        GrpcMethodUtil.compileCmakeProject(
+            proto_dir, service_name, cpp_file_type="proto"
+        )
 
     @staticmethod
     def generateServerImpl(atom_service: AtomService):
@@ -219,12 +178,53 @@ class GrpcMethodUtil:
 
         # 将res_str写入框架内的cpp文件中，同名不同路径
         with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_server_impl/{service_name}_sync_server_impl.cpp",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_server_impl/{service_name + GrpcMethodUtil.grpc_service_sync_server_impl_suffix}.cpp",
             "w",
         ) as file:
             file.write(res_str)
         print(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_server_impl/{service_name}_sync_server_impl.cpp generated successfully!"
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_server_impl/{service_name + GrpcMethodUtil.grpc_service_sync_server_impl_suffix}.cpp generated successfully!"
+        )
+
+    @staticmethod
+    def generateServerImplCMakeLists(atom_service: AtomService):
+        service_name = atom_service._base_info.get_name()
+        proto_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/sync_impl_process_template/sync_server_impl_compile_cmake_template.j2"
+            ).read()
+        )
+        res_str = proto_template.render(
+            progject_name=service_name
+            + GrpcMethodUtil.grpc_service_sync_server_impl_suffix,
+            service_name=service_name,
+        )
+
+        # 确保目录存在
+        os.makedirs(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_server_impl/",
+            exist_ok=True,
+        )
+
+        # 将res_str写入框架内的cpp文件中，同名不同路径
+        with open(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_server_impl/CMakeLists.txt",
+            "w",
+        ) as file:
+            file.write(res_str)
+        print(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_server_impl/CMakeLists.txt generated successfully!"
+        )
+
+    @staticmethod
+    def compileServerImpl(atom_service: AtomService):
+        service_name = atom_service._base_info.get_name()
+        server_impl_dir = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_server_impl/"
+
+        GrpcMethodUtil.compileCmakeProject(
+            server_impl_dir,
+            service_name + GrpcMethodUtil.grpc_service_sync_server_impl_suffix,
+            cpp_file_type="cpp",
         )
 
     @staticmethod
@@ -257,18 +257,104 @@ class GrpcMethodUtil:
 
         # 将res_str写入框架内的cpp文件中，同名不同路径
         with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_client_impl/{service_name}_sync_client_impl.cpp",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_client_impl/{service_name + GrpcMethodUtil.grpc_service_sync_client_impl_suffix}.cpp",
             "w",
         ) as file:
             file.write(res_str)
         print(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_client_impl/{service_name}_sync_client_impl.cpp generated successfully!"
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_client_impl/{service_name + GrpcMethodUtil.grpc_service_sync_client_impl_suffix}.cpp generated successfully!"
         )
 
     @staticmethod
-    def compileServerImpl(atom_service: AtomService):
+    def generateClientImplCMakeLists(atom_service: AtomService):
         service_name = atom_service._base_info.get_name()
-        pass
+        proto_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/sync_impl_process_template/sync_client_impl_compile_cmake_template.j2"
+            ).read()
+        )
+        res_str = proto_template.render(
+            progject_name=service_name
+            + GrpcMethodUtil.grpc_service_sync_client_impl_suffix,
+            service_name=service_name,
+        )
+
+        # 确保目录存在
+        os.makedirs(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_client_impl/",
+            exist_ok=True,
+        )
+
+        # 将res_str写入框架内的cpp文件中，同名不同路径
+        with open(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_client_impl/CMakeLists.txt",
+            "w",
+        ) as file:
+            file.write(res_str)
+        print(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_client_impl/CMakeLists.txt generated successfully!"
+        )
+
+    @staticmethod
+    def compileClientImpl(atom_service: AtomService):
+        service_name = atom_service._base_info.get_name()
+        server_impl_dir = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/sync_client_impl/"
+
+        GrpcMethodUtil.compileCmakeProject(
+            server_impl_dir,
+            service_name + GrpcMethodUtil.grpc_service_sync_server_impl_suffix,
+            cpp_file_type="cpp",
+        )
+
+    @staticmethod
+    def compileCmakeProject(
+        cmake_dir: str, cpp_file_name: str, cpp_file_type: str = "cpp"
+    ):
+        # 判断是否存在该文件
+        if not os.path.exists(cmake_dir + "CMakeLists.txt"):
+            print("CMakeLists.txt文件不存在")
+        if not os.path.exists(cmake_dir + f"{cpp_file_name}.{cpp_file_type}"):
+            print(f"{cpp_file_name}.{cpp_file_type}文件不存在")
+
+        # 创建 build 目录
+        build_dir = os.path.join(cmake_dir, "build")
+        # 准备 build 目录：如果目录已存在，则清空目录内容；否则创建空目录。
+        if os.path.exists(build_dir):
+            print(f"清空 build 目录：{build_dir}")
+            # 删除目录中的所有内容
+            for item in os.listdir(build_dir):
+                item_path = os.path.join(build_dir, item)
+                if os.path.isfile(item_path) or os.path.islink(item_path):
+                    os.unlink(item_path)  # 删除文件或符号链接
+                elif os.path.isdir(item_path):
+                    shutil.rmtree(item_path)  # 删除子目录
+        else:
+            print(f"创建 build 目录：{build_dir}")
+            os.makedirs(build_dir)
+
+        # 运行编译程序
+        try:
+            # 进入 build 目录
+            os.chdir(build_dir)
+            # 运行 cmake
+            print("运行 cmake...")
+            subprocess.run(["cmake", ".."], check=True)
+
+            # 运行 make
+            print("运行 make...")
+            subprocess.run(["make"], check=True)
+
+            print("文件生成成功！")
+        except subprocess.CalledProcessError as e:
+            print(f"错误：命令执行失败。{e}")
+        finally:
+            # 返回原始目录
+            os.chdir(cmake_dir)
+
+        # 删除 build 目录
+        if os.path.exists(build_dir):
+            print(f"删除 build 目录：{build_dir}")
+            shutil.rmtree(build_dir)
 
     # def set_service_method_util(self, service: AtomService):
     #     self.__service_name = service._base_info.get_name()

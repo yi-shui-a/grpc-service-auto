@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 # 设置项目名称
-project(atomic_service_mbsb_sync_server_impl)
+project({{progject_name}})
 
 # 设置 C++ 标准
 set(CMAKE_CXX_STANDARD 11)
@@ -37,23 +37,23 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/../atomic_src ${PROJECT_BINARY_DIR}/atomi
 
 
 # 指定源文件
-set(SOURCE_FILES atomic_service_mbsb_sync_server_impl.cpp)
+set(SOURCE_FILES {{progject_name}}.cpp)
 
 # 确保 SOURCE_FILES 变量不为空
 if(NOT SOURCE_FILES)
-    message(FATAL_ERROR "No source files found for atomic_service_mbsb_sync_server_impl.")
+    message(FATAL_ERROR "No source files found for {{progject_name}}.")
 endif()
 
 # 生成动态链接库
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 
-# 显式声明 atomic_service_mbsb_sync_server_impl 依赖于 atomic_service_mbsb
-# 确保了在构建 atomic_service_mbsb_sync_server_impl 之前，atomic_service_mbsb 已经构建完成
-add_dependencies(${PROJECT_NAME} atomic_service_mbsb)
+# 显式声明 {{progject_name}} 依赖于 {{service_name}}
+# 确保了在构建 {{progject_name}} 之前，{{service_name}} 已经构建完成
+add_dependencies(${PROJECT_NAME} {{service_name}})
 
-# 链接 atomic_service_mbsb 静态库
+# 链接 {{service_name}} 静态库
 target_link_libraries(${PROJECT_NAME}
-    -Wl,--whole-archive ${PROJECT_SOURCE_DIR}/../lib/atomic_service_mbsb.a -Wl,--no-whole-archive
+    -Wl,--whole-archive ${PROJECT_SOURCE_DIR}/../lib/{{service_name}}.a -Wl,--no-whole-archive
     grpc++
     grpc
     protobuf
@@ -68,3 +68,4 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_VISIBILITY_PRESET default
     VISIBILITY_INLINES_HIDDEN OFF
 )
+

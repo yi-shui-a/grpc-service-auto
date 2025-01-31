@@ -650,10 +650,34 @@ class AtomServiceUtil:
             f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_src/{atom_service._base_info.get_name()}.cpp generated successfully!"
         )
 
-    # @staticmethod
-    # def compile_atomic_src(atom_service: AtomService):
+    @staticmethod
+    def generateAtomServiceCMakeLists(atom_service: AtomService):
+        service_name = atom_service._base_info.get_name()
+        proto_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/input_process_template/atomic_src_compile_cmake.j2"
+            ).read()
+        )
+        res_str = proto_template.render(
+            service_name=service_name
+        )
 
-    #     pass
+        # 确保目录存在
+        os.makedirs(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/atomic_src/",
+            exist_ok=True,
+        )
+
+        # 将res_str写入框架内的cpp文件中，同名不同路径
+        with open(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/atomic_src/CMakeLists.txt",
+            "w",
+        ) as file:
+            file.write(res_str)
+        print(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/atomic_src/CMakeLists.txt generated successfully!"
+        )
+
 
     @staticmethod
     def __type_convert(atom_service: AtomService):

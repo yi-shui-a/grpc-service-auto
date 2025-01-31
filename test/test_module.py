@@ -27,6 +27,9 @@ if __name__ == "__main__":
         f"{os.path.dirname(os.path.abspath(__file__))}/../example/sf/atomic_service_sf.c",
     )
 
+    AtomServiceUtil.generateAtomServiceCMakeLists(serviceA)
+    AtomServiceUtil.generateAtomServiceCMakeLists(serviceB)
+
     GrpcMethodUtil.generateProtoFile(serviceA)
     GrpcMethodUtil.generateProtoFile(serviceB)
 
@@ -39,8 +42,20 @@ if __name__ == "__main__":
     GrpcMethodUtil.generateServerImpl(serviceA)
     GrpcMethodUtil.generateServerImpl(serviceB)
 
+    GrpcMethodUtil.generateServerImplCMakeLists(serviceA)
+    GrpcMethodUtil.generateServerImplCMakeLists(serviceB)
+
+    GrpcMethodUtil.compileServerImpl(serviceA)
+    GrpcMethodUtil.compileServerImpl(serviceB)
+
     GrpcMethodUtil.generateStubImpl(serviceA)
     GrpcMethodUtil.generateStubImpl(serviceB)
+
+    GrpcMethodUtil.generateClientImplCMakeLists(serviceA)
+    GrpcMethodUtil.generateClientImplCMakeLists(serviceB)
+
+    GrpcMethodUtil.compileClientImpl(serviceA)
+    GrpcMethodUtil.compileClientImpl(serviceB)
 
     exit(1)
 
