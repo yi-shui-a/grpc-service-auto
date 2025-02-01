@@ -25,20 +25,39 @@ class Client:
     def set_name(self, name: str) -> None:
         self._name = name
 
-    def add_dds_topic(self, dds_topic: str):
-        self._dds_topic.append(dds_topic)
-
     def add_service(self, service: str):
-        self._services.append(service)
+        # 将一个service的数据以dict的形式传给server
+        with open(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../db/atomic_service/{service}/{service}.json",
+            "r",
+        ) as file:
+            self._services.append(json.loads(file.read()))
 
     def delete_service(self, service: str):
-        try:
-            self._services.remove(service)
-        except ValueError as e:
-            print(f"Error: {e}")
+        # 创建一个新的列表，用于存储不需要删除的元素
+        new_services = []
+        found = False
+        # 遍历原列表中的每个元素
+        for s in self._services:
+            # 检查当前元素的 "basic_info" 中的 "name" 是否等于要删除的服务名称
+            if s["basic_info"]["name"] == service:
+                found = True
+            else:
+                # 如果不等于，则将该元素添加到新列表中
+                new_services.append(s)
+        # 如果找到了要删除的服务，则更新原列表
+        if found:
+            self._services = new_services
+        else:
+            # 如果未找到，则输出错误信息
             print(f"Service '{service}' not found in the list.")
-        except Exception as e:
-            print(f"An unexpected error occurred: {e}")
+
+    def set_service(self, old_service: str, new_service: str):
+        self.delete_service(old_service)
+        self.add_service(new_service)
+
+    def add_dds_topic(self, dds_topic: str):
+        self._dds_topic.append(dds_topic)
 
     def delete_dds_topic(self, topic: str):
         try:
@@ -53,12 +72,6 @@ class Client:
         for index in range(0, len(self._dds_topic)):
             if self._dds_topic[index] == old_topic:
                 self._dds_topic[index] = new_topic
-                break
-
-    def set_service(self, old_service: str, new_service: str):
-        for index in range(0, len(self._services)):
-            if self._services[index] == old_service:
-                self._services[index] = new_service
                 break
 
     # 使用用户输入数据加载Client
@@ -97,6 +110,8 @@ class Client:
     def saveClientJson(
         self, path=f"{os.path.dirname(os.path.abspath(__file__))}/../../json_client/"
     ):
+        # TODO: 保存一个client所有的数据
+        pass
         try:
             # 确保目录存在
             os.makedirs(path, exist_ok=True)

@@ -8,6 +8,8 @@ sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pard
 
 from src.scripts.util.Util import Util
 from src.scripts.util.DDSUtil import DDSUtil
+from src.scripts.Client import Client
+from src.scripts.util.ClientUtil import ClientUtil
 
 
 """
@@ -25,6 +27,18 @@ DDSUtil.loadDDS(
 DDSUtil.generateDDSCMakeLists("dds_publisher_formal_demo", ["example"])
 DDSUtil.compileDDS("dds_publisher_formal_demo")
 
+"""
+假装构造一个client
+"""
+# 构造client
+client = Client()
+client.set_name("client_formal_demo_with_dds")
+client.add_dds_topic("example")
+client.add_service("atomic_service_mbsb")
+client.add_service("atomic_service_sf")
+
+ClientUtil.generateSyncClientCMakeLists(client)
+ClientUtil.compileSyncClient(client)
 
 exit(1)
 
