@@ -88,7 +88,7 @@ class ServerUtil:
         Util.compileCmakeProject(
             server_dir,
             server.get_name() + ServerUtil.sync_server_suffix,
-            cpp_file_type="cpp",
+            file_type="cpp",
         )
 
     @staticmethod

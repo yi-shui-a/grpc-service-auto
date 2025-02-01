@@ -158,7 +158,7 @@ class GrpcMethodUtil:
         service_name = atom_service._base_info.get_name()
         proto_dir = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/protos/"
 
-        Util.compileCmakeProject(proto_dir, service_name, cpp_file_type="proto")
+        Util.compileCmakeProject(proto_dir, service_name, file_type="proto")
 
     @staticmethod
     def generateServerImpl(atom_service: AtomService):
@@ -236,7 +236,7 @@ class GrpcMethodUtil:
         Util.compileCmakeProject(
             server_impl_dir,
             service_name + GrpcMethodUtil.grpc_service_sync_server_impl_suffix,
-            cpp_file_type="cpp",
+            file_type="cpp",
         )
 
     @staticmethod
@@ -315,7 +315,7 @@ class GrpcMethodUtil:
         Util.compileCmakeProject(
             server_impl_dir,
             service_name + GrpcMethodUtil.grpc_service_sync_client_impl_suffix,
-            cpp_file_type="cpp",
+            file_type="cpp",
         )
 
     # def set_service_method_util(self, service: AtomService):

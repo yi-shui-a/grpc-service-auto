@@ -1,6 +1,8 @@
 db/atomic_service/**
 db/server/**
-db/client/**
+# db/client/**
+db/dds/**
+db/idl/**
 
 src/scripts/__pycache__/**
 src/scripts/config/__pycache__/**
