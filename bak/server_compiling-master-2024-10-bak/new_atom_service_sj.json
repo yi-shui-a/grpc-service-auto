@@ -1,0 +1,139 @@
+{
+    "basic_info": {
+        "owner": {
+            "developer": {
+                "name": "Spiderman",
+                "email": "Spidermsan@atomic_service_fwgz.com"
+            },
+            "maintainer": {
+                "name": "IronMan",
+                "email": "ironman@PNUI.com"
+            }
+        },
+        "name": "atomic_service_mbsb",
+        "version": "V1.0.0",
+        "build_time": "2024-09-21T09-21-21",
+        "resource_requirement": {
+            "cpu_architecture": "x86_64",
+            "memory": "4GB",
+            "hard_disk": "50GB"
+        },
+        "operating_system": [
+            {
+                "name": "Linux",
+                "version": {
+                    "v1": "5.13.0-117-generic",
+                    "v2": "5.14.0-117-generic"
+                }
+            },
+            {
+                "name": "SylixOS",
+                "version": {
+                    "v1": "1.0.0",
+                    "v2": "1.0.2"
+                }
+            }
+        ]
+    },
+    "return_code": {
+        "ATOMIC_SERVICE_SUCCESS": 0,
+        "OperationNotPermitted": 1,
+        "InterruptedSystemCall": 2,
+        "NoSuchDeviceORAddress": 3,
+        "ArgumentListTooLong": 4,
+        "InvalidArgument": 5,
+        "NoSuchFile": 6,
+        "NoSuchDir": 7,
+        "DATA_ERROR": 8
+    },
+    "messages": [
+        {
+            "label": "request",
+            "name": "atomic_service_mbsb_task_A_Request_st",
+            "fields": [
+                {
+                    "id": 1,
+                    "type": "int",
+                    "name": "number1"
+                },
+                {
+                    "id": 2,
+                    "type": "int",
+                    "name": "number2"
+                }
+            ]
+        },
+        {
+            "label": "reply",
+            "name": "atomic_service_mbsb_task_A_Reply_st",
+            "fields": [
+                {
+                    "id": 1,
+                    "type": "int",
+                    "name": "sum_result"
+                },
+                {
+                    "id": 2,
+                    "type": "int",
+                    "name": "return_type"
+                }
+            ]
+        },
+        {
+            "label": "request",
+            "name": "atomic_service_mbsb_task_B_Request_st",
+            "fields": [
+                {
+                    "id": 1,
+                    "type": "int",
+                    "name": "number1"
+                },
+                {
+                    "id": 2,
+                    "type": "int",
+                    "name": "number2"
+                }
+            ]
+        },
+        {
+            "label": "reply",
+            "name": "atomic_service_mbsb_task_B_Reply_st",
+            "fields": [
+                {
+                    "id": 1,
+                    "type": "int",
+                    "name": "sub_result"
+                },
+                {
+                    "id": 2,
+                    "type": "int",
+                    "name": "return_type"
+                }
+            ]
+        }
+    ],
+    "grpc_methods": [
+        {
+            "name": "atomic_service_fun_task_A",
+            "description": "ccccc",
+            "requestMsg": "atomic_service_mbsb_task_A_Request_st",
+            "responseMsg": "atomic_service_mbsb_task_A_Reply_st",
+            "capabilities": {
+                "read": true,
+                "write": false,
+                "delete": false
+            }
+        },
+        {
+            "name": "atomic_service_fun_task_B",
+            "description": "ccccc",
+            "requestMsg": "atomic_service_mbsb_task_B_Request_st",
+            "responseMsg": "atomic_service_mbsb_task_B_Reply_st",
+            "capabilities": {
+                "read": true,
+                "write": false,
+                "delete": false
+            }
+        }
+    ]
+}

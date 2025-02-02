@@ -51,7 +51,7 @@ target_include_directories( client_formal_demo_with_dds_sync_client PRIVATE
     ${CMAKE_SOURCE_DIR}/../../../idl/example 
     
     ${CycloneDDS_INCLUDE_DIRS} # 包含 CycloneDDS 头文件
-)
+) 
 
 # 链接库
 target_link_libraries( client_formal_demo_with_dds_sync_client PRIVATE

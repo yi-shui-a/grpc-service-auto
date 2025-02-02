@@ -1,0 +1,151 @@
+{
+  "atomic_service": {
+    "basic_info": {
+      "name": "atomic_service_sj_Service",
+      "chinese_name":"原子服务——射击",
+      "description": " ********** content ********** ",
+      "chinese_description": "服务描述、功能介绍",
+      "version": "1.0.0",
+      "build_time": "2024-08-16T12:00:00Z",
+      "priority_level": "High_Level",
+      "license": " ***** ",
+      "developer": {
+        "name": "Spiderman",
+        "email": "Spidermsan@atomic_service_fwgz.com"
+      },
+      "maintainer": {
+        "name": "IronMan",
+        "email": "ironman@PNUI.com"
+      },
+      "resource_requirements": {
+        "cpu_architecture": "x86_64",
+        "memory": "4GB",
+        "hard_disk": "50GB"
+      },
+      "operating_system":[
+        {
+          "name": "Linux",
+          "version":{
+          "v1" : "5.13.0-117-generic",
+          "v2" : "5.14.0-117-generic",
+          "v3" : "5.15.0-117-generic"
+          }
+        },
+        {
+          "name":"SylixOS",
+          "version":{
+			  "v1":"1.0.0",
+			  "v2":"1.0.1"
+		  }
+        },
+        {
+          "name":"EulerOS",
+          "version":{
+			  "v1":"1.0.0",
+			  "v2":"1.2.3"
+		  }
+        },
+        {
+          "name":"HarmonyOS",
+          "version":{
+			  "v1":"1.0.0"
+		  }
+        },
+        {
+          "name":"ACoreOS",
+          "version":{
+			  "v1":"1.0.0"
+		  }
+        }
+      ]
+    },
+    "messages": [
+      { 
+        "lable": "request",
+        "name": "atomic_service_fwgz_Request",
+        "fields": [
+          { "name": "name", "type": "string", "id": 1 ,"chinese_name": "输入参数1"},
+          { "name": "integer_field", "type": "int32", "id": 2, "chinese_name": "输入参数2" },
+          { "name": "double_field", "type": "double", "id": 3, "chinese_name": "输入参数3" },
+          { "name": "float_field", "type": "float", "id": 4, "chinese_name": "输入参数4" },
+          { "name": "int_array", "type": "int32", "repeated": true, "id": 5, "chinese_name": "输入参数5" },
+          { "name": "string_int_map", "type": "map","key": "string", "value": "int32","map": true, "id": 6, "chinese_name": "输入参数6" }
+        ]
+      },
+      {
+        "lable": "reply",
+        "name": "atomic_service_fwgz_Reply",
+        "fields": [
+          { "name": "message", "type": "string", "id": 1, "chinese_name": "输出参数1" },
+          { "name": "integer_reply", "type": "int32", "id": 2, "chinese_name": "输出参数2" },
+          { "name": "double_reply", "type": "double", "id": 3, "chinese_name": "输出参数3" },
+          { "name": "float_reply", "type": "float", "id": 4, "chinese_name": "输出参数4" },
+          { "name": "int_array_reply", "type": "int32", "repeated": true, "id": 5, "chinese_name": "输出参数5" },
+          { "name": "string_int_map_reply", "type": "map","key": "string", "value": "int32","map": true, "id": 6, "chinese_name": "输出参数6" },
+          { "name": "error_type", "type":"int32", "id": 7}
+        ]
+      }
+    ],
+    "rpc_methods": [
+      {
+        "name": "UnitaryStream",
+        "requestType": "atomic_service_fwgz_Request",
+        "responseType": "atomic_service_fwgz_Reply",
+        "capabilities": {
+          "read": true,
+          "write": false,
+          "delete": false
+        }
+      },
+	  {
+        "name": "UnitaryStream",
+        "requestType": "atomic_service_fwgz_Request",
+        "responseType": "atomic_service_fwgz_Reply",
+        "capabilities": {
+          "read": true,
+          "write": false,
+          "delete": false
+        }
+      },
+      {
+        "name": "ServerStream",
+        "requestType": "atomic_service_fwgz_Request",
+        "responseType": "stream atomic_service_fwgz_Reply",
+        "capabilities": {
+          "read": false,
+          "write": true,
+          "delete": false
+        }
+      },
+      {
+        "name": "ClientStream",
+        "requestType": "stream atomic_service_fwgz_Request",
+        "responseType": "atomic_service_fwgz_Reply",
+        "capabilities": {
+          "read": true,
+          "write": false,
+          "delete": false
+        }
+      },
+      {
+        "name": "BidirectionalStream",
+        "requestType": "stream atomic_service_fwgz_Request",
+        "responseType": "stream atomic_service_fwgz_Reply",
+        "capabilities": {
+          "read": true,
+          "write": true,
+          "delete": false
+        }
+      }
+    ]
+  },
+  "implement":{
+    "description": "Generate *.proto and *.cpp files",
+    "syntax": "proto3",
+    "package": "atomic_service_fwgz_Package",
+    "request": "atomic_service_fwgz_Request",
+    "reply": "atomic_service_fwgz_Reply",
+    "atom_interface": "atomic_service_fwgz_interface",
+    "atom_name": "atomic_service_fwgz"
+  }
+}

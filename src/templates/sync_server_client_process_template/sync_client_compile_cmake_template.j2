@@ -45,7 +45,7 @@ target_include_directories( {{project_name}} PRIVATE
     ${CMAKE_SOURCE_DIR}/../../../idl/{{idl}} 
     {% endfor %}
     ${CycloneDDS_INCLUDE_DIRS} # 包含 CycloneDDS 头文件
-)
+) 
 
 # 链接库
 target_link_libraries( {{project_name}} PRIVATE
