@@ -23,9 +23,12 @@ find_package(gRPC CONFIG REQUIRED)
 # 查找 CycloneDDS 库
 find_package(CycloneDDS REQUIRED)
 
+file(GLOB SOURCES_CPP "${CMAKE_SOURCE_DIR}/*.cpp")
+
 # 添加可执行文件
 add_executable( client_formal_demo_with_dds_sync_client
-    ${CMAKE_SOURCE_DIR}/client_formal_demo_with_dds_sync_client.cpp
+    # 添加cmake目录下的所有cpp文件
+    ${SOURCES_CPP}
     
     ${CMAKE_SOURCE_DIR}/../../../atomic_service/atomic_service_mbsb/protos/atomic_service_mbsb.pb.cc
     ${CMAKE_SOURCE_DIR}/../../../atomic_service/atomic_service_mbsb/protos/atomic_service_mbsb.grpc.pb.cc
@@ -40,6 +43,7 @@ add_executable( client_formal_demo_with_dds_sync_client
 
 # 包含目录
 target_include_directories( client_formal_demo_with_dds_sync_client PRIVATE
+    ${CMAKE_SOURCE_DIR}/
     
     ${CMAKE_SOURCE_DIR}/../../../atomic_service/atomic_service_mbsb/sync_server_impl
     ${CMAKE_SOURCE_DIR}/../../../atomic_service/atomic_service_mbsb/protos

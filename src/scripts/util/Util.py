@@ -189,3 +189,91 @@ class Util(object):
     #         # 如果make命令失败，则捕获异常并打印错误信息
     #         print("Make failed with error:", e)
     #         print("Error Output:\n", e.stderr)
+
+    @staticmethod
+    def generateHeaderHppAndCpp(path: str):
+        # 定义模板
+        cpp_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/registry_comm_template/HeaderCpp.j2"
+            ).read()
+        )
+        cpp_str = cpp_template.render()
+        hpp_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/registry_comm_template/HeaderHpp.j2"
+            ).read()
+        )
+        hpp_str = hpp_template.render()
+
+        # 确保目录存在
+        os.makedirs(path, exist_ok=True)
+
+        # 将cpp_str写入框架内的cpp文件中，同名不同路径
+        with open(
+            f"{path}/Header.cpp",
+            "w",
+        ) as file:
+            file.write(cpp_str)
+        print(f"{path}/Header.cpp generated successfully!")
+
+        # 将hpp_str写入框架内的hpp文件中，同名不同路径
+        with open(
+            f"{path}/Header.h",
+            "w",
+        ) as file:
+            file.write(hpp_str)
+        print(f"{path}/Header.h generated successfully!")
+
+    @staticmethod
+    def run_executable_in_path(path, executable_name):
+        """
+        进入指定路径并运行该路径中的可执行文件，实时输出可执行文件的打印内容。
+
+        :param path: 目标路径
+        :param executable_name: 可执行文件的名称
+        :return: 可执行文件的返回码
+        """
+        # 检查路径是否存在
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"executable_path '{path}' does not exist")
+
+        # 切换到目标路径
+        os.chdir(path)
+
+        # 检查可执行文件是否存在
+        executable_path = os.path.join(path, executable_name)
+        if not os.path.isfile(executable_path):
+            raise FileNotFoundError(
+                f"executable_file '{executable_name}' is not exist  in path '{path}' "
+            )
+
+        # 运行可执行文件并实时输出
+        try:
+            process = subprocess.Popen(
+                [executable_path],  # 可执行文件路径
+                stdout=subprocess.PIPE,  # 捕获 stdout
+                stderr=subprocess.PIPE,  # 捕获 stderr
+                text=True,  # 以文本模式返回输出
+                bufsize=1,  # 行缓冲
+                universal_newlines=True,  # 确保跨平台兼容性
+            )
+
+            # 实时读取并输出 stdout 和 stderr
+            while True:
+                output = process.stdout.readline()
+                error = process.stderr.readline()
+                if output == "" and error == "" and process.poll() is not None:
+                    break
+                if output:
+                    print(output.strip())  # 输出 stdout
+                if error:
+                    print(error.strip(), file=sys.stderr)  # 输出 stderr
+
+            # 等待进程结束并获取返回码
+            return_code = process.wait()
+            return return_code
+        except Exception as e:
+            raise RuntimeError(
+                f"Failed to run executable file '{executable_name}' , exception: {e}"
+            )

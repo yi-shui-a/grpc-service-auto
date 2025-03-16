@@ -11,6 +11,19 @@ from src.scripts.util.DDSUtil import DDSUtil
 from src.scripts.Client import Client
 from src.scripts.util.ClientUtil import ClientUtil
 
+if __name__ == "__main__":
+    # 构造client
+    client = Client()
+    client.set_name("client_formal_demo_with_dds")
+    client.add_dds_topic("example")
+    client.add_service("atomic_service_mbsb")
+    client.add_service("atomic_service_sf")
+
+    ClientUtil.generateSyncClientCMakeLists(client)
+    ClientUtil.compileSyncClient(client)
+
+    exit(1)
+
 
 """
 DDS相关函数

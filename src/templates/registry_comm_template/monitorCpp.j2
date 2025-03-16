@@ -1,0 +1,110 @@
+#include "monitor.h"
+
+void monitorComm(const std::string& broadcastAddress, const int port){
+    int sock;
+    struct sockaddr_in sockertaddr;  
+    // 创建UDP socket  
+    if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {  
+        perror("socket creation failed");  
+        exit(EXIT_FAILURE);  
+    }  
+  
+    // 设置socket选项以允许广播  
+    int opt = 1;
+    if (setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &opt, sizeof(opt)) < 0) {  
+        perror("setsockopt(SO_BROADCAST) failed");  
+        exit(EXIT_FAILURE);  
+    }  
+  
+    // 初始化广播地址结构  
+    memset(&sockertaddr, 0, sizeof(sockertaddr));  
+    sockertaddr.sin_family = AF_INET;  
+    sockertaddr.sin_addr.s_addr = inet_addr(broadcastAddress.c_str());  
+    sockertaddr.sin_port = htons(port);  
+
+    // 构造注册信息
+    json registry_json;
+    registry_json["server_name"] = "{{name}}";
+    registry_json["address"] = "{{ip}}";
+    registry_json["port"] = {{port}};
+
+    json registry_services_list = json::array();
+    
+    {% for service in services %}
+    registry_services_list.push_back({ {"service_name","{{service["grpc_info"]["name"]}}"},{"role", 1} });
+    {% endfor %}
+    registry_json["services_list"] = registry_services_list;
+    std::string registry_str = formatResponse(registry_json.dump(4), 1);
+    // 发送注册报文到广播地址
+    if (sendto(sock, registry_str.c_str(), registry_str.size(), 0, (struct sockaddr *)&sockertaddr, sizeof(sockertaddr)) < 0) {
+        close(sock);
+        exit(EXIT_FAILURE);
+    }
+
+    // 构造元数据信息
+    json metadata_registry_json;
+    metadata_registry_json["server_name"] = "{{name}}";
+    metadata_registry_json["address"] = "{{ip}}";
+    metadata_registry_json["port"] = {{port}};
+    json metadata_registry_services_list = json::array();
+    {% for service in services %}
+    metadata_registry_services_list.push_back({ {"metadata",{ { "version", "{{service["basic_info"]["version"]}}" },{"decription","{{service["basic_info"]["description"]}}"},{"developer","{{service["basic_info"]["owner"]["developer"]["name"]}}"},{"build_time","{{service["basic_info"]["build_time"]}}"} } },{"service_name", "{{service["basic_info"]["name"]}}" },{"card","atlas"},{"os","openeuler"} });
+    {% endfor %}
+    metadata_registry_json["services_list"] = metadata_registry_services_list;
+    std::string metadata_registry_str = formatResponse(metadata_registry_json.dump(4), 3);
+    // 发送注册报文到广播地址
+    if (sendto(sock, metadata_registry_str.c_str(), metadata_registry_str.size(), 0, (struct sockaddr *)&sockertaddr, sizeof(sockertaddr)) < 0) {
+        close(sock);
+        exit(EXIT_FAILURE);
+    }
+
+
+    //构造心跳信息
+    json heartbeat_json;
+    json heartbeat_services_list;
+    while (1) { 
+        // 无限循环，每2秒发送一次  
+        heartbeat_json["server_name"] = "{{name}}";
+        heartbeat_json["address"] = "{{ip}}";
+        heartbeat_json["port"] = {{port}};
+        heartbeat_services_list = json::array();
+        {% for service in services %}
+        heartbeat_services_list.push_back({ {"service_name","{{service["grpc_info"]["name"]}}"},{"role", 1} });
+        {% endfor %}
+        heartbeat_json["services_list"] = heartbeat_services_list;
+        std::string heartbeat_str = formatResponse(heartbeat_json.dump(4), 7);
+        // 发送注册报文到广播地址
+        if (sendto(sock, heartbeat_str.c_str(), heartbeat_str.size(), 0, (struct sockaddr *)&sockertaddr, sizeof(sockertaddr)) < 0) {
+            close(sock);
+            exit(EXIT_FAILURE);
+        }
+
+        sleep(2);  
+    }  
+
+    // 关闭socket
+    close(sock);  
+}
+
+std::string formatResponse(std::string contentStr, int32_t type, int32_t identifier)
+{
+    Header header = Header();
+    header.identifier = identifier;
+    header.sendTime = getCurrentTimeMillis();
+    header.messageLength = contentStr.length();
+    header.serialNumber = 1;
+    header.checkBit = 1;
+    header.type = type;
+    std::string headerStr = Header::serialize(header);
+    return headerStr + contentStr;
+}
+
+// 获取当前毫秒级时间戳
+long long getCurrentTimeMillis()
+{
+    auto now = std::chrono::system_clock::now();
+    auto duration = now.time_since_epoch();
+    auto res = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+    std::cout << "res: " << res << std::endl;
+    return res;
+}

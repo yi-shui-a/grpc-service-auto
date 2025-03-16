@@ -19,6 +19,14 @@ class ServerUtil:
 
     @staticmethod
     def generateSyncServer(server: Server):
+        """
+        添加header和moniter
+        """
+        Util.generateHeaderHppAndCpp(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/server/{server.get_name()}/sync_server/"
+        )
+        ServerUtil.generateMonitor(server)
+
         # 定义模板
         proto_template = Template(
             open(
@@ -256,3 +264,57 @@ class ServerUtil:
     #         # 如果make命令失败，则捕获异常并打印错误信息
     #         print("Make failed with error:", e)
     #         print("Error Output:\n", e.stderr)
+
+    @staticmethod
+    def generateMonitor(server: Server):
+        # 定义模板
+        hpp_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/registry_comm_template/monitorHpp.j2"
+            ).read()
+        )
+
+        cpp_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/registry_comm_template/monitorCpp.j2"
+            ).read()
+        )
+
+        hpp_str = hpp_template.render()
+
+        cpp_str = cpp_template.render(
+            services=server._services,
+            name=server.get_name(),
+            ip=server.get_ip(),
+            port=server.get_port(),
+            username=server.get_username(),
+            password=server.get_password(),
+            broadcast_address=server.get_broadcast_address(),
+            broadcast_port=server.get_broadcast_port(),
+        )
+
+        # 确保目录存在
+        os.makedirs(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/server/{server.get_name()}/sync_server/",
+            exist_ok=True,
+        )
+
+        # 将hpp_str写入框架内的hpp文件中，同名不同路径
+        with open(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/server/{server.get_name()}/sync_server/monitor.h",
+            "w",
+        ) as file:
+            file.write(hpp_str)
+        print(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/server/{server.get_name()}/sync_server/monitor.h generated successfully!"
+        )
+
+        # 将cpp_str写入框架内的cpp文件中，同名不同路径
+        with open(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/server/{server.get_name()}/sync_server/monitor.cpp",
+            "w",
+        ) as file:
+            file.write(cpp_str)
+        print(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/server/{server.get_name()}/sync_server/monitor.cpp generated successfully!"
+        )

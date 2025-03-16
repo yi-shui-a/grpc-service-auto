@@ -1,0 +1,29 @@
+#ifndef MONITOR_H
+#define MONITOR_H
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <cstring>
+#include <chrono>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+
+#include "Header.h"
+
+#include <nlohmann/json.hpp>
+
+// 使用 nlohmann::json 库进行 JSON 处理
+using json = nlohmann::json;
+
+void monitorComm(const std::string& broadcastAddress, const int port);
+
+//为发送报文加报头，生成发送报文
+std::string formatResponse(std::string contentStr, int32_t type, int32_t identifier = 22);
+
+// 获取当前毫秒级时间戳
+long long getCurrentTimeMillis();
+#endif // MONITOR_H

@@ -9,3 +9,4 @@ src/scripts/config/__pycache__/**
 src/scripts/entity/__pycache__/**
 src/scripts/util/__pycache__/**
 
+.VSCodeCounter

@@ -65,7 +65,13 @@
         "cinttypes": "cpp",
         "valarray": "cpp",
         "string.h": "c",
-        "atom_service_sf.h": "c"
+        "atom_service_sf.h": "c",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "numbers": "cpp",
+        "ranges": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/g++",
     "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools"
