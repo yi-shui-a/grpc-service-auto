@@ -10,7 +10,9 @@ from ServiceMethod import ServiceMethod
 from entity.OperatingSystem import OperatingSystem
 from entity.Message import Message
 from AtomService import AtomService
-from config.types import cpp_types
+
+# from scripts.config.globals import cpp_types
+from config import cpp_types
 from util.Util import Util
 
 

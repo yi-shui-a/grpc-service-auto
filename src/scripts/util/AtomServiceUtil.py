@@ -9,7 +9,8 @@ import os
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
 from AtomService import AtomService
 from entity.OperatingSystem import OperatingSystem
-from config.types import cpp_types
+# from scripts.config.globals import cpp_types
+from config import *
 
 
 class AtomServiceUtil:
