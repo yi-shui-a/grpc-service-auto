@@ -1,10 +1,9 @@
 import sys
 import os
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from entity.Message import Message
-from entity.Capabilities import Capabilities
-from ServiceMethod import ServiceMethod
+from .Capabilities import Capabilities
+from .Message import Message
+from .ServiceMethod import ServiceMethod
 
 
 class GrpcMethod(ServiceMethod):

@@ -8,7 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pard
 
 from src.scripts.util.Util import Util
 from src.scripts.util.DDSUtil import DDSUtil
-from src.scripts.Client import Client
+from scripts.entity.Client import Client
 from src.scripts.util.ClientUtil import ClientUtil
 
 if __name__ == "__main__":

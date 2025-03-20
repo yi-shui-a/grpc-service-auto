@@ -4,16 +4,9 @@ import os
 import re
 import json
 
-
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
-from ServiceMethod import ServiceMethod
-from entity.OperatingSystem import OperatingSystem
-from entity.Message import Message
-from AtomService import AtomService
-
-# from scripts.config.globals import cpp_types
-from config import cpp_types
-from util.Util import Util
+from ..config import cpp_types,Config
+from .Util import Util
+from ..entity import AtomService
 
 
 class GrpcMethodUtil:

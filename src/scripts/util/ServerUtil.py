@@ -3,9 +3,8 @@ import os
 from jinja2 import Template
 import subprocess
 
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-from Server import Server
-from util.Util import Util
+from .Util import Util
+from ..entity import Server
 
 
 class ServerUtil:

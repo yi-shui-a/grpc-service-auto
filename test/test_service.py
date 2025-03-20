@@ -9,7 +9,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pard
 from src.scripts.util.AtomServiceUtil import AtomServiceUtil
 from src.scripts.util.GrpcMethodUtil import GrpcMethodUtil
 from src.scripts.util.ServerUtil import ServerUtil
-from src.scripts.Server import Server
+from scripts.entity.Server import Server
 from src.scripts.util.Util import Util
 from src.scripts.util.DDSUtil import DDSUtil
 

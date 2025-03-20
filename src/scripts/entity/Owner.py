@@ -1,9 +1,9 @@
 import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-from Maintainer import Maintainer
-from Developer import Developer
+
+from .Maintainer import Maintainer
+from .Developer import Developer
 
 
 class Owner:

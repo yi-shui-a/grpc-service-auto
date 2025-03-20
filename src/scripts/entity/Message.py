@@ -2,9 +2,7 @@ from typing import List
 import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-
-from Field import Field
+from .Field import Field
 
 
 class Message:

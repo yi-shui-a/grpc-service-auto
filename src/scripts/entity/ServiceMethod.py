@@ -3,9 +3,8 @@ import os
 from typing import List
 from abc import abstractmethod
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from entity.ReturnCode import ReturnCode
-from entity.Message import Message
+from .Message import Message
+from .ReturnCode import ReturnCode
 
 
 class ServiceMethod:

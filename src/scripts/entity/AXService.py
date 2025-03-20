@@ -3,15 +3,13 @@ from abc import abstractmethod
 import sys
 import os
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from entity.BaseInfo import BaseInfo
-from entity.Owner import Owner
-from entity.ResourceRequirement import ResourceRequirement
-from entity.OperatingSystem import OperatingSystem
-from entity.Message import Message
-from entity.ReturnCode import ReturnCode
-from GrpcMethod import GrpcMethod
-from ServiceMethod import ServiceMethod
+from .BaseInfo import BaseInfo
+from .Message import Message
+from .OperatingSystem import OperatingSystem
+from .Owner import Owner
+from .ResourceRequirement import ResourceRequirement
+from .ReturnCode import ReturnCode
+from .ServiceMethod import ServiceMethod
 
 
 class AXService:

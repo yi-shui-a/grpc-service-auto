@@ -5,8 +5,7 @@ from jinja2 import Template
 import subprocess
 import shutil
 
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-from Util import Util
+from .Util import Util
 
 
 class DDSUtil:

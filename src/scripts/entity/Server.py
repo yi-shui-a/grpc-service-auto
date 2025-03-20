@@ -3,9 +3,11 @@ import os
 from typing import List
 import json
 
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-from AtomService import AtomService
-from util.Config import Config
+# sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+# from scripts.entity.AtomService import AtomService
+# from util.Config import Config
+
+from ..config import Config
 
 
 class Server:
@@ -117,7 +119,7 @@ class Server:
             self.add_service(service)
 
     # 加载json_client
-    def set_info(self, info):
+    def set_info(self, info: dict):
         self._name = info.get("name", "")
         self._ip = info.get("ip", "")
         self._port = info.get("port", "")

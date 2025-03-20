@@ -2,11 +2,10 @@ import json
 import sys
 import os
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from AXService import AXService
-from entity.OperatingSystem import OperatingSystem
-from entity.Message import Message
-from GrpcMethod import GrpcMethod
+from .AXService import AXService
+from .OperatingSystem import OperatingSystem
+from .Message import Message
+from .GrpcMethod import GrpcMethod
 
 
 class AtomService(AXService):

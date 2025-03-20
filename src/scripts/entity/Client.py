@@ -3,7 +3,7 @@ import os
 from typing import List
 import json
 
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+# sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 
 class Client:

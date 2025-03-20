@@ -6,11 +6,9 @@ from jinja2 import Template
 import sys
 import os
 
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
-from AtomService import AtomService
-from entity.OperatingSystem import OperatingSystem
-# from scripts.config.globals import cpp_types
-from config import *
+
+from ..config import cpp_types, Config
+from ..entity import AtomService
 
 
 class AtomServiceUtil:
@@ -659,9 +657,7 @@ class AtomServiceUtil:
                 f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/input_process_template/atomic_src_compile_cmake.j2"
             ).read()
         )
-        res_str = proto_template.render(
-            service_name=service_name
-        )
+        res_str = proto_template.render(service_name=service_name)
 
         # 确保目录存在
         os.makedirs(
@@ -678,7 +674,6 @@ class AtomServiceUtil:
         print(
             f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/atomic_src/CMakeLists.txt generated successfully!"
         )
-
 
     @staticmethod
     def __type_convert(atom_service: AtomService):
