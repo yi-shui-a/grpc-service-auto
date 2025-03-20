@@ -105,6 +105,5 @@ long long getCurrentTimeMillis()
     auto now = std::chrono::system_clock::now();
     auto duration = now.time_since_epoch();
     auto res = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
-    std::cout << "res: " << res << std::endl;
     return res;
 }

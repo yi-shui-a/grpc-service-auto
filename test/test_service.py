@@ -13,8 +13,8 @@ from src.scripts.Server import Server
 from src.scripts.util.Util import Util
 from src.scripts.util.DDSUtil import DDSUtil
 
-if __name__ == "__main__":
 
+def test_service():
     """
     atomic_service相关的函数
     """
@@ -73,19 +73,6 @@ if __name__ == "__main__":
     GrpcMethodUtil.add_info_to_json(serviceA)
     GrpcMethodUtil.add_info_to_json(serviceB)
 
-    """
-    server相关函数
-    """
-    # 实例化一个server
-    serverB = Server()
-    with open(
-        f"{os.path.dirname(os.path.abspath(__file__))}/user_info.json", "r"
-    ) as file:
-        user_info = json.loads(file.read())
-    serverB.set_info_from_user(user_info)
-    serverB.saveServerJson()
 
-    # SyncServer生成编译相关函数
-    ServerUtil.generateSyncServer(serverB)
-    ServerUtil.generateSyncServerCMakeLists(serverB)
-    ServerUtil.compileSyncServer(serverB)
+if __name__ == "__main__":
+    test_service()

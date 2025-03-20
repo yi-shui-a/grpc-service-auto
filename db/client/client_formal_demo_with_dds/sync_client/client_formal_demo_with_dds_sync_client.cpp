@@ -52,6 +52,7 @@ typedef struct
 void queryServiceInfo(std::string serviceName[], int num[], int size, QueryInfo info[], const std::string broadcastAddress, const int port);
 
 std::string formatResponse(std::string contentStr, int32_t type, int32_t identifier);
+
 long long getCurrentTimeMillis();
 
 FormalTest_test1 *receiveData();

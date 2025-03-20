@@ -14,7 +14,7 @@ from src.scripts.util.Util import Util
 from src.scripts.util.DDSUtil import DDSUtil
 
 
-if __name__ == "__main__":
+def test_server():
     # 实例化一个server
     serverB = Server()
     with open(
@@ -22,9 +22,13 @@ if __name__ == "__main__":
     ) as file:
         user_info = json.loads(file.read())
     serverB.set_info_from_user(user_info)
-    # serverB.saveServerJson()
+    serverB.saveServerJson()
 
     # SyncServer生成编译相关函数
     ServerUtil.generateSyncServer(serverB)
     ServerUtil.generateSyncServerCMakeLists(serverB)
     ServerUtil.compileSyncServer(serverB)
+
+
+if __name__ == "__main__":
+    test_server()
