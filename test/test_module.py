@@ -38,57 +38,57 @@ if __name__ == "__main__":
         f"{os.path.dirname(os.path.abspath(__file__))}/../example/sf/atomic_service_sf.c",
     )
 
-    # # 生成微服务编译的cmake
-    # AtomServiceUtil.generateAtomServiceCMakeLists(serviceA)
-    # AtomServiceUtil.generateAtomServiceCMakeLists(serviceB)
+    # 生成微服务编译的cmake
+    AtomServiceUtil.generateAtomServiceCMakeLists(serviceA)
+    AtomServiceUtil.generateAtomServiceCMakeLists(serviceB)
 
-    # # proto生成编译相关函数
-    # GrpcMethodUtil.generateProtoFile(serviceA)
-    # GrpcMethodUtil.generateProtoFile(serviceB)
+    # proto生成编译相关函数
+    GrpcMethodUtil.generateProtoFile(serviceA)
+    GrpcMethodUtil.generateProtoFile(serviceB)
 
-    # GrpcMethodUtil.generateProtoCmakeLists(serviceA)
-    # GrpcMethodUtil.generateProtoCmakeLists(serviceB)
+    GrpcMethodUtil.generateProtoCmakeLists(serviceA)
+    GrpcMethodUtil.generateProtoCmakeLists(serviceB)
 
-    # GrpcMethodUtil.compileProtoFile(serviceA)
-    # GrpcMethodUtil.compileProtoFile(serviceB)
+    GrpcMethodUtil.compileProtoFile(serviceA)
+    GrpcMethodUtil.compileProtoFile(serviceB)
 
-    # # ServerImpl 生成编译相关函数
-    # GrpcMethodUtil.generateServerImpl(serviceA)
-    # GrpcMethodUtil.generateServerImpl(serviceB)
+    # ServerImpl 生成编译相关函数
+    GrpcMethodUtil.generateServerImpl(serviceA)
+    GrpcMethodUtil.generateServerImpl(serviceB)
 
-    # GrpcMethodUtil.generateServerImplCMakeLists(serviceA)
-    # GrpcMethodUtil.generateServerImplCMakeLists(serviceB)
+    GrpcMethodUtil.generateServerImplCMakeLists(serviceA)
+    GrpcMethodUtil.generateServerImplCMakeLists(serviceB)
 
-    # GrpcMethodUtil.compileServerImpl(serviceA)
-    # GrpcMethodUtil.compileServerImpl(serviceB)
+    GrpcMethodUtil.compileServerImpl(serviceA)
+    GrpcMethodUtil.compileServerImpl(serviceB)
 
-    # # ClientImpl 生成编译相关函数
-    # GrpcMethodUtil.generateStubImpl(serviceA)
-    # GrpcMethodUtil.generateStubImpl(serviceB)
+    # ClientImpl 生成编译相关函数
+    GrpcMethodUtil.generateStubImpl(serviceA)
+    GrpcMethodUtil.generateStubImpl(serviceB)
 
-    # GrpcMethodUtil.generateClientImplCMakeLists(serviceA)
-    # GrpcMethodUtil.generateClientImplCMakeLists(serviceB)
+    GrpcMethodUtil.generateClientImplCMakeLists(serviceA)
+    GrpcMethodUtil.generateClientImplCMakeLists(serviceB)
 
-    # GrpcMethodUtil.compileClientImpl(serviceA)
-    # GrpcMethodUtil.compileClientImpl(serviceB)
+    GrpcMethodUtil.compileClientImpl(serviceA)
+    GrpcMethodUtil.compileClientImpl(serviceB)
 
-    # # 将grpc的信息写入json
-    # GrpcMethodUtil.add_info_to_json(serviceA)
-    # GrpcMethodUtil.add_info_to_json(serviceB)
+    # 将grpc的信息写入json
+    GrpcMethodUtil.add_info_to_json(serviceA)
+    GrpcMethodUtil.add_info_to_json(serviceB)
 
-    # """
-    # server相关函数
-    # """
-    # # 实例化一个server
-    # serverB = Server()
-    # with open(
-    #     f"{os.path.dirname(os.path.abspath(__file__))}/user_info.json", "r"
-    # ) as file:
-    #     user_info = json.loads(file.read())
-    # serverB.set_info_from_user(user_info)
-    # serverB.saveServerJson()
+    """
+    server相关函数
+    """
+    # 实例化一个server
+    serverB = Server()
+    with open(
+        f"{os.path.dirname(os.path.abspath(__file__))}/user_info.json", "r"
+    ) as file:
+        user_info = json.loads(file.read())
+    serverB.set_info_from_user(user_info)
+    serverB.saveServerJson()
 
-    # # SyncServer生成编译相关函数
-    # ServerUtil.generateSyncServer(serverB)
-    # ServerUtil.generateSyncServerCMakeLists(serverB)
-    # ServerUtil.compileSyncServer(serverB)
+    # SyncServer生成编译相关函数
+    ServerUtil.generateSyncServer(serverB)
+    ServerUtil.generateSyncServerCMakeLists(serverB)
+    ServerUtil.compileSyncServer(serverB)

@@ -28,7 +28,7 @@ class Client:
     def add_service(self, service: str):
         # 将一个service的数据以dict的形式传给server
         with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../db/atomic_service/{service}/{service}.json",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service}/{service}.json",
             "r",
         ) as file:
             self._services.append(json.loads(file.read()))
