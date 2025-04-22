@@ -5,7 +5,7 @@ import os
 from .AXService import AXService
 from .OperatingSystem import OperatingSystem
 from .Message import Message
-from .GrpcMethod import GrpcMethod
+from .ServiceMethod import ServiceMethod
 
 
 class AtomService(AXService):
@@ -32,7 +32,7 @@ class AtomService(AXService):
         method_list = list()
         for method in self._service_methods:
             method_list.append(method.to_dict())
-        res_dict["grpc_methods"] = method_list
+        res_dict["methods"] = method_list
 
         # print(json.dumps(res_dict))
         return res_dict
@@ -54,9 +54,10 @@ class AtomService(AXService):
             msg.set_info(item)
             self.add_message(msg)
         # 创建_rpc_service_methods
-        for item in info["grpc_methods"]:
-            # method = GrpcMethod.GrpcMethod(return_code= self._return_code,messages=self._messages)
-            method = GrpcMethod(return_code=self._return_code, messages=self._messages)
+        for item in info["methods"]:
+            method = ServiceMethod(
+                return_code=self._return_code, messages=self._messages
+            )
             method.set_info(item)
             # for msg in self._messages:
             #     if msg._name == item["requestMsg"]:

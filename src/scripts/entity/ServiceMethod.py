@@ -5,22 +5,35 @@ from abc import abstractmethod
 
 from .Message import Message
 from .ReturnCode import ReturnCode
+from .Capabilities import Capabilities
 
 
 class ServiceMethod:
     def __init__(self, return_code=None, messages=None):
         self._name: str = ""
         self._description: str = ""
+        self._capabilities: Capabilities = Capabilities()
         self._return_code: ReturnCode = return_code
         self._messages: List[Message] = messages
 
-    def setReturnCode(self, return_code):
-        self._return_code = return_code
-
     def set_info(self, info):
-        self._name = info["name"]
-        self._description = info["description"]
+        self._name = info.get("name", "")
+        self._description = info.get("description", "")
+        self._capabilities.set_info(info["capabilities"])
+        for message in self._messages:
+            if message._name == info["requestMsg"]:
+                self._requestMsg = message
+            elif message._name == info["responseMsg"]:
+                self._responseMsg = message
 
-    @abstractmethod
     def to_dict(self):
-        pass
+        res_dict = dict()
+        res_dict["name"] = self._name
+        res_dict["description"] = self._description
+        res_dict["requestMsg"] = self._requestMsg.get_name()
+        res_dict["responseMsg"] = self._responseMsg.get_name()
+        res_dict["capabilities"] = self._capabilities.to_dict()
+        return res_dict
+
+    def __str__(self):
+        return f"Request Message: {self._requestMsg}, Response Message: {self._responseMsg}, Capabilities: {self._capabilities}"

@@ -451,13 +451,13 @@ class AtomServiceUtil:
         matches = pattern.findall(interface_declaration)
 
         # 构建JSON格式的数据
-        grpc_methods = []
+        methods = []
         for match in matches:
             method_name = match[0]
             request_type = match[1].strip()
             response_type = match[3].strip()
 
-            grpc_methods.append(
+            methods.append(
                 {
                     "name": method_name,
                     "description": "ccccc",  # 这里可以根据需要修改描述
@@ -470,7 +470,7 @@ class AtomServiceUtil:
         root_json_dict["basic_info"] = basic_info
         root_json_dict["return_code"] = return_code
         root_json_dict["messages"] = struct_json_list
-        root_json_dict["grpc_methods"] = grpc_methods
+        root_json_dict["methods"] = methods
 
         # print(json.dumps(root_json_dict, indent=4))
         # 根据dict创建对象

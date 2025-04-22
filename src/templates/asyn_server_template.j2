@@ -183,7 +183,7 @@ public:
         server_->Shutdown();
         // Always shutdown the completion queue after the server.
         {% for service in services %}
-        {% for grpc_method in service["grpc_methods"] %}
+        {% for grpc_method in service["methods"] %}
         {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_cq_->Shutdown();
         {% endfor %}
         {% endfor %}
@@ -196,7 +196,7 @@ public:
         builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
         /* TODO: Add other services */
         {% for service in services %}
-        {% for grpc_method in service["grpc_methods"] %}
+        {% for grpc_method in service["methods"] %}
         builder.RegisterService(&{{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_service_);
         {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_cq_ = builder.AddCompletionQueue();
         {% endfor %}
@@ -210,7 +210,7 @@ public:
 //-----> Step1 Class encompasing the state and logic needed to serve a request.
 private: 
     {% for service in services %}
-    {% for grpc_method in service["grpc_methods"] %}
+    {% for grpc_method in service["methods"] %}
     /* CallData class {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_CallData  BEGIN */
     class  {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_CallData {
         public:
@@ -301,7 +301,7 @@ private:
 //-----> Step2 This can be run in multiple threads if needed.
 public:
     {% for service in services %}
-    {% for grpc_method in service["grpc_methods"] %}
+    {% for grpc_method in service["methods"] %}
     void {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_HandleRpcs() {
         new {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_CallData(&{{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_service_, {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_cq_.get());
         void* tag; 
@@ -319,7 +319,7 @@ public:
 private:
     std::unique_ptr<Server> server_;
     {% for service in services %}
-    {% for grpc_method in service["grpc_methods"] %}
+    {% for grpc_method in service["methods"] %}
     std::unique_ptr<ServerCompletionQueue> {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_cq_;
     {{ service["grpc_info"]["name_package"] }}::{{ service["grpc_info"]["name_service"] }}::AsyncService {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_service_;
     {% endfor %}
@@ -345,7 +345,7 @@ int main(int argc, char** argv) {
     serverPersonal.Run();
 
     {% for service in services %}
-    {% for grpc_method in service["grpc_methods"] %}
+    {% for grpc_method in service["methods"] %}
     std::thread {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_thread(&AsyncServerImpl::{{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_HandleRpcs, &serverPersonal);
     {% endfor %}
     {% endfor %}
@@ -353,7 +353,7 @@ int main(int argc, char** argv) {
     std::thread senderThread(monitorComm, broadcastAddress, std::stoi(broadcastPort));
 
     {% for service in services %}
-    {% for grpc_method in service["grpc_methods"] %}
+    {% for grpc_method in service["methods"] %}
     {{ service["grpc_info"]["name"] }}_{{ grpc_method["name"] }}_thread.join();
     {% endfor %}
     {% endfor %}
