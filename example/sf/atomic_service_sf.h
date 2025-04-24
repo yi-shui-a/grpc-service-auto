@@ -14,41 +14,24 @@
 /*------------------------  Service Info Begin  --------------------------*/
 /**
   ******************************************************************************
-  * @file    atomic_service_sf.h
-  * @author  Spiderman
-  * @email   Spidermsan@atomic_service_st.com
-  * @version V1.0.2
-  * @date    2024-09-30T09-21-21
-  * @brief
-  *         + atom_service_sf is an implementation of the service interface
-  *         + atom_service_sf
-  * @priority  1
+  * @file:    atomic_service_sf.h
+  * @author:  Spiderman
+  * @email:   Spidermsan@atomic_service_st.com
+  * @version: V1.0.2
+  * @date:    2024-09-30T09-21-21
+  * @brief:
+  *         +atom_service_sf is an implementation of the service interface
+  *         +atom_service_sf
+  * @priority:  1
   *
-  * @resource_requirement
-  *         + cpu_architecture: x86_64
-  *         + memory: 4GB
-  *         + hard_disk: 50GB
+  * @resource_requirement:
+  *         +cpu_architecture: x86_64
+  *         +memory: 4GB
+  *         +hard_disk: 50GB
   *
-  *
-  *
-@verbatim
- ===============================================================================
-                      ##### How to use this driver #####
- ===============================================================================
-
-@endverbatim
-  *
-  ******************************************************************************
-  * @attention
-  ******************************************************************************
-*/
-
-/*------------------------  atomic_service_info  Begin -------------------------*/
-
-/**
-* @atomic_service_name "atomic_service_sf"
-* @details_description information about atomic_service_sf
-* @task_function_name
+* @atomic_service_name: "atomic_service_sf"
+* @details_description: information about atomic_service_sf
+* @task_function_name:
 * @developer:
         +name: yishui
         +email: yishui@atomic_service_fwgz.com
@@ -62,7 +45,6 @@
         +name:SylixOS
         +v1:1.0.0
         +v2:1.0.2
-
 */
 /*------------------------  Service Info End  --------------------------*/
 

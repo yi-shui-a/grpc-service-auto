@@ -28,6 +28,7 @@ if __name__ == "__main__":
     serviceB = AtomServiceUtil.parseHpp(
         f"{os.path.dirname(os.path.abspath(__file__))}/../example/sf/atomic_service_sf.h"
     )
+    exit(1)
     # 解析 cpp 文件
     AtomServiceUtil.parseCpp(
         serviceA,
@@ -86,7 +87,8 @@ if __name__ == "__main__":
     ) as file:
         user_info = json.loads(file.read())
     serverB.set_info_from_user(user_info)
-    serverB.saveServerJson()
+    # serverB.saveServerJson()
+    ServerUtil.saveServerJson(serverB)
 
     # SyncServer生成编译相关函数
     ServerUtil.generateSyncServer(serverB)

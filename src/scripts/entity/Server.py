@@ -144,7 +144,7 @@ class Server:
         res_dict["password"] = self._password
         res_dict["broadcast_address"] = self._broadcast_address
         res_dict["broadcast_port"] = self._broadcast_port
-        res_dict["heartbeat_interal"] = self._heartbeat_interal
+        res_dict["heartbeat_interval"] = self._heartbeat_interal
 
         res_dict["async_server_name"] = self._async_server_name
         res_dict["sync_server_name"] = self._sync_server_name
@@ -152,36 +152,36 @@ class Server:
         res_dict["services"] = self._services
         return res_dict
 
-    def saveServerJson(self):
-        """
-        保存服务器信息的 JSON 文件。此函数标志着一个服务器的生成。
+    # def saveServerJson(self):
+    #     """
+    #     保存服务器信息的 JSON 文件。此函数标志着一个服务器的生成。
 
-        此方法将服务器的相关信息序列化为 JSON 格式，并将其保存到指定的文件路径中。
-        具体步骤包括：
-        1. 构建服务器信息文件存储的目录路径。
-        2. 确保该目录存在，如果不存在则创建。
-        3. 构建完整的 JSON 文件路径。
-        4. 将服务器对象转换为字典，并写入 JSON 文件。
-        5. 成功保存后打印成功消息；若过程中发生异常，则捕获并打印错误信息。
+    #     此方法将服务器的相关信息序列化为 JSON 格式，并将其保存到指定的文件路径中。
+    #     具体步骤包括：
+    #     1. 构建服务器信息文件存储的目录路径。
+    #     2. 确保该目录存在，如果不存在则创建。
+    #     3. 构建完整的 JSON 文件路径。
+    #     4. 将服务器对象转换为字典，并写入 JSON 文件。
+    #     5. 成功保存后打印成功消息；若过程中发生异常，则捕获并打印错误信息。
 
-        参数:
-            无
+    #     参数:
+    #         无
 
-        返回:
-            无
-        """
-        path = f"{os.path.dirname(os.path.abspath(__file__))}/../../db/server/{self.get_name()}/"
-        try:
-            # 确保目录存在
-            os.makedirs(path, exist_ok=True)
+    #     返回:
+    #         无
+    #     """
+    #     path = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/server/{self.get_name()}/"
+    #     try:
+    #         # 确保目录存在
+    #         os.makedirs(path, exist_ok=True)
 
-            # 构建完整的文件路径
-            file_path = os.path.join(path, self.get_name()) + ".json"
+    #         # 构建完整的文件路径
+    #         file_path = os.path.join(path, self.get_name()) + ".json"
 
-            # 打开文件并写入 JSON 数据
-            with open(file_path, "w") as file:
-                json.dump(self.to_dict(), file, indent=4)
+    #         # 打开文件并写入 JSON 数据
+    #         with open(file_path, "w") as file:
+    #             json.dump(self.to_dict(), file, indent=4)
 
-            print(f"{file_path} saved successfully!")
-        except Exception as e:
-            print(f"Error saving JSON file: {e}")
+    #         print(f"{file_path} saved successfully!")
+    #     except Exception as e:
+    #         print(f"Error saving JSON file: {e}")

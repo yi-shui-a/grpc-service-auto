@@ -2,9 +2,11 @@ import sys
 import os
 from jinja2 import Template
 import subprocess
+import json
 
 from .Util import Util
 from ..entity import Server
+from ..enums import FileEnum
 
 
 class ServerUtil:
@@ -15,6 +17,30 @@ class ServerUtil:
     def __init__(self, server):
         # self._server: Server = server
         pass
+
+    def saveServerJson(self):
+        """
+        保存服务器信息的 JSON 文件。此函数标志着一个服务器的生成。
+
+        此方法将服务器的相关信息序列化为 JSON 格式，并将其保存到指定的文件路径中。
+        具体步骤包括：
+        1. 构建服务器信息文件存储的目录路径。
+        2. 确保该目录存在，如果不存在则创建。
+        3. 构建完整的 JSON 文件路径。
+        4. 将服务器对象转换为字典，并写入 JSON 文件。
+        5. 成功保存后打印成功消息；若过程中发生异常，则捕获并打印错误信息。
+
+        参数:
+            server: Server
+
+        返回:
+            无
+        """
+        Util.saveFile(
+            name_list=[self.get_name()],
+            content=json.dumps(self.to_dict(), indent=4),
+            type=FileEnum.SERVER_JSON,
+        )
 
     @staticmethod
     def generateSyncServer(server: Server):
@@ -103,166 +129,6 @@ class ServerUtil:
         # 从 self._server._services 列表中取出每个 service 的 name 变量，并组成一个字符串
         service_names = [service["grpc_info"]["name"] for service in server._services]
         return " ".join(service_names)
-
-    # def compileSyncServer(self):
-    #     """
-    #     make -f test2_make SERVICE="atomic_service_mbsb atomic_service_sf" SERVER="client_sync_demo"
-    #     """
-    #     # 定义make命令及其参数
-    #     make_command = [
-    #         "make",
-    #         "-C",
-    #         f"{os.path.dirname(os.path.abspath(__file__))}/make/",
-    #         "-f",
-    #         "test2_make",
-    #         f"SERVICE={self._get_name_list()}",
-    #         f"SERVER={self._server._sync_server_name}",
-    #     ]
-
-    #     try:
-    #         # 调用make命令，并等待其完成
-    #         result = subprocess.run(
-    #             make_command,
-    #             check=True,
-    #             stdout=subprocess.PIPE,
-    #             stderr=subprocess.PIPE,
-    #             text=True,
-    #         )
-
-    #         # 如果make命令成功执行，则打印其输出
-    #         if result.stdout:
-    #             print("Make Output:\n", result.stdout)
-
-    #     except subprocess.CalledProcessError as e:
-    #         # 如果make命令失败，则捕获异常并打印错误信息
-    #         print("Make failed with error:", e)
-    #         print("Error Output:\n", e.stderr)
-
-    # def generateAsyncServer(self):
-    #     # 定义模板
-    #     proto_template = Template(
-    #         open(
-    #             f"{os.path.dirname(os.path.abspath(__file__))}/../../src/templates/asyn_server_template.j2"
-    #         ).read()
-    #     )
-
-    #     res_str = proto_template.render(
-    #         services=self._server._services,
-    #         name=self._server.get_name(),
-    #         ip=self._server.get_ip(),
-    #         port=self._server.get_port(),
-    #         username=self._server.get_username(),
-    #         password=self._server.get_password(),
-    #         broadcast_address=self._server.get_broadcast_address(),
-    #         broadcast_port=self._server.get_broadcast_port(),
-    #     )
-
-    #     # 确保目录存在
-    #     os.makedirs(
-    #         f"{os.path.dirname(os.path.abspath(__file__))}/../../server_src/",
-    #         exist_ok=True,
-    #     )
-
-    #     # 将res_str写入框架内的cpp文件中，同名不同路径
-    #     with open(
-    #         f"{os.path.dirname(os.path.abspath(__file__))}/../../server_src/{self._server._async_server_name}.cpp",
-    #         "w",
-    #     ) as file:
-    #         file.write(res_str)
-    #     print(
-    #         f"{os.path.dirname(os.path.abspath(__file__))}/../../server_src/{self._server._async_server_name}.cpp generated successfully!"
-    #     )
-
-    # def compileAsyncServer(self):
-    #     # 定义make命令及其参数
-    #     make_command = [
-    #         "make",
-    #         "-C",
-    #         f"{os.path.dirname(os.path.abspath(__file__))}/make/",
-    #         "-f",
-    #         "test2_make",
-    #         f"SERVICE={self._get_name_list()}",
-    #         f"SERVER={self._server._async_server_name}",
-    #     ]
-    #     try:
-    #         # 调用make命令，并等待其完成
-    #         result = subprocess.run(
-    #             make_command,
-    #             check=True,
-    #             stdout=subprocess.PIPE,
-    #             stderr=subprocess.PIPE,
-    #             text=True,
-    #         )
-
-    #         # 如果make命令成功执行，则打印其输出
-    #         if result.stdout:
-    #             print("Make Output:\n", result.stdout)
-
-    #     except subprocess.CalledProcessError as e:
-    #         # 如果make命令失败，则捕获异常并打印错误信息
-    #         print("Make failed with error:", e)
-    #         print("Error Output:\n", e.stderr)
-
-    # def compileServerDemo(self, filename):
-    #     # 定义make命令及其参数
-    #     make_command = [
-    #         "make",
-    #         "-C",
-    #         f"{os.path.dirname(os.path.abspath(__file__))}/make/",
-    #         "-f",
-    #         "test2_make",
-    #         f"SERVICE={self._get_name_list()}",
-    #         f"SERVER={filename}",
-    #     ]
-    #     try:
-    #         # 调用make命令，并等待其完成
-    #         result = subprocess.run(
-    #             make_command,
-    #             check=True,
-    #             stdout=subprocess.PIPE,
-    #             stderr=subprocess.PIPE,
-    #             text=True,
-    #         )
-
-    #         # 如果make命令成功执行，则打印其输出
-    #         if result.stdout:
-    #             print("Make Output:\n", result.stdout)
-
-    #     except subprocess.CalledProcessError as e:
-    #         # 如果make命令失败，则捕获异常并打印错误信息
-    #         print("Make failed with error:", e)
-    #         print("Error Output:\n", e.stderr)
-
-    # def compileDemo(self, filename: str):
-    #     filename = filename.split(".")[0]
-    #     # 定义make命令及其参数
-    #     make_command = [
-    #         "make",
-    #         "-C",
-    #         f"{os.path.dirname(os.path.abspath(__file__))}/make/",
-    #         "-f",
-    #         "test2_make",
-    #         f"SERVICE={self._get_name_list()}",
-    #         f"SERVER={filename}",
-    #     ]
-    #     try:
-    #         # 调用make命令，并等待其完成
-    #         result = subprocess.run(
-    #             make_command,
-    #             check=True,
-    #             stdout=subprocess.PIPE,
-    #             stderr=subprocess.PIPE,
-    #             text=True,
-    #         )
-
-    #         # 如果make命令成功执行，则打印其输出
-    #         if result.stdout:
-    #             print("Make Output:\n", result.stdout)
-
-    #     except subprocess.CalledProcessError as e:
-    #         # 如果make命令失败，则捕获异常并打印错误信息
-    #         print("Make failed with error:", e)
-    #         print("Error Output:\n", e.stderr)
 
     @staticmethod
     def generateMonitor(server: Server):

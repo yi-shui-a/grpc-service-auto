@@ -4,6 +4,9 @@ from jinja2 import Template
 import subprocess
 from typing import List
 import shutil
+import json
+
+from ..enums.FileEnum import FileEnum
 
 
 class Util(object):
@@ -55,140 +58,6 @@ class Util(object):
         if os.path.exists(build_dir):
             print(f"删除 build 目录：{build_dir}")
             shutil.rmtree(build_dir)
-
-    # @staticmethod
-    # def compile_idl(file_path: str):
-    #     file_name = file_path.split(".")[0].split("/")[-1]
-    #     # 定义make命令及其参数
-    #     make_command = [
-    #         "make",
-    #         "-C",
-    #         f"{os.path.dirname(os.path.abspath(__file__))}/make/",
-    #         "-f",
-    #         "IDL_make",
-    #         f"IDL_FILE={file_name}.idl",
-    #     ]
-    #     try:
-    #         # 调用make命令，并等待其完成
-    #         result = subprocess.run(
-    #             make_command,
-    #             check=True,
-    #             stdout=subprocess.PIPE,
-    #             stderr=subprocess.PIPE,
-    #             text=True,
-    #         )
-
-    #         # 如果make命令成功执行，则打印其输出
-    #         if result.stdout:
-    #             print("Make Output:\n", result.stdout)
-
-    #     except subprocess.CalledProcessError as e:
-    #         # 如果make命令失败，则捕获异常并打印错误信息
-    #         print("Make failed with error:", e)
-    #         print("Error Output:\n", e.stderr)
-
-    # @staticmethod
-    # def compile_dds(file_path: str):
-    #     file_name = file_path.split(".")[0].split("/")[-1]
-    #     # 定义make命令及其参数
-    #     make_command = [
-    #         "make",
-    #         "-C",
-    #         f"{os.path.dirname(os.path.abspath(__file__))}/make/",
-    #         "-f",
-    #         "DDS_make",
-    #         f"DDS_FILE={file_name}.cpp",
-    #     ]
-    #     try:
-    #         # 调用make命令，并等待其完成
-    #         result = subprocess.run(
-    #             make_command,
-    #             check=True,
-    #             stdout=subprocess.PIPE,
-    #             stderr=subprocess.PIPE,
-    #             text=True,
-    #         )
-
-    #         # 如果make命令成功执行，则打印其输出
-    #         if result.stdout:
-    #             print("Make Output:\n", result.stdout)
-
-    #     except subprocess.CalledProcessError as e:
-    #         # 如果make命令失败，则捕获异常并打印错误信息
-    #         print("Make failed with error:", e)
-    #         print("Error Output:\n", e.stderr)
-
-    # @staticmethod
-    # def compileServerDemo(service_list: List[str], filename):
-    #     # 将 service_list 列表中的每个元素组成一个字符串，元素之间用空格相连
-    #     services_str = " ".join(service_list)
-
-    #     # 定义make命令及其参数
-    #     make_command = [
-    #         "make",
-    #         "-C",
-    #         f"{os.path.dirname(os.path.abspath(__file__))}/make/",
-    #         "-f",
-    #         "test2_make",
-    #         f"SERVICE={services_str}",
-    #         f"SERVER={filename}",
-    #     ]
-    #     try:
-    #         # 调用make命令，并等待其完成
-    #         result = subprocess.run(
-    #             make_command,
-    #             check=True,
-    #             stdout=subprocess.PIPE,
-    #             stderr=subprocess.PIPE,
-    #             text=True,
-    #         )
-
-    #         # 如果make命令成功执行，则打印其输出
-    #         if result.stdout:
-    #             print("Make Output:\n", result.stdout)
-
-    #     except subprocess.CalledProcessError as e:
-    #         # 如果make命令失败，则捕获异常并打印错误信息
-    #         print("Make failed with error:", e)
-    #         print("Error Output:\n", e.stderr)
-
-    # @staticmethod
-    # def compileClientDemo(
-    #     service_list: List[str], topic_list: List[str], filename: str
-    # ):
-    #     filename = filename.split(".")[0]
-
-    #     service_str = " ".join(service_list)
-    #     topic_str = " ".join(topic_list)
-    #     # 定义make命令及其参数
-    #     make_command = [
-    #         "make",
-    #         "-C",
-    #         f"{os.path.dirname(os.path.abspath(__file__))}/make/",
-    #         "-f",
-    #         "DDS_client_make",
-    #         f"SERVICE={service_str}",
-    #         f"TOPIC={topic_str}",
-    #         f"SERVER={filename}",
-    #     ]
-    #     try:
-    #         # 调用make命令，并等待其完成
-    #         result = subprocess.run(
-    #             make_command,
-    #             check=True,
-    #             stdout=subprocess.PIPE,
-    #             stderr=subprocess.PIPE,
-    #             text=True,
-    #         )
-
-    #         # 如果make命令成功执行，则打印其输出
-    #         if result.stdout:
-    #             print("Make Output:\n", result.stdout)
-
-    #     except subprocess.CalledProcessError as e:
-    #         # 如果make命令失败，则捕获异常并打印错误信息
-    #         print("Make failed with error:", e)
-    #         print("Error Output:\n", e.stderr)
 
     @staticmethod
     def generateHeaderHppAndCpp(path: str):
@@ -277,3 +146,40 @@ class Util(object):
             raise RuntimeError(
                 f"Failed to run executable file '{executable_name}' , exception: {e}"
             )
+
+    @staticmethod
+    def saveFile(name_list: List[str], content: str, type: FileEnum):
+        path = ""
+        filepath = ""
+
+        # 根据类型选择路径和文件名
+        if type == FileEnum.ATOM_SERIVCE_JSON:
+            # 确保目录存在
+            path = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{'/'.join(name_list)}"
+            filepath = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{'/'.join(name_list)}/{name_list[-1]}.json"
+        elif type == FileEnum.HPP:
+            path = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{'/'.join(name_list)}/atomic_include"
+            filepath = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{'/'.join(name_list)}/atomic_include/{name_list[-1]}.h"
+        elif type == FileEnum.CPP:
+            path = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{'/'.join(name_list)}/atomic_src"
+            filepath = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{'/'.join(name_list)}/atomic_src/{name_list[-1]}.cpp"
+        elif type == FileEnum.CPP_CMAKE:
+            path = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{'/'.join(name_list)}/atomic_src"
+            filepath = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{'/'.join(name_list)}/atomic_src/CMakeLists.txt"
+        elif type == FileEnum.SERVER_JSON:
+            path = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/server/{'/'.join(name_list)}"
+            filepath = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/server/{'/'.join(name_list)}/{name_list[-1]}.json"
+        if path == "" or filepath == "":
+            print("Error: saveFile path is empty")
+            return
+
+        os.makedirs(
+            path,
+            exist_ok=True,
+        )
+        with open(
+            filepath,
+            "w",
+        ) as file:
+            file.write(content)
+            print("SUCCESS: generated " + filepath)

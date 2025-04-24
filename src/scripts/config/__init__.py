@@ -1,2 +1,2 @@
-from .globals import cpp_types
+from .globals import *
 from .Config import Config

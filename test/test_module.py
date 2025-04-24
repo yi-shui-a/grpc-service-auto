@@ -86,7 +86,7 @@ if __name__ == "__main__":
     ) as file:
         user_info = json.loads(file.read())
     serverB.set_info_from_user(user_info)
-    serverB.saveServerJson()
+    ServerUtil.saveServerJson(serverB)
 
     # SyncServer生成编译相关函数
     ServerUtil.generateSyncServer(serverB)

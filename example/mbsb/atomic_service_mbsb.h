@@ -11,6 +11,7 @@
 
 
 
+
 /*------------------------  Service Info Begin  --------------------------*/
 /**
   *
@@ -24,9 +25,9 @@
   * @date:    2024-09-21T09-21-21
   *
   * @resource_requirement:
-  *         + cpu_architecture: x86_64
-  *         + memory: 4GB
-  *         + hard_disk: 50GB
+  *         +cpu_architecture: x86_64
+  *         +memory: 4GB
+  *         +hard_disk: 50GB
   *
   *@developer:
   *      +name: Spiderman
