@@ -23,13 +23,13 @@ class Owner:
     def set_developer(self, developer):
         self.__developer = developer
 
-    def set_info(self, info):
-        self.__maintainer.set_info(info["maintainer"])
-        self.__developer.set_info(info["developer"])
+    def set_info(self, info: dict):
+        self.__maintainer.set_info(info.get("maintainer", {}))
+        self.__developer.set_info(info.get("developer", {}))
 
-    def set_all_info(self, maintainer, developer):
-        self.__maintainer = (maintainer, developer)
-        self.__developer = (maintainer, developer)
+    def set_all_info(self, maintainer: Maintainer, developer: Developer):
+        self.__maintainer = maintainer
+        self.__developer = developer
 
     def to_dict(self):
         res_dict = dict()

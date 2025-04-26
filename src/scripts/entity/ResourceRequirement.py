@@ -13,21 +13,21 @@ class ResourceRequirement:
     def get_hard_disk(self):
         return self.__hard_disk
 
-    def set_cpu_architecture(self, architecture):
+    def set_cpu_architecture(self, architecture: str):
         self.__cpu_architecture = architecture
 
-    def set_memory_size(self, memory):
+    def set_memory_size(self, memory: str):
         self.__memory = memory
 
-    def set_hard_disk(self, hard_disk):
+    def set_hard_disk(self, hard_disk: str):
         self.__hard_disk = hard_disk
 
-    def set_info(self, info):
+    def set_info(self, info: dict):
         self.__cpu_architecture = info.get("cpu_architecture", "")
         self.__memory = info.get("memory", "")
         self.__hard_disk = info.get("hard_disk", "")
 
-    def set_all_info(self, cpu_architecture, memory_size, hard_disk):
+    def set_all_info(self, cpu_architecture: str, memory_size: str, hard_disk: str):
         self.__cpu_architecture = cpu_architecture
         self.__memory = memory_size
         self.__hard_disk = hard_disk

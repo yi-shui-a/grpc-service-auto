@@ -15,11 +15,11 @@ class Maintainer:
     def set_email(self, email):
         self.__email = email
 
-    def set_info(self, info):
-        self.__name = info["name"]
-        self.__email = info["email"]
+    def set_info(self, info: dict):
+        self.__name = info.get("name", "")
+        self.__email = info.get("email", "")
 
-    def set_all_info(self, name, email):
+    def set_all_info(self, name: str, email: str):
         self.__name = name
         self.__email = email
 

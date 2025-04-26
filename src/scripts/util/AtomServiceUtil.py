@@ -9,7 +9,7 @@ import copy
 
 
 from ..config import (
-    cpp_types,
+    cpp_proto_dict,
     service_task_suffix,
     Config,
     doc_types_correct_dict,
@@ -542,11 +542,13 @@ class AtomServiceUtil:
         for message in atom_service._messages:
             for field in message._fields:
                 # field._type_proto为赋值时，才进行此操作
-                if field._type_proto != "":
-                    continue
-
+                # if field._type_proto != "":
+                #     continue
+                """
+                处理protoBuffer类型的数据
+                """
                 # 为 _type_proto 赋值
-                field._type_proto = cpp_types.get(field._type, field._type)
+                field._type_proto = cpp_proto_dict.get(field._type, field._type)
                 # 去除命名空间标示符
                 if field._type_proto.count("std::") > 0:
                     field._type_proto = field._type_proto.replace("std::", "")
@@ -557,11 +559,11 @@ class AtomServiceUtil:
                     field._repeated = True
                     # 使用正则表达式提取类型
                     match = re.search(r"vector<(\w+)>", field._type_proto)
-                    temp_str = cpp_types.get(match.group(1), match.group(1))
+                    temp_str = cpp_proto_dict.get(match.group(1), match.group(1))
                     if match:
                         field._type_proto = "repeated " + temp_str
 
-                # []
+                # 处理[]
                 if field._name.count("[") > 0 and field._name.count("]") > 0:
                     field._repeated = True
                     field._type_proto = "repeated " + field._type_proto
@@ -571,9 +573,15 @@ class AtomServiceUtil:
                     field._map = True
                     match = re.search(r"map<(\w+),\s*(\w+)>", field._type_proto)
                     if match:
-                        field._key = cpp_types.get(match.group(1), match.group(1))
-                        field._value = cpp_types.get(match.group(2), match.group(2))
+                        field._key = cpp_proto_dict.get(match.group(1), match.group(1))
+                        field._value = cpp_proto_dict.get(
+                            match.group(2), match.group(2)
+                        )
                         field._type_proto = f"map<{field._key}, {field._value}>"
+
+                """
+                处理idl类型的数据
+                """
 
     @staticmethod
     def __add_basic_info_dict(basic_info, key, value):

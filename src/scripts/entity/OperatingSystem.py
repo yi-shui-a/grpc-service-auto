@@ -15,11 +15,11 @@ class OperatingSystem:
     def set_os_version(self, os_version):
         self.__os_version = os_version
 
-    def set_info(self, info):
+    def set_info(self, info: dict):
         self.__os_name = info.get("os_name", "")
         self.__os_version = info.get("os_version", {})
 
-    def set_all_info(self, name, version):
+    def set_all_info(self, name: str, version: dict):
         self.__os_name = name
         self.__os_version = version
 

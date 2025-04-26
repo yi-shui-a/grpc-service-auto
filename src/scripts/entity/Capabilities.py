@@ -28,9 +28,9 @@ class Capabilities:
         self.__delete = delete
 
     def set_info(self, capabilities: dict):
-        self.__read = capabilities["read"]
-        self.__write = capabilities["write"]
-        self.__delete = capabilities["delete"]
+        self.__read = capabilities.get("read", "")
+        self.__write = capabilities.get("write", "")
+        self.__delete = capabilities.get("delete", "")
 
     def to_dict(self) -> dict:
         res_dict = dict()

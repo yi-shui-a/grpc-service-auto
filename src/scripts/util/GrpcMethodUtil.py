@@ -4,7 +4,7 @@ import os
 import re
 import json
 
-from ..config import cpp_types,Config
+from ..config import cpp_proto_dict, Config
 from .Util import Util
 from ..entity import AtomService
 

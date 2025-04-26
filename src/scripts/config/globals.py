@@ -1,4 +1,8 @@
-cpp_types = {
+"""
+cpp中的类型和protobuffer中类型的对应关系
+"""
+
+cpp_proto_dict = {
     "int": "int32",
     "uint": "uint32",
     "int32_t": "int32",
@@ -8,8 +12,16 @@ cpp_types = {
     "int16_t": "int32",
 }
 
+
+"""
+用户输入的原task的添加后缀
+"""
 service_task_suffix = "_func"
 
+
+"""
+用户输入doc，可能出现词语拼写错误，需要纠正
+"""
 doc_types_correct_dict = {
     "atomic_service_name": "name",
     "file": "name",
@@ -17,6 +29,10 @@ doc_types_correct_dict = {
     "priority": "priority_level",
 }
 
+
+"""
+用户输入doc，必须需要的字段。如果用户没有输入，使用下面的默认值
+"""
 doc_types_dict = {
     "name": "",
     "chinese_name": "",
@@ -40,4 +56,15 @@ doc_types_dict = {
             "os_version": {},
         }
     ],
+}
+
+
+"""
+cpp中的类型和idl中类型的对应关系
+
+idl支持的数据类型
+
+"""
+cpp_idl_dict = {
+    "uint8": "octet",
 }
