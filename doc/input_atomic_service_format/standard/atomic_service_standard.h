@@ -1,12 +1,27 @@
-#ifndef _ATOMIC_SERVICE_MBSB_H_
-#define _ATOMIC_SERVICE_MBSB_H_
+#ifndef _ATOMIC_SERVICE_STANDARD_H_
+#define _ATOMIC_SERVICE_STANDARD_H_
 
 /*------------------------ Include Begin --------------------------*/
 
+// C
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <string>
+#include <math.h>
+#include <time.h>
+#include <ctype.h>
 
+// C++
+#include <iostream>
+#include <fstream>
+#include <chrono>
+#include <string>
+
+#include <cmath>
+#include <vector>
+#include <map>
+#include <set>
 /*------------------------  Include End  -------------------------*/
 
 
@@ -50,14 +65,28 @@
 /*------------------------  Return Type Begin  --------------------------*/
 
 #define ATOMIC_SERVICE_SUCCESS 0
-#define OperationNotPermitted 1
-#define InterruptedSystemCall 2
-#define NoSuchDeviceORAddress 3
-#define ArgumentListTooLong 4
-#define InvalidArgument 5
-#define NoSuchFile 6
-#define NoSuchDir 7
-#define DATA_ERROR 8
+#define ATOMIC_SERVICE_FAIL -1
+#define ATOMIC_SERVICE_TIMEOUT -2
+#define ATOMIC_SERVICE_ERROR -3
+#define ATOMIC_SERVICE_NOT_SUPPORT -4
+#define ATOMIC_SERVICE_NOT_READY -5
+#define ATOMIC_SERVICE_NOT_INIT -6
+#define ATOMIC_SERVICE_NOT_START -7
+#define ATOMIC_SERVICE_NOT_STOP -8
+#define ATOMIC_SERVICE_NOT_RELEASE -9
+#define ATOMIC_SERVICE_NOT_DESTROY -10
+#define ATOMIC_SERVICE_NOT_CREATE -11
+#define ATOMIC_SERVICE_NOT_OPEN -12
+#define ATOMIC_SERVICE_NOT_CLOSE -13
+#define ATOMIC_SERVICE_NOT_READ -14
+#define ATOMIC_SERVICE_NOT_WRITE -15
+#define ATOMIC_SERVICE_NOT_SEEK -16
+#define ATOMIC_SERVICE_NOT_TELL -17
+#define ATOMIC_SERVICE_NOT_SIZE -18
+#define ATOMIC_SERVICE_NOT_SEEK_END -19
+#define ATOMIC_SERVICE_NOT_SEEK_SET -20
+#define ATOMIC_SERVICE_NOT_SEEK_CUR -21
+#define ATOMIC_SERVICE_NOT_SEEK_ABS -22
 
 /*------------------------  Return Type End  --------------------------*/
 
@@ -102,4 +131,4 @@ int atomic_service_fun_task_B(atomic_service_mbsb_task_B_Request_st *request, at
 
 
 
-#endif // _ATOMIC_SERVICE_MBSB_H_
+#endif // _ATOMIC_SERVICE_STANDARD_H_

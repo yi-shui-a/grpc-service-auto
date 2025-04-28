@@ -1,4 +1,4 @@
-#include "../atom_inc/atom_service_mbsb.h"
+#include "atomic_service_standard.h"
 
 int atomic_service_fun_task_A(atomic_service_mbsb_task_A_Request_st *request, atomic_service_mbsb_task_A_Reply_st *reply){
 	// TODO: add your code here
