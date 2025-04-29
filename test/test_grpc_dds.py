@@ -7,7 +7,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
 
 from src.scripts.util.Util import Util
-from src.scripts.util.DDSUtil import DDSUtil
+from src.scripts.util.GrpcDDSUtil import GrpcDDSUtil
 from scripts.entity.Client import Client
 from src.scripts.util.ClientUtil import ClientUtil
 
@@ -16,17 +16,17 @@ def test_dds():
     """
     DDS相关函数
     """
-    DDSUtil.loadIdl(
+    GrpcDDSUtil.loadIdl(
         f"{os.path.dirname(os.path.abspath(__file__))}/../example/idl/example.idl"
     )
-    DDSUtil.generateIdlCMakeLists("example")
-    DDSUtil.compileIdl("example")
+    GrpcDDSUtil.generateIdlCMakeLists("example")
+    GrpcDDSUtil.compileIdl("example")
 
-    DDSUtil.loadDDS(
+    GrpcDDSUtil.loadDDS(
         f"{os.path.dirname(os.path.abspath(__file__))}/../example/communication/dds_publisher_formal_demo.cpp"
     )
-    DDSUtil.generateDDSCMakeLists("dds_publisher_formal_demo", ["example"])
-    DDSUtil.compileDDS("dds_publisher_formal_demo")
+    GrpcDDSUtil.generateDDSCMakeLists("dds_publisher_formal_demo", ["example"])
+    GrpcDDSUtil.compileDDS("dds_publisher_formal_demo")
 
 
 if __name__ == "__main__":

@@ -4,3 +4,4 @@ from .DDSUtil import DDSUtil
 from .GrpcMethodUtil import GrpcMethodUtil
 from .ServerUtil import ServerUtil
 from .Util import Util
+from .GrpcDDSUtil import GrpcDDSUtil

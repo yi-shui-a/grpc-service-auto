@@ -67,4 +67,11 @@ idl支持的数据类型
 """
 cpp_idl_dict = {
     "uint8": "octet",
+    "int": "long",
+    "uint": "unsigned long",
+    "int32_t": "long",
+    "uint8_t": "octet",
+    "uint16_t": "unsigned short",
+    "int16_t": "short",
+    "int32": "long",
 }
