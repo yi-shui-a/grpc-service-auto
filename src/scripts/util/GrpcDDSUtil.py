@@ -9,40 +9,50 @@ from .Util import Util
 from ..entity import AtomService, Message
 
 
-class DDSUtil:
+class GrpcDDSUtil:
 
     @staticmethod
-    def generateIdl(atomService: AtomService):
-        messages: List[Message] = atomService._messages
-        # 生成CMakeLists.txt
-        idl_template = Template(
-            open(
-                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/dds_process_template/idl_template.j2"
-            ).read()
-        )
-        res_str = idl_template.render(
-            module_name=atomService._base_info.get_name(),
-            messages=messages,
-        )
+    def loadIdl(filePath: str):
+        filename_with_ext = os.path.basename(filePath)
+        filename_without_ext = os.path.splitext(filename_with_ext)[0]
+
+        # 判断是否存在该文件
+        if not os.path.exists(filePath):
+            print(filePath + "文件不存在")
+            return
+
+        # 将idl文件加载到idl目录下
         # 确保目录存在
         os.makedirs(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atomService._base_info.get_name()}/idl/",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/idl/{filename_without_ext}/",
             exist_ok=True,
         )
 
-        # 将res_str写入框架内的cpp文件中，同名不同路径
-        with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atomService._base_info.get_name()}/idl/{atomService._base_info.get_name()}.idl",
-            "w",
-        ) as file:
-            file.write(res_str)
-        print(
-            f"SUCCESS: generated {os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atomService._base_info.get_name()}/idl/{atomService._base_info.get_name()}.idl"
-        )
+        # 目标路径
+        target_path = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/idl/{filename_without_ext}/{filename_with_ext}"
+
+        # 将文件复制到db中
+        try:
+            shutil.copy2(filePath, target_path)
+            print(f"文件 {filePath} 已成功复制到 {target_path}")
+        except FileNotFoundError:
+            print(f"源文件 {filePath} 未找到。")
+        except PermissionError:
+            print("没有足够的权限进行复制操作。")
+        except Exception as e:
+            print(f"复制文件时出现错误: {e}")
 
     @staticmethod
-    def generateIdlCMakeLists(atom_service: AtomService):
-        atom_service_name = atom_service._base_info.get_name()
+    def generateIdlCMakeLists(filename: str):
+        filename = filename.split(".")[0]
+        idl_path = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/idl/"
+        # 判断是否存在文件和目录
+        if not os.path.exists(idl_path + filename):
+            print(f"目录 {idl_path +filename} 不存在")
+            return
+        if not os.path.exists(os.path.join(idl_path, filename, filename + ".idl")):
+            print(f"文件 {os.path.join(idl_path, filename, filename + '.idl')} 不存在")
+            return
 
         # 生成CMakeLists.txt
         idl_template = Template(
@@ -51,32 +61,34 @@ class DDSUtil:
             ).read()
         )
         res_str = idl_template.render(
-            project_name=atom_service_name,
+            project_name=filename,
         )
 
         # 确保目录存在
         os.makedirs(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service_name}/idl/",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/idl/{filename}/",
             exist_ok=True,
         )
 
         # 将res_str写入框架内的cpp文件中，同名不同路径
         with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service_name}/idl/CMakeLists.txt",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/idl/{filename}/CMakeLists.txt",
             "w",
         ) as file:
             file.write(res_str)
         print(
-            f"SUCCESS: generated {os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service_name}/idl/CMakeLists.txt"
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/idl/{filename}/CMakeLists.txt generated successfully!"
         )
 
     @staticmethod
-    def compileIdl(atom_service: AtomService):
-        atom_service_name = atom_service._base_info.get_name()
-        file_dir = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service_name}/idl/"
+    def compileIdl(filename: str):
+        filename = filename.split(".")[0]
+        file_dir = (
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/idl/{filename}/"
+        )
         Util.compileCmakeProject(
             file_dir,
-            atom_service_name,
+            filename,
             file_type="idl",
         )
 

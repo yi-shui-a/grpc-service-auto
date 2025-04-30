@@ -93,7 +93,7 @@ typedef struct
     double y_min;             // 边界框左上角 Y
     double x_max;             // 边界框右下角 X
     double y_max;             // 边界框右下角 Y
-
+    int return_type;
 } DetectionResult;
 
 typedef struct
@@ -102,6 +102,7 @@ typedef struct
     double speed;       // 当前速度
     double temperature; // 温度
     std::string status; // 状态信息
+    int return_type;
 } MotorResult;
 
 typedef struct
@@ -111,7 +112,7 @@ typedef struct
     double angle;            // 角度
     double velocity;         // 速度
     std::string target_type; // 目标类型
-
+    int return_type;
 } RadarResult;
 
 typedef struct
@@ -123,7 +124,7 @@ typedef struct
     double roll;  // 横滚角
     double pitch; // 俯仰角
     double yaw;   // 偏航角
-
+    int return_type;
 } RobotResult;
 
 typedef struct
@@ -147,6 +148,7 @@ typedef struct
 {
     int code;           // 状态码
     std::string status; // 状态信息
+    int return_type;
 } FusionStatus;
 
 /*------------------------  Message Info End  --------------------------*/

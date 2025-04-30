@@ -15,6 +15,8 @@ class ServiceMethod:
         self._capabilities: Capabilities = Capabilities()
         self._return_code: ReturnCode = return_code
         self._messages: List[Message] = messages
+        self._requestMsg: Message = None
+        self._responseMsg: Message = None
 
     def set_info(self, info):
         self._name = info.get("name", "")
@@ -23,15 +25,25 @@ class ServiceMethod:
         for message in self._messages:
             if message._name == info["requestMsg"]:
                 self._requestMsg = message
-            elif message._name == info["responseMsg"]:
+            if message._name == info["responseMsg"]:
                 self._responseMsg = message
 
     def to_dict(self):
         res_dict = dict()
         res_dict["name"] = self._name
         res_dict["description"] = self._description
-        res_dict["requestMsg"] = self._requestMsg.get_name()
-        res_dict["responseMsg"] = self._responseMsg.get_name()
+
+        if self._requestMsg is None:
+            res_dict["requestMsg"] = ""
+        else:
+            res_dict["requestMsg"] = self._requestMsg.get_name()
+
+        if self._responseMsg is None:
+            res_dict["responseMsg"] = ""
+        else:
+            res_dict["responseMsg"] = self._responseMsg.get_name()
+        # res_dict["requestMsg"] = self._requestMsg.get_name()
+        # res_dict["responseMsg"] = self._responseMsg.get_name()
         res_dict["capabilities"] = self._capabilities.to_dict()
         return res_dict
 

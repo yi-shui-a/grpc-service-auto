@@ -133,8 +133,8 @@ typedef struct
 
 typedef struct
 {
+    int motor_id;
 	double speed;
-	int motor_id;
 } RequestSpeed;
 
 typedef struct

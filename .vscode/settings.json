@@ -71,7 +71,8 @@
         "numbers": "cpp",
         "ranges": "cpp",
         "semaphore": "cpp",
-        "stop_token": "cpp"
+        "stop_token": "cpp",
+        "dds_public_impl.h": "c"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/g++",
     "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools"

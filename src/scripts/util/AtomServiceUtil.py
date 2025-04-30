@@ -10,6 +10,7 @@ import copy
 
 from ..config import (
     cpp_proto_dict,
+    cpp_idl_dict,
     service_task_suffix,
     Config,
     doc_types_correct_dict,
@@ -191,6 +192,8 @@ class AtomServiceUtil:
         for key, value in doc_types_dict.items():
             if basic_info.get(key, None) is None:
                 basic_info[key] = value
+        # 修正name字段为文件名，去除路径名和后缀
+        basic_info["name"] = os.path.basename(file_name).split(".")[0]
 
         """
         提取return_type信息
@@ -295,6 +298,9 @@ class AtomServiceUtil:
         """
         interface_declarations = list()
 
+        # 去除所有除空格外以//开头的行
+        interface_declaration_info = re.sub(r"^//.*$", "", interface_declaration_info, flags=re.MULTILINE)
+
         pattern = re.compile(
             r"(?:\w+)\s+(\w+)\s*\(([^,]+)\s*\*\s*([^,]+)\s*,\s*([^,]+)\s*\*\s*([^,]+)\s*\);"
         )
@@ -326,9 +332,7 @@ class AtomServiceUtil:
         atom_service_dict["return_code"] = return_code
         atom_service_dict["messages"] = messages
         atom_service_dict["methods"] = interface_declarations
-        with open("test.json", "w") as file:
-            json.dump(atom_service_dict, file, indent=4)
-
+        # print(json.dumps(atom_service_dict, indent=4))
         atom_service = AtomService()
         atom_service.set_info(atom_service_dict)
         # 整理message数据类型
@@ -548,10 +552,15 @@ class AtomServiceUtil:
                 处理protoBuffer类型的数据
                 """
                 # 为 _type_proto 赋值
-                field._type_proto = cpp_proto_dict.get(field._type, field._type)
+                # field._type_proto = cpp_proto_dict.get(field._type, field._type)
+                field._type_proto = field._type
                 # 去除命名空间标示符
                 if field._type_proto.count("std::") > 0:
                     field._type_proto = field._type_proto.replace("std::", "")
+
+                field._type_proto = cpp_proto_dict.get(
+                    field._type_proto, field._type_proto
+                )
 
                 # 数组转为repeated
                 # vector
@@ -582,6 +591,12 @@ class AtomServiceUtil:
                 """
                 处理idl类型的数据
                 """
+                field._type_idl = field._type
+                # 去除命名空间标示符
+                if field._type_idl.count("std::") > 0:
+                    field._type_idl = field._type_idl.replace("std::", "")
+
+                field._type_idl = cpp_idl_dict.get(field._type_idl, field._type_idl)
 
     @staticmethod
     def __add_basic_info_dict(basic_info, key, value):
@@ -628,6 +643,19 @@ class AtomServiceUtil:
         if match:
             return match.group(1).strip()  # 返回匹配的内容，并去除前后空白
         return None
+
+    @staticmethod
+    def compileAtomService(atom_service: AtomService):
+        """
+        自动生成 AtomService 源文件的静态链接库
+
+        :param atom_service: AtomService 对象
+        :return: None
+        """
+        service_name = atom_service._base_info.get_name()
+        proto_dir = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_src/"
+
+        Util.compileCmakeProject(proto_dir, service_name, file_type="cpp")
 
     # 获取CPP文件中完整的函数体组成的列表
     @staticmethod

@@ -1,0 +1,10 @@
+module {{module_name}} {
+    {% for message in messages %}
+    struct {{message._name}} {
+        {% for field in message._fields %}
+        {{field._type_idl}} {{field._name}};
+        {% endfor %}
+    };
+
+    {% endfor %}
+};
