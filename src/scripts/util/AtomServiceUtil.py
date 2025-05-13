@@ -299,7 +299,9 @@ class AtomServiceUtil:
         interface_declarations = list()
 
         # 去除所有除空格外以//开头的行
-        interface_declaration_info = re.sub(r"^//.*$", "", interface_declaration_info, flags=re.MULTILINE)
+        interface_declaration_info = re.sub(
+            r"^//.*$", "", interface_declaration_info, flags=re.MULTILINE
+        )
 
         pattern = re.compile(
             r"(?:\w+)\s+(\w+)\s*\(([^,]+)\s*\*\s*([^,]+)\s*,\s*([^,]+)\s*\*\s*([^,]+)\s*\);"
@@ -656,6 +658,19 @@ class AtomServiceUtil:
         proto_dir = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{atom_service._base_info.get_name()}/atomic_src/"
 
         Util.compileCmakeProject(proto_dir, service_name, file_type="cpp")
+
+    @staticmethod
+    def loadAtomService(json_file: str) -> AtomService:
+        """
+        读取json文件，生成AtomService对象
+        """
+        # 读取json文件
+        with open(json_file, "r") as file:
+            json_data = json.load(file)
+        # 创建AtomService对象
+        atom_service = AtomService()
+        atom_service.set_info(json_data)
+        return atom_service
 
     # 获取CPP文件中完整的函数体组成的列表
     @staticmethod

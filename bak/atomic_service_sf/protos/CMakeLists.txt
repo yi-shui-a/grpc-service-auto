@@ -1,0 +1,60 @@
+cmake_minimum_required(VERSION 3.14)
+project(GenerateProtoFiles)
+
+# 设置 gRPC 的 CMake 模块路径
+set(gRPC_DIR "/usr/local/lib/cmake/grpc")
+
+# 查找 Protobuf 和 gRPC 包
+find_package(Protobuf REQUIRED)
+find_package(gRPC CONFIG REQUIRED)
+
+# 检查 gRPC 模块是否已正确加载
+if (TARGET gRPC::grpc_cpp_plugin)
+    message(STATUS "gRPC CMake module loaded successfully")
+else()
+    message(FATAL_ERROR "gRPC CMake module not loaded")
+endif()
+
+# 定义生成 Protobuf 和 gRPC 文件的函数
+function(generate_proto_files PROTO_FILE)
+    # 获取 .proto 文件的目录和文件名（不带扩展名）
+    get_filename_component(PROTO_DIR ${PROTO_FILE} DIRECTORY)
+    get_filename_component(PROTO_NAME ${PROTO_FILE} NAME_WE)
+
+    # 设置生成的 .pb.cc 和 .pb.h 文件路径
+    set(PB_SRCS "${PROTO_DIR}/${PROTO_NAME}.pb.cc")
+    set(PB_HDRS "${PROTO_DIR}/${PROTO_NAME}.pb.h")
+
+    # 设置生成的 .grpc.pb.cc 和 .grpc.pb.h 文件路径
+    set(GRPC_SRCS "${PROTO_DIR}/${PROTO_NAME}.grpc.pb.cc")
+    set(GRPC_HDRS "${PROTO_DIR}/${PROTO_NAME}.grpc.pb.h")
+
+    # 调用 protoc 生成 Protobuf 文件
+    add_custom_command(
+        OUTPUT ${PB_SRCS} ${PB_HDRS}
+        COMMAND ${Protobuf_PROTOC_EXECUTABLE}
+        ARGS --cpp_out=${PROTO_DIR} -I ${PROTO_DIR} ${PROTO_FILE}
+        DEPENDS ${PROTO_FILE}
+        COMMENT "Generating Protobuf files: ${PB_SRCS}, ${PB_HDRS}"
+    )
+
+    # 调用 protoc 生成 gRPC 文件
+    add_custom_command(
+        OUTPUT ${GRPC_SRCS} ${GRPC_HDRS}
+        COMMAND ${Protobuf_PROTOC_EXECUTABLE}
+        ARGS --grpc_out=${PROTO_DIR} --plugin=protoc-gen-grpc=/usr/local/bin/grpc_cpp_plugin -I ${PROTO_DIR} ${PROTO_FILE}
+        DEPENDS ${PROTO_FILE}
+        COMMENT "Generating gRPC files: ${GRPC_SRCS}, ${GRPC_HDRS}"
+    )
+
+    # 将生成的文件添加到目标
+    add_custom_target(generate_proto_files ALL
+        DEPENDS ${PB_SRCS} ${PB_HDRS} ${GRPC_SRCS} ${GRPC_HDRS}
+    )
+endfunction()
+
+# 设置 .proto 文件的路径
+set(PROTO_FILE ${CMAKE_CURRENT_SOURCE_DIR}/atomic_service_sf.proto)
+
+# 生成 Protobuf 和 gRPC 文件
+generate_proto_files(${PROTO_FILE})

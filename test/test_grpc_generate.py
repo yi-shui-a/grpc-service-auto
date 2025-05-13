@@ -23,20 +23,19 @@ if __name__ == "__main__":
     """
     # 解析h文件，生成service对象
     serviceA = AtomServiceUtil.parseHpp(
-        f"{os.path.dirname(os.path.abspath(__file__))}/../example/mbsb/atomic_service_mbsb.h"
+        f"{os.path.dirname(os.path.abspath(__file__))}/../../example/mbsb/atomic_service_mbsb.h"
     )
     serviceB = AtomServiceUtil.parseHpp(
-        f"{os.path.dirname(os.path.abspath(__file__))}/../example/sf/atomic_service_sf.h"
+        f"{os.path.dirname(os.path.abspath(__file__))}/../../example/sf/atomic_service_sf.h"
     )
-    exit(1)
     # 解析 cpp 文件
     AtomServiceUtil.parseCpp(
         serviceA,
-        f"{os.path.dirname(os.path.abspath(__file__))}/../example/mbsb/atomic_service_mbsb.cpp",
+        f"{os.path.dirname(os.path.abspath(__file__))}/../../example/mbsb/atomic_service_mbsb.cpp",
     )
     AtomServiceUtil.parseCpp(
         serviceB,
-        f"{os.path.dirname(os.path.abspath(__file__))}/../example/sf/atomic_service_sf.c",
+        f"{os.path.dirname(os.path.abspath(__file__))}/../../example/sf/atomic_service_sf.c",
     )
 
     # 生成微服务编译的cmake
