@@ -1,0 +1,37 @@
+{
+    "messages": [
+        {
+            "name": "atomic_service_mbsb_task_A_Request_st",
+            "label": "",
+            "description": "",
+            "fields": [
+                {
+                    "id": 1,
+                    "name": "number1",
+                    "description": "",
+                    "type": "int",
+                    "type_idl": "long",
+                    "type_proto": "int32",
+                    "repeated": false,
+                    "map": false,
+                    "key": "",
+                    "value": "",
+                    "chinese_name": ""
+                },
+                {
+                    "id": 2,
+                    "name": "number2",
+                    "description": "",
+                    "type": "int",
+                    "type_idl": "long",
+                    "type_proto": "int32",
+                    "repeated": false,
+                    "map": false,
+                    "key": "",
+                    "value": "",
+                    "chinese_name": ""
+                }
+            ]
+        }
+    ]
+}

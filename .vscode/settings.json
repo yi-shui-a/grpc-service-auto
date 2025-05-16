@@ -72,7 +72,8 @@
         "ranges": "cpp",
         "semaphore": "cpp",
         "stop_token": "cpp",
-        "dds_public_impl.h": "c"
+        "dds_public_impl.h": "c",
+        "atomic_service_sf.h": "c"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/g++",
     "C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools",

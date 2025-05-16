@@ -63,7 +63,16 @@
 
 /*------------------------  Message Info Begin  --------------------------*/
 
-// Request /* task_C 输入数据 */
+typedef struct
+{
+  int sum_result;
+} atomic_service_sf_task_E_Request_st;
+typedef struct
+{
+  int sum_result;
+  int return_type;
+} atomic_service_sf_task_E_Reply_st;
+
 typedef struct
 {
   std::string name;
@@ -93,6 +102,7 @@ typedef struct
 /*------------------------  Interface Declaration Begin  --------------------------*/
 
 /* 用户 任务函数 (不同的接口函数) */
+int atomic_service_fun_task_E(atomic_service_sf_task_E_Request_st *request, atomic_service_sf_task_E_Reply_st *reply);
 int atomic_service_fun_task_C(atomic_service_sf_task_C_Request_st *request, atomic_service_sf_task_C_Reply_st *reply);
 int atomic_service_fun_task_D(atomic_service_sf_task_D_Request_st *request, atomic_service_sf_task_D_Reply_st *reply);
 

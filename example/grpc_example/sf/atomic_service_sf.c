@@ -1,4 +1,13 @@
-#include "../atom_inc/atom_service_sf.h"
+#include "atomic_service_sf.h"
+
+int atomic_service_fun_task_E(atomic_service_sf_task_E_Request_st *request, atomic_service_sf_task_E_Reply_st *reply){
+	// TODO: add your code here
+    reply->sum_result = request->sum_result + request->sum_result;
+    
+    return ATOMIC_SERVICE_SUCCESS;
+}
+
+
 int atomic_service_fun_task_C(atomic_service_sf_task_C_Request_st *request, atomic_service_sf_task_C_Reply_st *reply)
 {
 

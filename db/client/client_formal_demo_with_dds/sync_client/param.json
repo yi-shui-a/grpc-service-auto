@@ -1,0 +1,139 @@
+{
+    "module": "",
+    "struct":"",
+    "id": 1,
+    "messages": [
+        {
+            "name": "atomic_service_mbsb_task_A_Request_st",
+            "label": "",
+            "description": "",
+            "fields": [
+                {
+                    "id": 1,
+                    "name": "number1",
+                    "description": "",
+                    "type": "int",
+                    "type_idl": "long",
+                    "type_proto": "int32",
+                    "repeated": false,
+                    "map": false,
+                    "key": "",
+                    "value": "",
+                    "chinese_name": ""
+                },
+                {
+                    "id": 2,
+                    "name": "number2",
+                    "description": "",
+                    "type": "int",
+                    "type_idl": "long",
+                    "type_proto": "int32",
+                    "repeated": false,
+                    "map": false,
+                    "key": "",
+                    "value": "",
+                    "chinese_name": ""
+                }
+            ]
+        },
+        {
+            "name": "atomic_service_mbsb_task_A_Reply_st",
+            "label": "",
+            "description": "",
+            "fields": [
+                {
+                    "id": 1,
+                    "name": "sum_result",
+                    "description": "",
+                    "type": "int",
+                    "type_idl": "long",
+                    "type_proto": "int32",
+                    "repeated": false,
+                    "map": false,
+                    "key": "",
+                    "value": "",
+                    "chinese_name": ""
+                },
+                {
+                    "id": 2,
+                    "name": "return_type",
+                    "description": "",
+                    "type": "int",
+                    "type_idl": "long",
+                    "type_proto": "int32",
+                    "repeated": false,
+                    "map": false,
+                    "key": "",
+                    "value": "",
+                    "chinese_name": ""
+                }
+            ]
+        },
+        {
+            "name": "atomic_service_mbsb_task_B_Request_st",
+            "label": "",
+            "description": "",
+            "fields": [
+                {
+                    "id": 1,
+                    "name": "number1",
+                    "description": "",
+                    "type": "int",
+                    "type_idl": "long",
+                    "type_proto": "int32",
+                    "repeated": false,
+                    "map": false,
+                    "key": "",
+                    "value": "",
+                    "chinese_name": ""
+                },
+                {
+                    "id": 2,
+                    "name": "number2",
+                    "description": "",
+                    "type": "int",
+                    "type_idl": "long",
+                    "type_proto": "int32",
+                    "repeated": false,
+                    "map": false,
+                    "key": "",
+                    "value": "",
+                    "chinese_name": ""
+                }
+            ]
+        },
+        {
+            "name": "atomic_service_mbsb_task_B_Reply_st",
+            "label": "",
+            "description": "",
+            "fields": [
+                {
+                    "id": 1,
+                    "name": "sub_result",
+                    "description": "",
+                    "type": "int",
+                    "type_idl": "long",
+                    "type_proto": "int32",
+                    "repeated": false,
+                    "map": false,
+                    "key": "",
+                    "value": "",
+                    "chinese_name": ""
+                },
+                {
+                    "id": 2,
+                    "name": "return_type",
+                    "description": "",
+                    "type": "int",
+                    "type_idl": "long",
+                    "type_proto": "int32",
+                    "repeated": false,
+                    "map": false,
+                    "key": "",
+                    "value": "",
+                    "chinese_name": ""
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,14 @@
+// write for formal test
+
+module FormalResponse
+{
+  struct Response
+  {
+    long number1;
+    long number2;
+    double doubleNumber1;
+    double doubleNumber2;
+    string message1;
+    string message2;
+  };
+};

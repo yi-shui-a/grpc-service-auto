@@ -600,33 +600,7 @@ class AtomServiceUtil:
 
                 field._type_idl = cpp_idl_dict.get(field._type_idl, field._type_idl)
 
-    @staticmethod
-    def __add_basic_info_dict(basic_info, key, value):
-        basic_info_format_list = [
-            "name",
-            "description",
-            "version",
-            "build_time",
-            "priority_level",
-            "license",
-            "operating_system",
-        ]
-        if key == "file":
-            basic_info["name"] = value.split(".")[0]
-            return
-        if key == "date":
-            basic_info["build_time"] = value
-            return
-        if key == "priority_level":
-            basic_info["priority_level"] = int(value)
-            return
-        if key == "chinese_name":
-            value = value.replace('"', "")
-            basic_info["chinese_name"] = value
-            return
-        if key in basic_info_format_list:
-            basic_info[key] = value
-            return
+
 
     @staticmethod
     def extract_section_hpp(content, begin_pattern, end_pattern):
@@ -671,6 +645,15 @@ class AtomServiceUtil:
         atom_service = AtomService()
         atom_service.set_info(json_data)
         return atom_service
+    
+    def getAtomServiceJson(service_name:str)->dict:
+        """
+        读取json文件，生成AtomService对象
+        """
+        # 读取json文件
+        with open(f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/{service_name}.json", "r") as file:
+            json_data = json.load(file)
+        return json_data
 
     # 获取CPP文件中完整的函数体组成的列表
     @staticmethod
@@ -702,6 +685,35 @@ class AtomServiceUtil:
                         break
 
         return functions
+    
+    
+        @staticmethod
+        def __add_basic_info_dict(basic_info, key, value):
+            basic_info_format_list = [
+                "name",
+                "description",
+                "version",
+                "build_time",
+                "priority_level",
+                "license",
+                "operating_system",
+            ]
+            if key == "file":
+                basic_info["name"] = value.split(".")[0]
+                return
+            if key == "date":
+                basic_info["build_time"] = value
+                return
+            if key == "priority_level":
+                basic_info["priority_level"] = int(value)
+                return
+            if key == "chinese_name":
+                value = value.replace('"', "")
+                basic_info["chinese_name"] = value
+                return
+            if key in basic_info_format_list:
+                basic_info[key] = value
+            return
 
     # @staticmethod
     # def parseHpp_old(file_name, encodings=None) -> AtomService:
