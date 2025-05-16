@@ -69,6 +69,8 @@ int main(int argc, char **argv)
     //===============================================================================
     //                             init :初始化程序
     //===============================================================================
+    std::cout << "INFO: client start" << std::endl;
+
     // 创建ip和端口，此处为注册中心的的ip和端口号
     std::string broadcastAddress = "255.255.255.255"; // Default broadcast addressIP "192.168.0.255"
     int broadcastPort = 10450;                        // Default broadcast port
@@ -138,6 +140,8 @@ int main(int argc, char **argv)
         
     }
 
+    std::cout << "INFO: grpc connect finish." << std::endl;
+
     //===============================================================================
     //                             receiveData :接收输入数据
     //===============================================================================
@@ -147,7 +151,7 @@ int main(int argc, char **argv)
     StartRequest_atomic_service_mbsb_task_A_Request_st *start_8761100 = receiveData_8761100();
     
 
-    //FormalRequest_Request *data = receiveData();
+    std::cout << "INFO: start info received." << std::endl;
 
     //===============================================================================
     //                             setParam :设置结构体变量值

@@ -426,7 +426,7 @@ class ClientUtil:
             f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/client/{orchestrattion_info.get('name', '')}/sync_client/",
             exist_ok=True,
         )
-        client_file = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/client/{orchestrattion_info.get('name', '')}/sync_client/{orchestrattion_info.get('name', '')}.cpp"
+        client_file = f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/client/{orchestrattion_info.get('name', '')}/sync_client/{orchestrattion_info.get('name', '') + ClientUtil.sync_client_suffix}.cpp"
         with open(client_file, "w", encoding="utf-8") as f:
             f.write(output_str)
         # 输出字符串
