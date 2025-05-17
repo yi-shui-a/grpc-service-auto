@@ -131,7 +131,6 @@ def orchestrate():
         res["type"] = node.get("type", "")
         res["id"] = node.get("id", "")
         res["title"] = node.get("file", "").split("/")[-1].split(".")[0]
-        print(res["title"])
         res["method"] = node.get("method", "")
         res["module"] = node.get("module", "")
         res["topic"] = node.get("topic", "")

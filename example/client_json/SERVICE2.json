@@ -1,0 +1,99 @@
+{
+  "name": "SERVICE2",
+  "describe": "test",
+  "id": "8690651",
+  "nodes": [
+    {
+      "type": "START",
+      "id": "7251674",
+      "title": "开始",
+      "x": 118,
+      "y": 37,
+      "method": "",
+      "input": "",
+      "module": "StartRequest",
+      "topic": "startA",
+      "struct": "typedef struct\r\n{\r\n  int number1;\r\n  int number2;\r\n} atomic_service_mbsb_task_A_Request_st;",
+      "struct_name": "atomic_service_mbsb_task_A_Request_st",
+      "dataBind": {
+        "input": "",
+        "output": ""
+      }
+    },
+    {
+      "type": "END",
+      "id": "0292837",
+      "title": "结束",
+      "x": 118,
+      "y": 507,
+      "method": "",
+      "input": "",
+      "module": "EndResponse",
+      "topic": "endA",
+      "struct": "typedef struct\r\n{\r\n  int sum_result;\r\n  int return_type;\r\n} atomic_service_sf_task_E_Reply_st;",
+      "struct_name": "atomic_service_sf_task_E_Reply_st",
+      "dataBind": {
+        "input": "",
+        "output": ""
+      }
+    },
+    {
+      "type": "SERVICE",
+      "id": "6405196",
+      "title": "目标识别",
+      "x": 118,
+      "y": 183,
+      "file": "atomic_service_mbsb.json",
+      "method": "atomic_service_fun_task_A",
+      "input": "",
+      "module": "",
+      "topic": "",
+      "struct": "",
+      "struct_name": "",
+      "basicData": {},
+      "dataBind": {
+        "input": "",
+        "output": ""
+      }
+    },
+    {
+      "type": "SERVICE",
+      "id": "3473875",
+      "title": "释放",
+      "x": 118,
+      "y": 351,
+      "file": "atomic_service_sf.json",
+      "method": "atomic_service_fun_task_E",
+      "input": "",
+      "module": "",
+      "topic": "",
+      "struct": "",
+      "struct_name": "",
+      "basicData": {},
+      "dataBind": {
+        "input": "",
+        "output": ""
+      }
+    }
+  ],
+  "connections": [
+    {
+      "source": "7251674",
+      "target": "6405196",
+      "condition": "",
+      "ddsCondition": ""
+    },
+    {
+      "source": "6405196",
+      "target": "3473875",
+      "condition": "",
+      "ddsCondition": ""
+    },
+    {
+      "source": "3473875",
+      "target": "0292837",
+      "condition": "",
+      "ddsCondition": ""
+    }
+  ]
+}

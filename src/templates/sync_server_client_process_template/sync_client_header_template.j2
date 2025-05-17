@@ -59,7 +59,12 @@ std::string formatResponse(std::string contentStr, int32_t type, int32_t identif
 long long getCurrentTimeMillis();
 
 {% for start_node in start_node_list %}
-{{start_node["module"]}}_{{start_node["struct_name"]}} *receiveData_{{start_node["id"]}}();
+{{start_node["module"]}}_{{start_node["struct_name"]}} *receiveData_{{start_node["id"]}}(dds_entity_t participant, dds_entity_t topic, dds_entity_t reader);
+{% endfor %}
+
+{% for end_node in end_node_list %}
+{{end_node["module"]}}_{{end_node["struct_name"]}} end_{{end_node["id"]}};
+void sendData_{{end_node["id"]}}(dds_entity_t participant, dds_entity_t topic, dds_entity_t writer, {{end_node["module"]}}_{{end_node["struct_name"]}} data);
 {% endfor %}
 
 int main(int argc, char **argv)
@@ -133,14 +138,76 @@ int main(int argc, char **argv)
 
     std::cout << "INFO: grpc connect finish." << std::endl;
 
+    //创建DDS相关函数
+    // 初始化 DDS 参与者实体
+    dds_entity_t participant;  
+    participant = dds_create_participant(0, NULL, NULL);
+    if (participant < 0)
+    {
+        std::cerr << "ERROR: Failed to create participant: " << dds_strretcode(-participant) << std::endl;
+        return EXIT_FAILURE;
+    }
+    // 创建Qos
+    dds_qos_t *qos = dds_create_qos();
+    dds_qset_reliability(qos, DDS_RELIABILITY_RELIABLE, DDS_SECS(10));
+    dds_qset_history(qos, DDS_HISTORY_KEEP_LAST, 10);
+
+    {% for start_node in start_node_list %}
+    // 创建Topic
+    dds_entity_t {{start_node["topic"]}};
+    {{start_node["topic"]}} = dds_create_topic(participant, &{{start_node["module"]}}_{{start_node["struct_name"]}}_desc, "{{start_node["topic"]}}", NULL, NULL);
+    if ({{start_node["topic"]}} < 0)
+    {
+        std::cerr << "ERROR: {{start_node["topic"]}} -- Failed to create topic: " << dds_strretcode(-{{start_node["topic"]}}) << std::endl;
+        return 0;
+    }
+    // 创建读取器
+    dds_entity_t {{start_node["topic"]}}_reader;
+    if ({{start_node["topic"]}}_reader < 0)
+    {
+        std::cerr << "ERROR: {{start_node["topic"]}} -- Failed to create reader: " << dds_strretcode(-{{start_node["topic"]}}_reader) << std::endl;
+        dds_delete({{start_node["topic"]}});
+        dds_delete_qos(qos);
+        return 0;
+    }
+    {% endfor %}
+
+    {% for end_node in end_node_list %}
+    // 创建Topic
+    dds_entity_t {{end_node["topic"]}};
+    {{end_node["topic"]}} = dds_create_topic(participant, &{{end_node["module"]}}_{{end_node["struct_name"]}}_desc, "{{end_node["topic"]}}", NULL, NULL);
+    if ({{end_node["topic"]}} < 0)
+    {
+        std::cerr << "ERROR: {{end_node["topic"]}} -- Failed to create topic: " << dds_strretcode(-{{end_node["topic"]}}) << std::endl;
+        return 0;
+    }
+    // 创建写入器
+    dds_entity_t {{end_node["topic"]}}_writer;
+    {{end_node["topic"]}}_writer = dds_create_writer(participant, {{end_node["topic"]}}, qos, NULL);
+        if ({{end_node["topic"]}}_writer < 0)
+        {
+            std::cerr << "ERROR: Failed to create writer for " << {{end_node["topic"]}} << ": "
+                      << dds_strretcode(-{{end_node["topic"]}}_writer) << std::endl;
+            // 清理已创建的写入器
+            dds_delete_qos(qos);
+            dds_delete(participant);
+            return EXIT_FAILURE;
+        }
+    {% endfor %}
+    // QoS配置不再需要，可以删除
+    dds_delete_qos(qos);
+    std::cout << "INFO: DDS initial finish." << std::endl;
+
+
     //===============================================================================
     //                             receiveData :接收输入数据
     //===============================================================================
 
     // 接收输入数据
     {% for start_node in start_node_list %}
-    {{start_node["module"]}}_{{start_node["struct_name"]}} *start_{{start_node["id"]}} = receiveData_{{start_node["id"]}}();
+    {{start_node["module"]}}_{{start_node["struct_name"]}} *start_{{start_node["id"]}} = receiveData_{{start_node["id"]}}(participant, {{start_node["topic"]}}, {{start_node["topic"]}}_reader);
     {% endfor %}
+    
 
     std::cout << "INFO: start info received." << std::endl;
 
@@ -149,7 +216,7 @@ int main(int argc, char **argv)
     //===============================================================================
 
     // 声明变量并赋值
-    {% for declare in declare_list %}
+    {% for declare in declare_service_request_list %}
     {{declare[0]}} request_{{declare[1]}};
     {% endfor %}
     

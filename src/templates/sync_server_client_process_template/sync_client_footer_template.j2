@@ -5,6 +5,17 @@
     {% endfor %}
             << reply_{{assignment_list[-1][0]}}.{{assignment_list[-1][1]}} << std::endl;
 
+    // 赋值
+    {% for assignment in assignment_end_send_list %}
+    end_{{assignment[0]}}.{{assignment[1]}} = reply_{{assignment[2]}}.{{assignment[3]}};
+    {% endfor %}
+
+    std::cout << "INFO: start info finish." << std::endl;
+
+    // 删除 DDS 参与者
+    dds_return_t rc = dds_delete(participant);
+    if (rc != DDS_RETCODE_OK)
+        DDS_FATAL("dds_delete: %s\n", dds_strretcode(-rc));
     return 0;
 }
 
@@ -129,32 +140,13 @@ long long getCurrentTimeMillis()
 }
 
 {% for start_node in start_node_list %}
-{{start_node["module"]}}_{{start_node["struct_name"]}} *receiveData_{{start_node["id"]}}()
+{{start_node["module"]}}_{{start_node["struct_name"]}} *receiveData_{{start_node["id"]}}(dds_entity_t participant, dds_entity_t topic, dds_entity_t reader)
 {
     // 定义dds数据类型
-    dds_entity_t participant;
-    dds_entity_t topic;
-    dds_entity_t reader;
     dds_return_t rc;
     {{start_node["module"]}}_{{start_node["struct_name"]}} *msg;
     void *samples[1];
     dds_sample_info_t infos[1];
-
-    // 创建参与者
-    participant = dds_create_participant(DDS_DOMAIN_DEFAULT, NULL, NULL);
-    if (participant < 0)
-        DDS_FATAL("dds_create_participant: %s\n", dds_strretcode(-participant));
-
-    // 创建主题
-    topic = dds_create_topic(
-        participant, &{{start_node["module"]}}_{{start_node["struct_name"]}}_desc, "{{start_node["topic"]}}", NULL, NULL);
-    if (topic < 0)
-        DDS_FATAL("dds_create_topic: %s\n", dds_strretcode(-topic));
-
-    // 创建读取者
-    reader = dds_create_reader(participant, topic, NULL, NULL);
-    if (reader < 0)
-        DDS_FATAL("dds_create_reader: %s\n", dds_strretcode(-reader));
 
     // 为sample分配空间
     for (int i = 0; i < 1; i++)
@@ -221,11 +213,6 @@ long long getCurrentTimeMillis()
             {% endif %}
             {% endfor %}
 
-            // 删除 DDS 资源
-            rc = dds_delete(participant);
-            if (rc != DDS_RETCODE_OK)
-                DDS_FATAL("dds_delete: %s\n", dds_strretcode(-rc));
-
             // 返回接收到的消息
             return ret_msg;
         }
@@ -233,11 +220,23 @@ long long getCurrentTimeMillis()
         dds_sleepfor(DDS_MSECS(300));
     }
 
-    // 删除参与者
-    rc = dds_delete(participant);
-    if (rc != DDS_RETCODE_OK)
-        DDS_FATAL("dds_delete: %s\n", dds_strretcode(-rc));
-
     return NULL;
+}
+{% endfor %}
+
+
+{% for end_node in end_node_list %}
+void sendData_{{end_node["id"]}}(dds_entity_t participant, dds_entity_t topic, dds_entity_t writer, {{end_node["module"]}}_{{end_node["struct_name"]}} data){
+    rc = dds_write(writer, &data);
+    {
+        if (rc != DDS_RETCODE_OK)
+        {
+            std::cout << "ERROR: Failed to write topic_1: " << dds_strretcode(-rc) << std::endl;
+        }
+        else
+        {
+            std::cout << "SUCCESS: Published {{end_node["topic"]}}" << std::endl;
+        }
+    }
 }
 {% endfor %}

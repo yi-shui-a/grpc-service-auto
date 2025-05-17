@@ -430,3 +430,8 @@ StartRequest_atomic_service_mbsb_task_A_Request_st *receiveData_8761100()
 
     return NULL;
 }
+
+
+reply_struct endData_(reply_4201444 reply_data){
+    
+}

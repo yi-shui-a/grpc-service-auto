@@ -20,7 +20,7 @@ class TestOrchestrate(unittest.TestCase):
         # 测试成功的情况
         # 读取json文件
         with open(
-            f"{os.path.dirname(os.path.abspath(__file__))}/../example/client_json/test0516.json",
+            f"{os.path.dirname(os.path.abspath(__file__))}/../example/client_json/SERVICE2.json",
             "r",
         ) as f:
             orchestration_file = json.load(f)

@@ -94,8 +94,8 @@ class ClientUtil:
         # idl_path: str = (
         #     f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/client/{orchestrattion_info.get('name', '')}/idl"
         # )
-        # 解析并编译开始节点中的结构体为proto文件
-        ClientUtil._compileStartStruct(orchestrattion_info)
+        # 解析并编译开始和结束节点中的结构体为proto文件
+        ClientUtil._compileStructs(orchestrattion_info)
         idl_list: List[str] = list()
 
         # 定义输出字符串
@@ -114,7 +114,7 @@ class ClientUtil:
                 node["service_info"] = AtomServiceUtil.getAtomServiceJson(
                     node.get("title", "")
                 )
-            if node.get("type", "") == "START":
+            if node.get("type", "") == "START" or node.get("type", "") == "END":
                 node["message_info"] = ClientUtil._getIdlJson(
                     orchestrattion_info.get("name", ""), node.get("module", "")
                 )
@@ -127,6 +127,27 @@ class ClientUtil:
                 start_node_list.append(node)
                 # 将module名称加入idl_list
                 idl_list.append(node.get("module", ""))
+
+        # end节点的列表
+        end_node_list: List[dict] = list()
+        for node in orchestrattion_info.get("nodes", []):
+            if node.get("type", "") == "END":
+                end_node_list.append(node)
+                # 将module名称加入idl_list
+                idl_list.append(node.get("module", ""))
+
+        # 保存指向end节点的node
+        end_prev_node_list: list[dict] = list()
+        for connection in orchestrattion_info.get("connections", []):
+            if connection.get("target", "") in [
+                end_node.get("id", "") for end_node in end_node_list
+            ]:
+                end_prev_node_list.append(
+                    ClientUtil._getNode(
+                        orchestrattion_info, connection.get("source", "")
+                    )
+                )
+
         # “开始” 节点的连接列表,Dict[id, List[str]]
         nodeId_connection_dict: Dict[str, List[dict]] = dict()
         for start_node in start_node_list:
@@ -135,10 +156,9 @@ class ClientUtil:
                 if connection.get("source", "") == start_node.get("id", ""):
                     start_connection_list.append(connection)
             nodeId_connection_dict[start_node.get("id", "")] = start_connection_list
-        print(json.dumps(nodeId_connection_dict, indent=4))
 
-        # 定义声明对象的列表
-        declare_list: List[list] = list()
+        # 定义声明对象的列表List[message_id, node_id]
+        declare_service_request_list: List[list] = list()
         for node in orchestrattion_info.get("nodes", []):
             if node.get("type", "") == "SERVICE":
                 temp_list: list = list()
@@ -148,7 +168,7 @@ class ClientUtil:
                     )
                 )
                 temp_list.append(node.get("id", ""))
-                declare_list.append(temp_list)
+                declare_service_request_list.append(temp_list)
 
         # 定义赋值关系
         assignment_list: List[list] = list()
@@ -200,8 +220,9 @@ class ClientUtil:
             service_list=service_list,
             idl_list=idl_list,
             start_node_list=start_node_list,
+            end_node_list=end_node_list,
             assignment_list=assignment_list,
-            declare_list=declare_list,
+            declare_service_request_list=declare_service_request_list,
         )
 
         # 将 client_header 的字符串添加到 output_str
@@ -237,24 +258,6 @@ class ClientUtil:
                         )
                         target_node["assign_num"] += 1
 
-        # end节点的列表
-        end_node_list: List[dict] = list()
-        for node in orchestrattion_info.get("nodes", []):
-            if node.get("type", "") == "END":
-                end_node_list.append(node)
-
-        # 保存指向end节点的node
-        end_prev_node_list: list[dict] = list()
-        for connection in orchestrattion_info.get("connections", []):
-            if connection.get("target", "") in [
-                end_node.get("id", "") for end_node in end_node_list
-            ]:
-                end_prev_node_list.append(
-                    ClientUtil._getNode(
-                        orchestrattion_info, connection.get("source", "")
-                    )
-                )
-
         # 标志位，表明是否结束
         end_flag = False
         while not end_flag:
@@ -281,23 +284,6 @@ class ClientUtil:
                     temp_call_template.append(node.get("method", ""))
                     temp_call_template.append(node.get("id", ""))
                     call_template_list.append(temp_call_template)
-
-            # # 将当前获取的值传给下一个节点
-            # # 获取当前运算完的节点和下一级节点的连线和node列表
-            # next_connection_list: List[dict] = list()
-            # next_node_list: List[dict] = list()
-            # # 遍历连线，获取下一级节点的信息
-            # for connection in orchestrattion_info.get("connections", []):
-            #     if connection.get("source", "") in [
-            #         node.get("id", "") for node in available_list
-            #     ]:
-            #         next_connection_list.append(connection)
-            # # 遍历下一级节点的信息，获取下一级节点的信息
-            # for node in orchestrattion_info.get("nodes", []):
-            #     if node.get("id", "") in [
-            #         connection.get("target", "") for connection in next_connection_list
-            #     ]:
-            #         next_node_list.append(node)
 
             # 定义赋值关系
             assignment_list: List[list] = list()
@@ -405,6 +391,52 @@ class ClientUtil:
                         )
                         assignment_list.append(temp_list)
 
+        # “开始” 节点的连接列表,Dict[id, List[str]]
+        nodeId_connection_dict: Dict[str, List[dict]] = dict()
+        for end_prev_node in end_prev_node_list:
+            end_connection_list: list[dict] = list()
+            for connection in orchestrattion_info.get("connections", []):
+                if connection.get("source", "") == end_prev_node.get("id", ""):
+                    end_connection_list.append(connection)
+            nodeId_connection_dict[end_prev_node.get("id", "")] = end_connection_list
+        # 定义赋值关系
+        assignment_end_send_list: List[list] = list()
+        for end_prev_node in end_prev_node_list:
+            # 遍历连接列表，获取连接的目标节点的id
+            connection_list: list[dict] = nodeId_connection_dict.get(
+                end_prev_node.get("id", ""), []
+            )
+            for connection in connection_list:
+                target_node_id = connection.get("target", "")
+                # 获取目标节点的信息
+                target_node = ClientUtil._getNode(orchestrattion_info, target_node_id)
+                source_message = ClientUtil._getResponseMessage(
+                    end_prev_node, end_prev_node.get("method", "")
+                )
+                # 最多考虑一层嵌套
+                for field in source_message.get("fields", []):
+                    if ClientUtil.isStruct(end_prev_node, field) == dict():
+                        temp_list = list()
+                        temp_list.append(target_node.get("id", ""))
+                        temp_list.append(field.get("name", ""))
+                        temp_list.append(end_prev_node.get("id", ""))
+                        temp_list.append(field.get("name", ""))
+                        assignment_end_send_list.append(temp_list)
+                    else:
+                        nest_list: list = list()
+                        for inner_field in ClientUtil.isStruct(end_prev_node, field):
+                            nest_list.append(inner_field.get("name", ""))
+                            temp_list = list()
+                            temp_list.append(target_node.get("id", ""))
+                            temp_list.append(
+                                ".".join(nest_list) + "." + inner_field.get("name", "")
+                            )
+                            temp_list.append(end_prev_node.get("id", ""))
+                            temp_list.append(
+                                ".".join(nest_list) + "." + inner_field.get("name", "")
+                            )
+                            assignment_end_send_list.append(temp_list)
+
         # 加载client_footer模版
         client_footer_template = Template(
             open(
@@ -416,6 +448,7 @@ class ClientUtil:
             service_list=service_list,
             assignment_list=assignment_list,
             start_node_list=start_node_list,
+            assignment_end_send_list=assignment_end_send_list,
         )
         output_str = output_str + client_footer_str
 
@@ -441,15 +474,17 @@ class ClientUtil:
         # 这里将module的内容作为topic导入，未来需要将client中的topic改为module
         for start_node in start_node_list:
             res_client.add_dds_topic(start_node.get("module", ""))
+        for end_node in end_node_list:
+            res_client.add_dds_topic(end_node.get("module", ""))
         for service_name in service_list:
             res_client.add_service(service_name)
         return res_client
 
-    # 解析并编译开始节点中的结构体为proto文件
     @staticmethod
-    def _compileStartStruct(orchestrattion_info: dict) -> str:
+    def _compileStructs(orchestrattion_info: dict) -> str:
         """
-        保存准备
+        将起始节点或末尾节点中需要的结构体编译成idl
+        一个节点为一个module，也是一个文件。
         """
         # 确保idl目录存在
         idl_path: str = (
@@ -464,93 +499,41 @@ class ClientUtil:
         解析json
         """
         # 找到开始节点
-        start_node_list: list[dict] = list()
+        node_list: list[dict] = list()
         for node in orchestrattion_info.get("nodes", []):
-            if node.get("type", "") == "START":
-                start_node_list.append(node)
-        # 解析开始节点的结构体为一个message
-        start_node_messages_list: list[dict] = list()
-        for start_node in start_node_list:
+            if node.get("type", "") == "START" or node.get("type", "") == "END":
+                node_list.append(node)
+        # 解析节点的结构体为一个message
+        node_messages_list: list[dict] = list()
+        for node in node_list:
             # 输入字符串
-            input_str: str = start_node.get("struct", "")
+            input_str: str = node.get("struct", "")
+            # 通过解析结构体代码块的函数将input_str解析为一个由存储message的dict组成的list
+            messages: List[dict] = ClientUtil._parseStructCodeBlock(input_str)
 
-            messages = list()
-            # 正则匹配结构体定义（支持多行和单行）
-            message_info_pattern = re.compile(
-                r"typedef\s+struct\s*{([^}]*)}[^{}]*?(\w+);",  # 匹配结构体定义
-                re.DOTALL,  # 使 . 匹配换行符
-            )
-
-            # 匹配所有结构体
-            message_info_matches = message_info_pattern.finditer(input_str)
-            for match in message_info_matches:
-                fields_text = match.group(1).strip()  # 字段定义部分
-                struct_name = match.group(2).strip()  # 结构体名称
-                # 解析字段
-                fields = []
-                field_id = 1
-                field_line_pattern = re.compile(
-                    r"""
-                    (?:const\s+)?                          # const限定符
-                    (?:std::)?                             # std命名空间
-                    (?:\w+<.*?>|\w+(?:\s*\*\s*)?)          # 模板类型或普通类型（可能带指针）
-                    (?:\s*$$\s*\d*\s*$$)?                  # 数组维度
-                    \s+                                    # 分隔空格
-                    (\w+)                                  # 变量名
-                    \s*;                                   # 结束分号
-                    """,
-                    re.VERBOSE,
-                )
-
-                # 逐行处理字段定义
-                for line in fields_text.split("\n"):
-                    line = line.strip()
-                    if not line or line.startswith("//"):
-                        continue
-
-                    # 尝试匹配类型声明
-                    type_match = field_line_pattern.search(line)
-                    if type_match:
-                        full_type = line.split(";")[0].strip()  # 获取完整类型声明
-                        var_name = type_match.group(1)
-
-                        fields.append(
-                            {
-                                "id": field_id,
-                                "name": var_name,
-                                "type": " ".join(full_type.split(" ")[:-1]),
-                                "description": "",
-                                "chinese_name": "",
-                            }
-                        )
-                        field_id += 1
-
-                messages.append(
-                    {"name": struct_name, "description": "", "fields": fields}
-                )
             # 保存到json到idl中，命名为start节点id
             # 保存到idl文件夹
             os.makedirs(
-                f"{idl_path}/{start_node.get('module', '')}",
+                f"{idl_path}/{node.get('module', '')}",
                 exist_ok=True,
             )
             with open(
-                f"{idl_path}/{start_node.get('module', '')}/{start_node.get('module', '')}.json",
+                f"{idl_path}/{node.get('module', '')}/{node.get('module', '')}.json",
                 "w",
                 encoding="utf-8",
             ) as f:
                 f.write(
                     json.dumps(
-                        {"module": start_node["module"], "messages": messages}, indent=4
+                        {"module": node["module"], "messages": messages}, indent=4
                     )
                 )
 
-            start_node_messages_list.append(messages)
+            node_messages_list.append(messages)
 
         # 遍历start_node_messages_list，生成idl文件
-        for i in range(len(start_node_messages_list)):
+        for i in range(len(node_messages_list)):
             # for start_node_messages in start_node_messages_list:
-            module_name = start_node_list[i].get("module", "")
+            module_name = node_list[i].get("module", "")
             # 遍历message，生成idl文件
             idl_template = Template(
                 open(
@@ -559,13 +542,13 @@ class ClientUtil:
             )
             # 构建message列表
             messages: Message = list()
-            for message in start_node_messages_list[i]:
+            for message in node_messages_list[i]:
                 temp = Message()
                 temp.set_info(message)
                 messages.append(temp)
             ClientUtil.__type_convert(messages=messages)
             res_str = idl_template.render(
-                module_name=start_node_list[i].get("module", ""),
+                module_name=node_list[i].get("module", ""),
                 messages=messages,
             )
 
@@ -595,10 +578,69 @@ class ClientUtil:
 
             # 编译idl文件
             Util.compileCmakeProject(
-                f"{idl_path}/{start_node.get('module', '')}/",
+                f"{idl_path}/{module_name}/",
                 module_name,
                 file_type="idl",
             )
+
+    @staticmethod
+    def _parseStructCodeBlock(input_str: str) -> List[dict]:
+        """
+        解析结构体代码块
+        """
+        messages = list()
+        # 正则匹配结构体定义（支持多行和单行）
+        message_info_pattern = re.compile(
+            r"typedef\s+struct\s*{([^}]*)}[^{}]*?(\w+);",  # 匹配结构体定义
+            re.DOTALL,  # 使 . 匹配换行符
+        )
+
+        # 匹配所有结构体
+        message_info_matches = message_info_pattern.finditer(input_str)
+        for match in message_info_matches:
+            fields_text = match.group(1).strip()  # 字段定义部分
+            struct_name = match.group(2).strip()  # 结构体名称
+            # 解析字段
+            fields = []
+            field_id = 1
+            field_line_pattern = re.compile(
+                r"""
+                (?:const\s+)?                          # const限定符
+                (?:std::)?                             # std命名空间
+                (?:\w+<.*?>|\w+(?:\s*\*\s*)?)          # 模板类型或普通类型（可能带指针）
+                (?:\s*$$\s*\d*\s*$$)?                  # 数组维度
+                \s+                                    # 分隔空格
+                (\w+)                                  # 变量名
+                \s*;                                   # 结束分号
+                """,
+                re.VERBOSE,
+            )
+
+            # 逐行处理字段定义
+            for line in fields_text.split("\n"):
+                line = line.strip()
+                if not line or line.startswith("//"):
+                    continue
+
+                # 尝试匹配类型声明
+                type_match = field_line_pattern.search(line)
+                if type_match:
+                    full_type = line.split(";")[0].strip()  # 获取完整类型声明
+                    var_name = type_match.group(1)
+
+                    fields.append(
+                        {
+                            "id": field_id,
+                            "name": var_name,
+                            "type": " ".join(full_type.split(" ")[:-1]),
+                            "description": "",
+                            "chinese_name": "",
+                        }
+                    )
+                    field_id += 1
+
+            messages.append({"name": struct_name, "description": "", "fields": fields})
+        return messages
 
     @staticmethod
     def _getServiceName(orchestrattion_info: dict, id: str) -> str:

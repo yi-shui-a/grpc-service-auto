@@ -1,0 +1,244 @@
+
+    std::cout << "{{orchestrattion_info["name"]}} output: " << std::endl
+    {% for assignment in assignment_list[:-1] %}
+            << reply_{{assignment[0]}}.{{assignment[1]}} << std::endl
+    {% endfor %}
+            << reply_{{assignment_list[-1][0]}}.{{assignment_list[-1][1]}} << std::endl;
+
+    std::cout << "INFO: start info finish." << std::endl;
+    return 0;
+}
+
+void queryServiceInfo(std::string serviceName[], int num[], int size, QueryInfo info[], const std::string broadcastAddress, const int port)
+{
+    /*
+    查询服务信息
+    */
+    // 声明变量
+    int sock;
+    struct sockaddr_in sockertaddr, register_addr;
+    socklen_t register_addr_len = sizeof(register_addr);
+    char buffer[4 * 1024];
+    // 创建UDP socket
+    if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    {
+        perror("socket creation failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // 设置socket选项以允许广播
+    int opt = 1;
+    if (setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &opt, sizeof(opt)) < 0)
+    {
+        perror("setsockopt(SO_BROADCAST) failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // 初始化广播地址结构
+    memset(&sockertaddr, 0, sizeof(sockertaddr));
+    sockertaddr.sin_family = AF_INET;
+    sockertaddr.sin_addr.s_addr = inet_addr(broadcastAddress.c_str());
+    sockertaddr.sin_port = htons(port);
+
+    // 构造查询请求消息
+    for (int i = 0; i < size; i++)
+    {
+        json query_json;
+        query_json["service_name"] = serviceName[i];
+        query_json["service_num"] = num[i];
+
+        std::string query_str = query_json.dump(4);
+        query_str = formatResponse(query_str, 5, 1);
+
+        // 发送注册报文到广播地址
+        if (sendto(sock, query_str.c_str(), query_str.size(), 0, (struct sockaddr *)&sockertaddr, sizeof(sockertaddr)) < 0)
+        {
+            close(sock);
+            exit(EXIT_FAILURE);
+        }
+        // 接收查询结果
+        memset(buffer, 0, sizeof(buffer));
+        int recv_len = recvfrom(sock, buffer, sizeof(buffer) - 1, 0, (struct sockaddr *)&register_addr, &register_addr_len);
+        if (recv_len < 0)
+        {
+            perror("recvfrom failed");
+            continue;
+        }
+        // 确保缓冲区以null结尾
+        buffer[recv_len] = '\0';
+
+        // 将接收到的数据分为两部分
+        const int prefixLength = 28; // 前28个字节
+        if (recv_len < prefixLength)
+        {
+            close(sock);
+            throw std::runtime_error("接收到的数据不足28字节");
+        }
+        // 返回值类型转换
+        std::string responseMessage(buffer, recv_len);
+        std::string responseHeaderStr = responseMessage.substr(0, 28);
+        std::string responseContentStr = responseMessage.substr(28);
+        Header responseHeader = Header::deserialize(responseHeaderStr);
+        try
+        {
+            json response_json = json::parse(responseContentStr)["data"];
+            if (responseHeader.type == 6)
+            {
+                if (response_json["service_num"] == 0)
+                {
+                    printf("error: invalid service");
+                }
+                info[i].ip = response_json.at("instance_list").at(0).at("address").get<std::string>();
+                info[i].port = response_json.at("instance_list").at(0).at("port").get<int>();
+                info[i].server_name = response_json.at("instance_list").at(0).at("server_name").get<std::string>();
+                info[i].role = response_json.at("instance_list").at(0).at("role").get<int>();
+            }
+        }
+        catch (const std::exception &e)
+        {
+            std::cerr << "Exception: " << e.what() << std::endl;
+            std::cerr << "Invalid JSON data received." << std::endl;
+            close(sock);
+        }
+    }
+
+    // 关闭socket
+    close(sock);
+}
+
+std::string formatResponse(std::string contentStr, int32_t type, int32_t identifier)
+{
+    Header header = Header();
+    header.identifier = identifier;
+    header.sendTime = getCurrentTimeMillis();
+    header.messageLength = contentStr.length();
+    header.serialNumber = 1;
+    header.checkBit = 1;
+    header.type = type;
+    std::string headerStr = Header::serialize(header);
+
+    return headerStr + contentStr;
+}
+
+// 获取当前毫秒级时间戳
+long long getCurrentTimeMillis()
+{
+    auto now = std::chrono::system_clock::now();
+    auto duration = now.time_since_epoch();
+    auto res = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+    return res;
+}
+
+{% for start_node in start_node_list %}
+{{start_node["module"]}}_{{start_node["struct_name"]}} *receiveData_{{start_node["id"]}}()
+{
+    // 定义dds数据类型
+    dds_entity_t participant;
+    dds_entity_t topic;
+    dds_entity_t reader;
+    dds_return_t rc;
+    {{start_node["module"]}}_{{start_node["struct_name"]}} *msg;
+    void *samples[1];
+    dds_sample_info_t infos[1];
+
+    // 创建参与者
+    participant = dds_create_participant(DDS_DOMAIN_DEFAULT, NULL, NULL);
+    if (participant < 0)
+        DDS_FATAL("dds_create_participant: %s\n", dds_strretcode(-participant));
+
+    // 创建主题
+    topic = dds_create_topic(
+        participant, &{{start_node["module"]}}_{{start_node["struct_name"]}}_desc, "{{start_node["topic"]}}", NULL, NULL);
+    if (topic < 0)
+        DDS_FATAL("dds_create_topic: %s\n", dds_strretcode(-topic));
+
+    // 创建读取者
+    reader = dds_create_reader(participant, topic, NULL, NULL);
+    if (reader < 0)
+        DDS_FATAL("dds_create_reader: %s\n", dds_strretcode(-reader));
+
+    // 为sample分配空间
+    for (int i = 0; i < 1; i++)
+    {
+        samples[i] = {{start_node["module"]}}_{{start_node["struct_name"]}}__alloc();
+    }
+
+    printf("=== [Subscriber] Waiting for a message ...\n");
+    fflush(stdout);
+
+    // 读取消息
+    while (true)
+    {
+        // 从reader中读取，存储在 samples 数组中
+        // infos: 存储与数据样本相关的元信息（如样本的状态、时间戳等）长度与sample相同
+        // 最后两个参数，分别是samples数组和infos数组的长度
+        rc = dds_take(reader, samples, infos, 1, 1);
+        if (rc < 0)
+            DDS_FATAL("dds_take: %s\n", dds_strretcode(-rc));
+
+        // infos[0].valid_data: 判断infos[0]中的数据是否有效
+        if ((rc > 0) && (infos[0].valid_data))
+        {
+            // 显式类型转换
+            msg = ({{start_node["module"]}}_{{start_node["struct_name"]}} *)samples[0];
+            printf("=== [Subscriber] Received: ");
+            //printf("Message (number1: %d, number2: %d, doubleNumber1: %f, doubleNumber2: %f, message1: %s, message2: %s)\n",
+            //       msg->number1, msg->number2, msg->doubleNumber1, msg->doubleNumber2, msg->message1, msg->message2);
+            // 强制刷新标准输出缓冲区，确保消息立即显示在控制台上
+            fflush(stdout);
+
+            // 如果需要返回消息，可以在这里复制数据
+            {{start_node["module"]}}_{{start_node["struct_name"]}} *ret_msg = ({{start_node["module"]}}_{{start_node["struct_name"]}} *)malloc(sizeof({{start_node["module"]}}_{{start_node["struct_name"]}}));
+            if (ret_msg == NULL)
+            {
+                DDS_FATAL("Failed to allocate memory for return message\n");
+                // 删除参与者
+                dds_delete(participant);
+                return NULL;
+            }
+
+            /**
+             * 复制数据
+             */
+            // 复制基本数据类型
+            {% for message in start_node["message_info"]["messages"] %}
+            {% if message["name"] == start_node["struct_name"] %}
+            {% for field in message["fields"] %}
+
+            {% if "string" in field["type"] %}
+            ret_msg->{{field["name"]}} = strdup(msg->{{field["name"]}}); // 使用 strdup 分配并复制字符串
+            if (ret_msg->{{field["name"]}} == NULL)
+            {
+                DDS_FATAL("Failed to allocate memory for message1\n");
+                free(ret_msg); // 释放已分配的内存
+                dds_delete(participant);
+                return NULL;
+            }
+            {% else %}
+            ret_msg->{{field["name"]}} = msg->{{field["name"]}};
+            {% endif %}
+
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+
+            // 删除 DDS 资源
+            rc = dds_delete(participant);
+            if (rc != DDS_RETCODE_OK)
+                DDS_FATAL("dds_delete: %s\n", dds_strretcode(-rc));
+
+            // 返回接收到的消息
+            return ret_msg;
+        }
+        // 让线程休眠 300 ms，避免循环占用过多CPU资源。
+        dds_sleepfor(DDS_MSECS(300));
+    }
+
+    // 删除参与者
+    rc = dds_delete(participant);
+    if (rc != DDS_RETCODE_OK)
+        DDS_FATAL("dds_delete: %s\n", dds_strretcode(-rc));
+
+    return NULL;
+}
+{% endfor %}

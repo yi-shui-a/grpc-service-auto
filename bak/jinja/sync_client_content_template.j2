@@ -1,0 +1,11 @@
+
+    // 运行服务
+    {% for element in call_template_list %}
+    {{element[0]}} reply_{{element[1]}} = {{element[2]}}->{{element[3]}}(request_{{element[4]}});
+    {% endfor %}
+
+
+    // 赋值
+    {% for assignment in assignment_list %}
+    request_{{assignment[0]}}.{{assignment[1]}} = reply_{{assignment[2]}}.{{assignment[3]}};
+    {% endfor %}

@@ -1,0 +1,25 @@
+{
+    "module": "StartRequest",
+    "messages": [
+        {
+            "name": "atomic_service_mbsb_task_A_Request_st",
+            "description": "",
+            "fields": [
+                {
+                    "id": 1,
+                    "name": "number1",
+                    "type": "int",
+                    "description": "",
+                    "chinese_name": ""
+                },
+                {
+                    "id": 2,
+                    "name": "number2",
+                    "type": "int",
+                    "description": "",
+                    "chinese_name": ""
+                }
+            ]
+        }
+    ]
+}

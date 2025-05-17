@@ -1,0 +1,163 @@
+#include <iostream>
+#include <fstream>
+#include <memory>
+#include <string>
+#include <chrono>
+#include <cstring>
+#include <cstdlib>
+#include <cerrno>
+#include <netdb.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <ctime>
+#include <memory>
+
+#include <vector>
+#include <map>
+
+#include <grpcpp/grpcpp.h>
+
+#include "Header.h"
+
+{% for service in service_list %}
+#include "../../../atomic_service/{{service}}/sync_client_impl/{{service}}_sync_client_impl.cpp"
+{% endfor %}
+
+#include "dds/dds.h"
+{% for idl in idl_list %}
+#include "../idl/{{idl}}/{{idl}}.h"
+{% endfor %}
+
+using grpc::Channel;
+using grpc::ClientContext;
+using grpc::Status;
+
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
+typedef struct
+{
+    std::string ip;
+    int port;
+    std::string server_name;
+    int role;
+} QueryInfo;
+
+// 定义包含 channel 和 IP 地址的结构体
+typedef struct
+{
+    std::shared_ptr<grpc::Channel> channel;
+    std::string ip;
+} ChannelInfo;
+
+void queryServiceInfo(std::string serviceName[], int num[], int size, QueryInfo info[], const std::string broadcastAddress, const int port);
+
+std::string formatResponse(std::string contentStr, int32_t type, int32_t identifier);
+
+long long getCurrentTimeMillis();
+
+{% for start_node in start_node_list %}
+{{start_node["module"]}}_{{start_node["struct_name"]}} *receiveData_{{start_node["id"]}}();
+{% endfor %}
+
+int main(int argc, char **argv)
+{
+    //===============================================================================
+    //                             init :初始化程序
+    //===============================================================================
+    std::cout << "INFO: client start" << std::endl;
+
+    // 创建ip和端口，此处为注册中心的的ip和端口号
+    std::string broadcastAddress = "255.255.255.255"; // Default broadcast addressIP "192.168.0.255"
+    int broadcastPort = 10450;                        // Default broadcast port
+    // 定义服务名，此处为代码生成
+    std::string serviceName[{{service_list | length}}] = {
+        {% for service in service_list[:-1] %}
+        "{{service}}",
+        {% endfor %}
+        "{{service_list[-1]}}"
+    };
+    // 定义服务数量
+    int num[{{service_list | length}}];
+    for (int i = 0; i < {{service_list | length}}; i++)
+    {
+        num[i] = 1; // 假设只有一个该服务
+    }
+    // 定义返回值列表，依次查询服务信息
+    QueryInfo queryInfo[{{service_list | length}}];
+    // 查询服务信息
+    queryServiceInfo(serviceName, num, {{service_list | length}}, queryInfo, broadcastAddress, broadcastPort);
+
+    // 创建grpc channel
+    // 创建一个 ChannelInfo 结构体的 vector
+    std::vector<ChannelInfo> channel_list;
+    for (int i = 0; i < {{service_list | length}}; i++)
+    {
+        std::string temp_str = queryInfo[i].ip + ":" + std::to_string(queryInfo[i].port);
+        int unequal_num = 0;
+        // 遍历 channel_list 中的每个元素，比较 temp_str 与 channel_list 中元素的 ip 字段。如果不相等，则 unequal_num 加 1。
+        for (int size_v = 0; size_v < channel_list.size(); size_v++)
+        {
+            if (temp_str != channel_list[size_v].ip)
+            {
+                unequal_num++;
+            }
+        }
+        // 如果 unequal_num 等于 channel_list 的大小，说明 temp_str 对应的地址在 channel_list 中不存在.
+        // 此时使用 grpc::CreateChannel 函数创建一个新的 gRPC 通道，并使用不安全的通道凭证
+        if (unequal_num == channel_list.size())
+        {
+            auto channel = grpc::CreateChannel(temp_str, grpc::InsecureChannelCredentials());
+            std::string ip = temp_str;
+            ChannelInfo info = {channel, ip};
+            channel_list.push_back(info);
+        }
+    }
+
+    // 声明对象
+    {% for service in service_list %}
+    {{service}}_Service_Client *{{service}} = nullptr;
+    {% endfor %}
+
+    for (int i = 0; i < channel_list.size(); i++)
+    {
+        {% for service in service_list %}
+        if (channel_list[i].ip == queryInfo[0].ip + ":" + std::to_string(queryInfo[0].port))
+        {
+            {{service}} = new {{service}}_Service_Client(channel_list[i].channel);
+        }
+        {% endfor %}
+    }
+
+    std::cout << "INFO: grpc connect finish." << std::endl;
+
+    //===============================================================================
+    //                             receiveData :接收输入数据
+    //===============================================================================
+
+    // 接收输入数据
+    {% for start_node in start_node_list %}
+    {{start_node["module"]}}_{{start_node["struct_name"]}} *start_{{start_node["id"]}} = receiveData_{{start_node["id"]}}();
+    {% endfor %}
+
+    std::cout << "INFO: start info received." << std::endl;
+
+    //===============================================================================
+    //                             setParam :设置结构体变量值
+    //===============================================================================
+
+    // 声明变量并赋值
+    {% for declare in declare_list %}
+    {{declare[0]}} request_{{declare[1]}};
+    {% endfor %}
+    
+    //为开始的服务赋值
+    {% for assignment in assignment_list %}
+    request_{{assignment[0]}}.{{assignment[1]}} = start_{{assignment[2]}}->{{assignment[3]}};
+    {% endfor %}
+
+    //===============================================================================
+    //                                 调用服务流程
+    //===============================================================================
