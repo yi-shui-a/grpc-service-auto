@@ -161,8 +161,19 @@ int main(int argc, char **argv)
         std::cerr << "ERROR: {{start_node["topic"]}} -- Failed to create topic: " << dds_strretcode(-{{start_node["topic"]}}) << std::endl;
         return 0;
     }
+    // 创建subscriber
+    dds_entity_t {{start_node["topic"]}}_subscriber;
+    {{start_node["topic"]}}_subscriber = dds_create_subscriber(participant, NULL, NULL);
+    if ({{start_node["topic"]}}_subscriber < 0) {
+        std::cerr << "ERROR: Failed to create subscriber: " << dds_strretcode(-{{start_node["topic"]}}_subscriber) << std::endl;
+        dds_delete({{start_node["topic"]}});
+        dds_delete_qos(qos);
+        dds_delete(participant);
+        return EXIT_FAILURE;
+    }
     // 创建读取器
     dds_entity_t {{start_node["topic"]}}_reader;
+    {{start_node["topic"]}}_reader = dds_create_reader({{start_node["topic"]}}_subscriber, {{start_node["topic"]}}, qos, NULL);
     if ({{start_node["topic"]}}_reader < 0)
     {
         std::cerr << "ERROR: {{start_node["topic"]}} -- Failed to create reader: " << dds_strretcode(-{{start_node["topic"]}}_reader) << std::endl;
@@ -203,6 +214,7 @@ int main(int argc, char **argv)
     //                             receiveData :接收输入数据
     //===============================================================================
 
+while(1){
     // 接收输入数据
     {% for start_node in start_node_list %}
     {{start_node["module"]}}_{{start_node["struct_name"]}} *start_{{start_node["id"]}} = receiveData_{{start_node["id"]}}(participant, {{start_node["topic"]}}, {{start_node["topic"]}}_reader);

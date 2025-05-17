@@ -1,0 +1,12 @@
+module StartRequest {
+    
+    struct atomic_service_mbsb_task_A_Request_st {
+        
+        long number1;
+        
+        long number2;
+        
+    };
+
+    
+};

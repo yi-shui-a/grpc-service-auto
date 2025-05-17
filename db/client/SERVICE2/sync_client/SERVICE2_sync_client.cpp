@@ -172,8 +172,19 @@ int main(int argc, char **argv)
         std::cerr << "ERROR: startA -- Failed to create topic: " << dds_strretcode(-startA) << std::endl;
         return 0;
     }
+    // 创建subscriber
+    dds_entity_t startA_subscriber;
+    startA_subscriber = dds_create_subscriber(participant, NULL, NULL);
+    if (startA_subscriber < 0) {
+        std::cerr << "ERROR: Failed to create subscriber: " << dds_strretcode(-startA_subscriber) << std::endl;
+        dds_delete(startA);
+        dds_delete_qos(qos);
+        dds_delete(participant);
+        return EXIT_FAILURE;
+    }
     // 创建读取器
     dds_entity_t startA_reader;
+    startA_reader = dds_create_reader(startA_subscriber, startA, qos, NULL);
     if (startA_reader < 0)
     {
         std::cerr << "ERROR: startA -- Failed to create reader: " << dds_strretcode(-startA_reader) << std::endl;
@@ -214,6 +225,7 @@ int main(int argc, char **argv)
     //                             receiveData :接收输入数据
     //===============================================================================
 
+while(1){
     // 接收输入数据
     
     StartRequest_atomic_service_mbsb_task_A_Request_st *start_7251674 = receiveData_7251674(participant, startA, startA_reader);
@@ -273,9 +285,11 @@ int main(int argc, char **argv)
     
     end_0292837.return_type = reply_3473875.return_type;
     
-
-    std::cout << "INFO: start info finish." << std::endl;
-
+    
+    sendData_0292837(participant, endA, endA_writer, end_0292837);
+    
+    std::cout << "INFO: program operation info finish." << std::endl;
+}
     // 删除 DDS 参与者
     dds_return_t rc = dds_delete(participant);
     if (rc != DDS_RETCODE_OK)
@@ -486,3 +500,17 @@ StartRequest_atomic_service_mbsb_task_A_Request_st *receiveData_7251674(dds_enti
 
 
 
+
+void sendData_0292837(dds_entity_t participant, dds_entity_t topic, dds_entity_t writer, EndResponse_atomic_service_sf_task_E_Reply_st data){
+    dds_entity_t rc = dds_write(writer, &data);
+    {
+        if (rc != DDS_RETCODE_OK)
+        {
+            std::cout << "ERROR: Failed to write topic_1: " << dds_strretcode(-rc) << std::endl;
+        }
+        else
+        {
+            std::cout << "SUCCESS: Published endA" << std::endl;
+        }
+    }
+}

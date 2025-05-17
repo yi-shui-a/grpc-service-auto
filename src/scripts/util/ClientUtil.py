@@ -449,6 +449,7 @@ class ClientUtil:
             assignment_list=assignment_list,
             start_node_list=start_node_list,
             assignment_end_send_list=assignment_end_send_list,
+            end_node_list=end_node_list,
         )
         output_str = output_str + client_footer_str
 

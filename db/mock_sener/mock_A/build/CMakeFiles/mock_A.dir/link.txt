@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/mock_A.dir/mock_A.cpp.o CMakeFiles/mock_A.dir/StartRequest.c.o -o ../bin/mock_A  -Wl,-rpath,/usr/local/lib /usr/local/lib/libddsc.so.0.11.0 

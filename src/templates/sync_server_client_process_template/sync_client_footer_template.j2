@@ -9,9 +9,11 @@
     {% for assignment in assignment_end_send_list %}
     end_{{assignment[0]}}.{{assignment[1]}} = reply_{{assignment[2]}}.{{assignment[3]}};
     {% endfor %}
-
-    std::cout << "INFO: start info finish." << std::endl;
-
+    {% for end_node in end_node_list %}
+    sendData_{{end_node["id"]}}(participant, {{end_node["topic"]}}, {{end_node["topic"]}}_writer, end_{{end_node["id"]}});
+    {% endfor %}
+    std::cout << "INFO: program operation info finish." << std::endl;
+}
     // 删除 DDS 参与者
     dds_return_t rc = dds_delete(participant);
     if (rc != DDS_RETCODE_OK)
@@ -216,8 +218,8 @@ long long getCurrentTimeMillis()
             // 返回接收到的消息
             return ret_msg;
         }
-        // 让线程休眠 300 ms，避免循环占用过多CPU资源。
-        dds_sleepfor(DDS_MSECS(300));
+        // 让线程休眠 50 ms，避免循环占用过多CPU资源。
+        dds_sleepfor(DDS_MSECS(50));
     }
 
     return NULL;
@@ -227,7 +229,7 @@ long long getCurrentTimeMillis()
 
 {% for end_node in end_node_list %}
 void sendData_{{end_node["id"]}}(dds_entity_t participant, dds_entity_t topic, dds_entity_t writer, {{end_node["module"]}}_{{end_node["struct_name"]}} data){
-    rc = dds_write(writer, &data);
+    dds_entity_t rc = dds_write(writer, &data);
     {
         if (rc != DDS_RETCODE_OK)
         {
