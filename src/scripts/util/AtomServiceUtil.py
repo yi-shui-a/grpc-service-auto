@@ -6,7 +6,7 @@ from jinja2 import Template
 import sys
 import os
 import copy
-
+from typing import List, Dict
 
 from ..config import (
     cpp_proto_dict,
@@ -16,7 +16,7 @@ from ..config import (
     doc_types_correct_dict,
     doc_types_dict,
 )
-from ..entity import AtomService
+from ..entity import AtomService, Message
 from .Util import Util
 from ..enums import FileEnum
 
@@ -338,7 +338,7 @@ class AtomServiceUtil:
         atom_service = AtomService()
         atom_service.set_info(atom_service_dict)
         # 整理message数据类型
-        AtomServiceUtil.__type_convert(atom_service)
+        AtomServiceUtil._type_convert(atom_service._messages)
 
         # 保存json到Json文件夹
         json_info = atom_service.to_dict()
@@ -542,15 +542,15 @@ class AtomServiceUtil:
         # )
 
     @staticmethod
-    def __type_convert(atom_service: AtomService):
+    def _type_convert(messages: List[Message]):
         # 修改数据类型
         # 删除std::
-        for message in atom_service._messages:
+        for message in messages:
             for field in message._fields:
                 # field._type_proto为赋值时，才进行此操作
                 # if field._type_proto != "":
                 #     continue
-                """
+                """=
                 处理protoBuffer类型的数据
                 """
                 # 为 _type_proto 赋值
@@ -600,8 +600,6 @@ class AtomServiceUtil:
 
                 field._type_idl = cpp_idl_dict.get(field._type_idl, field._type_idl)
 
-
-
     @staticmethod
     def extract_section_hpp(content, begin_pattern, end_pattern):
         # 构造正则表达式，匹配 begin_pattern 和 end_pattern 之间的内容（不区分大小写和空格）
@@ -645,13 +643,16 @@ class AtomServiceUtil:
         atom_service = AtomService()
         atom_service.set_info(json_data)
         return atom_service
-    
-    def getAtomServiceJson(service_name:str)->dict:
+
+    def getAtomServiceJson(service_name: str) -> dict:
         """
         读取json文件，生成AtomService对象
         """
         # 读取json文件
-        with open(f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/{service_name}.json", "r") as file:
+        with open(
+            f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/atomic_service/{service_name}/{service_name}.json",
+            "r",
+        ) as file:
             json_data = json.load(file)
         return json_data
 
@@ -685,8 +686,7 @@ class AtomServiceUtil:
                         break
 
         return functions
-    
-    
+
         @staticmethod
         def __add_basic_info_dict(basic_info, key, value):
             basic_info_format_list = [

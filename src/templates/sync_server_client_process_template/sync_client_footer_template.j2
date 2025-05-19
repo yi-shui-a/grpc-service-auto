@@ -1,13 +1,13 @@
 
     std::cout << "{{orchestrattion_info["name"]}} output: " << std::endl
-    {% for assignment in assignment_list[:-1] %}
-            << reply_{{assignment[0]}}.{{assignment[1]}} << std::endl
+    {% for assignment in end_assignment_list[:-1] %}
+            << reply_{{assignment[2]}}.{{assignment[0]}} << std::endl
     {% endfor %}
-            << reply_{{assignment_list[-1][0]}}.{{assignment_list[-1][1]}} << std::endl;
+            << reply_{{end_assignment_list[-1][2]}}.{{end_assignment_list[-1][0]}} << std::endl;
 
     // 赋值
-    {% for assignment in assignment_end_send_list %}
-    end_{{assignment[0]}}.{{assignment[1]}} = reply_{{assignment[2]}}.{{assignment[3]}};
+    {% for assignment in end_assignment_list %}
+    end_{{assignment[3]}}.{{assignment[1]}} = reply_{{assignment[2]}}.{{assignment[0]}};
     {% endfor %}
     {% for end_node in end_node_list %}
     sendData_{{end_node["id"]}}(participant, {{end_node["topic"]}}, {{end_node["topic"]}}_writer, end_{{end_node["id"]}});

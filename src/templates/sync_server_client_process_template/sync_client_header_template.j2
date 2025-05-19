@@ -233,8 +233,8 @@ while(1){
     {% endfor %}
     
     //为开始的服务赋值
-    {% for assignment in assignment_list %}
-    request_{{assignment[0]}}.{{assignment[1]}} = start_{{assignment[2]}}->{{assignment[3]}};
+    {% for assignment in start_assignment_list %}
+    request_{{assignment[3]}}.{{assignment[1]}} = start_{{assignment[2]}}->{{assignment[0]}};
     {% endfor %}
 
     //===============================================================================

@@ -491,8 +491,8 @@ StartRequest_atomic_service_mbsb_task_A_Request_st *receiveData_7251674(dds_enti
             // 返回接收到的消息
             return ret_msg;
         }
-        // 让线程休眠 300 ms，避免循环占用过多CPU资源。
-        dds_sleepfor(DDS_MSECS(300));
+        // 让线程休眠 50 ms，避免循环占用过多CPU资源。
+        dds_sleepfor(DDS_MSECS(50));
     }
 
     return NULL;

@@ -6,6 +6,6 @@
 
 
     // 赋值
-    {% for assignment in assignment_list %}
-    request_{{assignment[0]}}.{{assignment[1]}} = reply_{{assignment[2]}}.{{assignment[3]}};
+    {% for assignment in content_assignment_list %}
+    request_{{assignment[3]}}.{{assignment[1]}} = reply_{{assignment[2]}}.{{assignment[0]}};
     {% endfor %}

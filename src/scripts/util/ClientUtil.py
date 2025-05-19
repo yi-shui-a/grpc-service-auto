@@ -5,6 +5,7 @@ from jinja2 import Template
 import subprocess
 from typing import List, Dict
 import json
+import copy
 
 from .Util import Util
 from .AtomServiceUtil import AtomServiceUtil
@@ -101,6 +102,7 @@ class ClientUtil:
         # 定义输出字符串
         output_str: str = ""
 
+        # 获取使用到的service的名称列表（不重复）
         service_list: List[str] = list()
         for node in orchestrattion_info.get("nodes", []):
             if (
@@ -148,15 +150,6 @@ class ClientUtil:
                     )
                 )
 
-        # “开始” 节点的连接列表,Dict[id, List[str]]
-        nodeId_connection_dict: Dict[str, List[dict]] = dict()
-        for start_node in start_node_list:
-            start_connection_list: list[dict] = list()
-            for connection in orchestrattion_info.get("connections", []):
-                if connection.get("source", "") == start_node.get("id", ""):
-                    start_connection_list.append(connection)
-            nodeId_connection_dict[start_node.get("id", "")] = start_connection_list
-
         # 定义声明对象的列表List[message_id, node_id]
         declare_service_request_list: List[list] = list()
         for node in orchestrattion_info.get("nodes", []):
@@ -170,44 +163,35 @@ class ClientUtil:
                 temp_list.append(node.get("id", ""))
                 declare_service_request_list.append(temp_list)
 
+        # “开始” 节点的连接列表,Dict[id, List[dict]]
+        StartNodeId_connection_dict: Dict[str, List[dict]] = dict()
+        for start_node in start_node_list:
+            start_connection_list: list[dict] = list()
+            for connection in orchestrattion_info.get("connections", []):
+                if connection.get("source", "") == start_node.get("id", ""):
+                    start_connection_list.append(connection)
+            StartNodeId_connection_dict[start_node.get("id", "")] = (
+                start_connection_list
+            )
+
         # 定义赋值关系
-        assignment_list: List[list] = list()
+        start_assignment_list: List[list] = list()
 
         for start_node in start_node_list:
-            # 遍历连接列表，获取连接的目标节点的id
-            connection_list: list[dict] = nodeId_connection_dict.get(
+            # # 遍历连接列表，获取连接的目标节点的id
+            connection_list: list[dict] = StartNodeId_connection_dict.get(
                 start_node.get("id", ""), []
             )
             for connection in connection_list:
                 target_node_id = connection.get("target", "")
                 # 获取目标节点的信息
                 target_node = ClientUtil._getNode(orchestrattion_info, target_node_id)
-                target_message = ClientUtil._getRequestMessage(
-                    target_node, target_node.get("method", "")
+                start_assignment_list: List[list] = ClientUtil._getAssignmentResult(
+                    source_id=start_node.get("id", ""),
+                    source_node=start_node,
+                    target_id=target_node_id,
+                    target_node=target_node,
                 )
-                # 最多考虑一层嵌套
-                for field in target_message.get("fields", []):
-                    if ClientUtil.isStruct(target_node, field) == dict():
-                        temp_list = list()
-                        temp_list.append(target_node.get("id", ""))
-                        temp_list.append(field.get("name", ""))
-                        temp_list.append(start_node.get("id", ""))
-                        temp_list.append(field.get("name", ""))
-                        assignment_list.append(temp_list)
-                    else:
-                        nest_list: list = list()
-                        for inner_field in ClientUtil.isStruct(target_node, field):
-                            nest_list.append(inner_field.get("name", ""))
-                            temp_list = list()
-                            temp_list.append(target_node.get("id", ""))
-                            temp_list.append(
-                                ".".join(nest_list) + "." + inner_field.get("name", "")
-                            )
-                            temp_list.append(start_node.get("id", ""))
-                            temp_list.append(
-                                ".".join(nest_list) + "." + inner_field.get("name", "")
-                            )
-                            assignment_list.append(temp_list)
 
         # 加载client_header模版
         client_header_template = Template(
@@ -221,7 +205,7 @@ class ClientUtil:
             idl_list=idl_list,
             start_node_list=start_node_list,
             end_node_list=end_node_list,
-            assignment_list=assignment_list,
+            start_assignment_list=start_assignment_list,
             declare_service_request_list=declare_service_request_list,
         )
 
@@ -286,7 +270,7 @@ class ClientUtil:
                     call_template_list.append(temp_call_template)
 
             # 定义赋值关系
-            assignment_list: List[list] = list()
+            content_assignment_list: List[list] = list()
 
             # 遍历所有available节点，将available节点的输出数据传给下一级节点
             for prev_node in available_list:
@@ -311,36 +295,14 @@ class ClientUtil:
                     target_node = ClientUtil._getNode(
                         orchestrattion_info, target_node_id
                     )
-                    target_message = ClientUtil._getRequestMessage(
-                        target_node, target_node.get("method", "")
+                    content_assignment_list: List[list] = (
+                        ClientUtil._getAssignmentResult(
+                            source_id=prev_node.get("id", ""),
+                            source_node=prev_node,
+                            target_id=target_node_id,
+                            target_node=target_node,
+                        )
                     )
-                    # 最多考虑一层嵌套
-                    for field in target_message.get("fields", []):
-                        if ClientUtil.isStruct(target_node, field) == dict():
-                            temp_list = list()
-                            temp_list.append(target_node.get("id", ""))
-                            temp_list.append(field.get("name", ""))
-                            temp_list.append(prev_node.get("id", ""))
-                            temp_list.append(field.get("name", ""))
-                            assignment_list.append(temp_list)
-                        else:
-                            nest_list: list = list()
-                            for inner_field in ClientUtil.isStruct(target_node, field):
-                                nest_list.append(inner_field.get("name", ""))
-                                temp_list = list()
-                                temp_list.append(target_node.get("id", ""))
-                                temp_list.append(
-                                    ".".join(nest_list)
-                                    + "."
-                                    + inner_field.get("name", "")
-                                )
-                                temp_list.append(prev_node.get("id", ""))
-                                temp_list.append(
-                                    ".".join(nest_list)
-                                    + "."
-                                    + inner_field.get("name", "")
-                                )
-                                assignment_list.append(temp_list)
 
             # 写入输出字符串
             client_content_template = Template(
@@ -350,7 +312,7 @@ class ClientUtil:
             )
             client_content_str = client_content_template.render(
                 call_template_list=call_template_list,
-                assignment_list=assignment_list,
+                content_assignment_list=content_assignment_list,
             )
             output_str = output_str + client_content_str
             # 判断循环是否应该结束,所有end节点的 assign_num都大于等于len(prev_id_list)，结束循环
@@ -368,74 +330,34 @@ class ClientUtil:
         """
         # 定义赋值关系
         assignment_list: List[list] = list()
-        # 打印输出字符串
-        for prev_end_node in end_prev_node_list:
-            messgae: dict = ClientUtil._getResponseMessage(
-                prev_end_node, prev_end_node.get("method", "")
-            )
-            # 最多考虑一层嵌套
-            for field in messgae.get("fields", []):
-                if ClientUtil.isStruct(prev_end_node, field) == dict():
-                    temp_list = list()
-                    temp_list.append(prev_end_node.get("id", ""))
-                    temp_list.append(field.get("name", ""))
-                    assignment_list.append(temp_list)
-                else:
-                    nest_list: list = list()
-                    for inner_field in ClientUtil.isStruct(target_node, field):
-                        nest_list.append(inner_field.get("name", ""))
-                        temp_list = list()
-                        temp_list.append(prev_end_node.get("id", ""))
-                        temp_list.append(
-                            ".".join(nest_list) + "." + inner_field.get("name", "")
-                        )
-                        assignment_list.append(temp_list)
 
         # “开始” 节点的连接列表,Dict[id, List[str]]
-        nodeId_connection_dict: Dict[str, List[dict]] = dict()
+        endPrevNodeId_connection_dict: Dict[str, List[dict]] = dict()
         for end_prev_node in end_prev_node_list:
             end_connection_list: list[dict] = list()
             for connection in orchestrattion_info.get("connections", []):
                 if connection.get("source", "") == end_prev_node.get("id", ""):
                     end_connection_list.append(connection)
-            nodeId_connection_dict[end_prev_node.get("id", "")] = end_connection_list
+            endPrevNodeId_connection_dict[end_prev_node.get("id", "")] = (
+                end_connection_list
+            )
         # 定义赋值关系
-        assignment_end_send_list: List[list] = list()
+        end_assignment_list: List[list] = list()
         for end_prev_node in end_prev_node_list:
             # 遍历连接列表，获取连接的目标节点的id
-            connection_list: list[dict] = nodeId_connection_dict.get(
+            connection_list: list[dict] = endPrevNodeId_connection_dict.get(
                 end_prev_node.get("id", ""), []
             )
             for connection in connection_list:
                 target_node_id = connection.get("target", "")
                 # 获取目标节点的信息
                 target_node = ClientUtil._getNode(orchestrattion_info, target_node_id)
-                source_message = ClientUtil._getResponseMessage(
-                    end_prev_node, end_prev_node.get("method", "")
+                end_assignment_list: List[list] = ClientUtil._getAssignmentResult(
+                    source_id=end_prev_node.get("id", ""),
+                    source_node=end_prev_node,
+                    target_id=target_node_id,
+                    target_node=target_node,
                 )
-                # 最多考虑一层嵌套
-                for field in source_message.get("fields", []):
-                    if ClientUtil.isStruct(end_prev_node, field) == dict():
-                        temp_list = list()
-                        temp_list.append(target_node.get("id", ""))
-                        temp_list.append(field.get("name", ""))
-                        temp_list.append(end_prev_node.get("id", ""))
-                        temp_list.append(field.get("name", ""))
-                        assignment_end_send_list.append(temp_list)
-                    else:
-                        nest_list: list = list()
-                        for inner_field in ClientUtil.isStruct(end_prev_node, field):
-                            nest_list.append(inner_field.get("name", ""))
-                            temp_list = list()
-                            temp_list.append(target_node.get("id", ""))
-                            temp_list.append(
-                                ".".join(nest_list) + "." + inner_field.get("name", "")
-                            )
-                            temp_list.append(end_prev_node.get("id", ""))
-                            temp_list.append(
-                                ".".join(nest_list) + "." + inner_field.get("name", "")
-                            )
-                            assignment_end_send_list.append(temp_list)
 
         # 加载client_footer模版
         client_footer_template = Template(
@@ -446,9 +368,8 @@ class ClientUtil:
         client_footer_str = client_footer_template.render(
             orchestrattion_info=orchestrattion_info,
             service_list=service_list,
-            assignment_list=assignment_list,
             start_node_list=start_node_list,
-            assignment_end_send_list=assignment_end_send_list,
+            end_assignment_list=end_assignment_list,
             end_node_list=end_node_list,
         )
         output_str = output_str + client_footer_str
@@ -496,14 +417,17 @@ class ClientUtil:
             exist_ok=True,
         )
 
-        """
-        解析json
-        """
-        # 找到开始节点
+        # 找到开始或者结束节点
         node_list: list[dict] = list()
         for node in orchestrattion_info.get("nodes", []):
             if node.get("type", "") == "START" or node.get("type", "") == "END":
                 node_list.append(node)
+        """
+        解析输入和输出代码块
+        
+        导出json
+        node_messages_list：所有node的结构体解析出的messages列表
+        """
         # 解析节点的结构体为一个message
         node_messages_list: list[dict] = list()
         for node in node_list:
@@ -531,9 +455,11 @@ class ClientUtil:
 
             node_messages_list.append(messages)
 
-        # 遍历start_node_messages_list，生成idl文件
+        """
+        根据node_messages_list生成idl文件
+        """
+        # 遍历node_messages_list，生成idl文件
         for i in range(len(node_messages_list)):
-            # for start_node_messages in start_node_messages_list:
             module_name = node_list[i].get("module", "")
             # 遍历message，生成idl文件
             idl_template = Template(
@@ -547,7 +473,7 @@ class ClientUtil:
                 temp = Message()
                 temp.set_info(message)
                 messages.append(temp)
-            ClientUtil.__type_convert(messages=messages)
+            AtomServiceUtil._type_convert(messages=messages)
             res_str = idl_template.render(
                 module_name=node_list[i].get("module", ""),
                 messages=messages,
@@ -684,6 +610,23 @@ class ClientUtil:
             if message.get("name", "") == response_message:
                 return message
 
+    @staticmethod
+    def _getStartOrEndNodeMessage(target_node: dict) -> dict:
+        """
+        在开始或者结束节点中查找并返回message的dict
+        查找的条件是：
+        1. type为START或END
+        2. struct_name和message的name相同
+        """
+        if (
+            target_node.get("type", "") == "START"
+            or target_node.get("type", "") == "END"
+        ):
+            for message in target_node.get("message_info", []).get("messages", []):
+                if message.get("name", "") == target_node.get("struct_name", ""):
+                    return message
+        return dict()
+
     # 判断该字段是否是一个结构体，如果是，返回结构体，否则返回空dict
     @staticmethod
     def isStruct(target_node: dict, field: dict) -> dict:
@@ -710,60 +653,109 @@ class ClientUtil:
         return dict()
 
     @staticmethod
-    def __type_convert(messages: List[Message]):
-        # 修改数据类型
-        # 删除std::
-        for message in messages:
-            for field in message._fields:
-                # field._type_proto为赋值时，才进行此操作
-                # if field._type_proto != "":
-                #     continue
-                """
-                处理protoBuffer类型的数据
-                """
-                # 为 _type_proto 赋值
-                # field._type_proto = cpp_proto_dict.get(field._type, field._type)
-                field._type_proto = field._type
-                # 去除命名空间标示符
-                if field._type_proto.count("std::") > 0:
-                    field._type_proto = field._type_proto.replace("std::", "")
+    def _getAssignmentResult(
+        source_id: str, source_node: dict, target_id: str, target_node: dict
+    ) -> list:
+        """
+        通过两个节点获取赋值结果
 
-                field._type_proto = cpp_proto_dict.get(
-                    field._type_proto, field._type_proto
-                )
+        第一个元素是source的字段的字符串，第二个元素是target的字段的字符串
+        第三个元素是source_id，第四个元素是target_id
+        """
+        # 返回值，一个list的list，
+        result: List[list] = []
 
-                # 数组转为repeated
-                # vector
-                if field._type_proto.count("vector") > 0:
-                    field._repeated = True
-                    # 使用正则表达式提取类型
-                    match = re.search(r"vector<(\w+)>", field._type_proto)
-                    temp_str = cpp_proto_dict.get(match.group(1), match.group(1))
-                    if match:
-                        field._type_proto = "repeated " + temp_str
+        # 获取source_node的message和target_node的message
+        source_message_name: str = ""
+        source_message: dict = dict()
+        source_messages: list = list()
+        target_message_name: str = ""
+        target_message: dict = dict()
+        target_messages: list = list()
+        if (
+            source_node.get("type", "") == "START"
+            or source_node.get("type", "") == "END"
+        ):
+            source_message_name = source_node.get("struct_name", "")
+            source_message = ClientUtil._getStartOrEndNodeMessage(source_node)
+            source_messages = source_node.get("message_info", []).get("messages", [])
+        else:
+            source_message = ClientUtil._getResponseMessage(
+                source_node, source_node.get("method", "")
+            )
+            source_message_name = source_message.get("name", "")
+            source_messages = source_node.get("service_info", []).get("messages", [])
 
-                # 处理[]
-                if field._name.count("[") > 0 and field._name.count("]") > 0:
-                    field._repeated = True
-                    field._type_proto = "repeated " + field._type_proto
+        if (
+            target_node.get("type", "") == "START"
+            or target_node.get("type", "") == "END"
+        ):
+            target_message_name = target_node.get("struct_name", "")
+            target_message = ClientUtil._getStartOrEndNodeMessage(target_node)
+            target_messages = target_node.get("message_info", []).get("messages", [])
+        else:
+            target_message = ClientUtil._getRequestMessage(
+                target_node, target_node.get("method", "")
+            )
+            target_message_name = target_message.get("name", "")
+            target_messages = target_node.get("service_info", []).get("messages", [])
 
-                # map中的数据类型处理
-                if field._type_proto.count("map") > 0:
-                    field._map = True
-                    match = re.search(r"map<(\w+),\s*(\w+)>", field._type_proto)
-                    if match:
-                        field._key = cpp_proto_dict.get(match.group(1), match.group(1))
-                        field._value = cpp_proto_dict.get(
-                            match.group(2), match.group(2)
-                        )
-                        field._type_proto = f"map<{field._key}, {field._value}>"
+        """
+        一些函数内部函数
+        """
 
-                """
-                处理idl类型的数据
-                """
-                field._type_idl = field._type
-                # 去除命名空间标示符
-                if field._type_idl.count("std::") > 0:
-                    field._type_idl = field._type_idl.replace("std::", "")
+        def find_message_by_type(messages, message_type) -> dict:
+            # 在messages列表中根据name查找对应的message
+            for msg in messages:
+                if msg["name"] == message_type:
+                    return msg
+            return dict()
 
-                field._type_idl = cpp_idl_dict.get(field._type_idl, field._type_idl)
+        def traverse(current_path: list, source_fields: list, target_fields: list):
+            # 递归遍历比较字段
+            for s_field in source_fields:
+                for t_field in target_fields:
+                    if (
+                        s_field["name"] == t_field["name"]
+                        and s_field["type"] == t_field["type"]
+                    ):
+                        if (
+                            find_message_by_type(target_messages, t_field["type"])
+                            == dict()
+                        ):
+                            # 基本类型，添加到结果
+                            source_path = copy.deepcopy(current_path)
+                            target_path = copy.deepcopy(current_path)
+                            source_path.append(s_field["name"])
+                            target_path.append(t_field["name"])
+                            result.append([source_path, target_path])
+                        else:
+                            # 消息类型，递归处理
+                            s_msg = find_message_by_type(
+                                source_messages, s_field["type"]
+                            )
+                            t_msg = find_message_by_type(
+                                target_messages, t_field["type"]
+                            )
+                            if s_msg and t_msg:
+                                new_path = copy.deepcopy(current_path)
+                                new_path.append(s_field["name"])
+                                traverse(new_path, s_msg["fields"], t_msg["fields"])
+
+        """"
+        实际的运行函数
+        """
+        # 获取source和target的顶层message
+        source_top = find_message_by_type(source_messages, source_message_name)
+        target_top = find_message_by_type(target_messages, target_message_name)
+
+        if source_top and target_top:
+            traverse(list(), source_top["fields"], target_top["fields"])
+
+        # 处理result，添加两个id
+        for item in result:
+            item[0] = ".".join(item[0])
+            item[1] = ".".join(item[1])
+            item.append(source_id)
+            item.append(target_id)
+        return result
