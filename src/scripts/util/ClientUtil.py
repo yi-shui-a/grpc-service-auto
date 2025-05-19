@@ -50,7 +50,7 @@ class ClientUtil:
         res_str = client_template.render(
             project_name=client.get_name() + ClientUtil.sync_client_suffix,
             services=client._services,
-            idl_list=client._dds_topic,
+            idl_list=client._dds_module,
         )
 
         # 确保目录存在
@@ -395,9 +395,9 @@ class ClientUtil:
         print("client: " + res_client.get_name())
         # 这里将module的内容作为topic导入，未来需要将client中的topic改为module
         for start_node in start_node_list:
-            res_client.add_dds_topic(start_node.get("module", ""))
+            res_client.add_dds_module(start_node.get("module", ""))
         for end_node in end_node_list:
-            res_client.add_dds_topic(end_node.get("module", ""))
+            res_client.add_dds_module(end_node.get("module", ""))
         for service_name in service_list:
             res_client.add_service(service_name)
         return res_client

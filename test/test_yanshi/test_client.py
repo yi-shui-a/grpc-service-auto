@@ -16,7 +16,7 @@ if __name__ == "__main__":
     # 构造client
     client = Client()
     client.set_name("client_formal_demo_with_dds")
-    client.add_dds_topic("example")
+    client.add_dds_module("example")
     client.add_service("atomic_service_mbsb")
     client.add_service("atomic_service_sf")
 

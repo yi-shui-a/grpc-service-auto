@@ -9,7 +9,7 @@ import json
 class Client:
     def __init__(self):
         self._name: str = ""
-        self._dds_topic: List[str] = []
+        self._dds_module: List[str] = []
         self._services: List[dict] = []
 
         self._async_client_name: str = ""
@@ -56,22 +56,22 @@ class Client:
         self.delete_service(old_service)
         self.add_service(new_service)
 
-    def add_dds_topic(self, dds_topic: str):
-        self._dds_topic.append(dds_topic)
+    def add_dds_module(self, dds_topic: str):
+        self._dds_module.append(dds_topic)
 
-    def delete_dds_topic(self, topic: str):
+    def delete_dds_module(self, topic: str):
         try:
-            self._dds_topic.remove(topic)
+            self._dds_module.remove(topic)
         except ValueError as e:
             print(f"Error: {e}")
             print(f"Topic '{topic}' not found in the list.")
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
 
-    def set_dds_topic(self, old_topic: str, new_topic: str):
-        for index in range(0, len(self._dds_topic)):
-            if self._dds_topic[index] == old_topic:
-                self._dds_topic[index] = new_topic
+    def set_dds_module(self, old_topic: str, new_topic: str):
+        for index in range(0, len(self._dds_module)):
+            if self._dds_module[index] == old_topic:
+                self._dds_module[index] = new_topic
                 break
 
     # 使用用户输入数据加载Client
