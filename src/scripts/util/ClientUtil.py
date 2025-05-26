@@ -186,11 +186,13 @@ class ClientUtil:
                 target_node_id = connection.get("target", "")
                 # 获取目标节点的信息
                 target_node = ClientUtil._getNode(orchestrattion_info, target_node_id)
-                start_assignment_list: List[list] = ClientUtil._getAssignmentResult(
-                    source_id=start_node.get("id", ""),
-                    source_node=start_node,
-                    target_id=target_node_id,
-                    target_node=target_node,
+                start_assignment_list.extend(
+                    ClientUtil._getAssignmentResult(
+                        source_id=start_node.get("id", ""),
+                        source_node=start_node,
+                        target_id=target_node_id,
+                        target_node=target_node,
+                    )
                 )
 
         # 加载client_header模版
@@ -232,15 +234,14 @@ class ClientUtil:
                         node["prev_id_list"].append(connection.get("source", ""))
 
         # 找到开始节点后可以运行的节点
-        for node in orchestrattion_info.get("nodes", []):
-            if node.get("type", "") == "START":
-                for connection in orchestrattion_info.get("connections", []):
-                    if connection.get("source", "") == node.get("id", ""):
-                        # 将该节点的assign_num加1
-                        target_node = ClientUtil._getNode(
-                            orchestrattion_info, connection.get("target", "")
-                        )
-                        target_node["assign_num"] += 1
+        for node in start_node_list:
+            for connection in orchestrattion_info.get("connections", []):
+                if connection.get("source", "") == node.get("id", ""):
+                    # 将该节点的assign_num加1
+                    target_node = ClientUtil._getNode(
+                        orchestrattion_info, connection.get("target", "")
+                    )
+                    target_node["assign_num"] += 1
 
         # 标志位，表明是否结束
         end_flag = False
@@ -295,7 +296,7 @@ class ClientUtil:
                     target_node = ClientUtil._getNode(
                         orchestrattion_info, target_node_id
                     )
-                    content_assignment_list: List[list] = (
+                    content_assignment_list.extend(
                         ClientUtil._getAssignmentResult(
                             source_id=prev_node.get("id", ""),
                             source_node=prev_node,
@@ -328,9 +329,6 @@ class ClientUtil:
         
         构造client的尾部字符串
         """
-        # 定义赋值关系
-        assignment_list: List[list] = list()
-
         # “开始” 节点的连接列表,Dict[id, List[str]]
         endPrevNodeId_connection_dict: Dict[str, List[dict]] = dict()
         for end_prev_node in end_prev_node_list:
@@ -352,11 +350,13 @@ class ClientUtil:
                 target_node_id = connection.get("target", "")
                 # 获取目标节点的信息
                 target_node = ClientUtil._getNode(orchestrattion_info, target_node_id)
-                end_assignment_list: List[list] = ClientUtil._getAssignmentResult(
-                    source_id=end_prev_node.get("id", ""),
-                    source_node=end_prev_node,
-                    target_id=target_node_id,
-                    target_node=target_node,
+                end_assignment_list.extend(
+                    ClientUtil._getAssignmentResult(
+                        source_id=end_prev_node.get("id", ""),
+                        source_node=end_prev_node,
+                        target_id=target_node_id,
+                        target_node=target_node,
+                    )
                 )
 
         # 加载client_footer模版
