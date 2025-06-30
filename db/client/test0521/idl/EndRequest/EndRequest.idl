@@ -1,0 +1,12 @@
+module EndRequest {
+    
+    struct atomic_service_sf_task_E_Reply_st {
+        
+        long sum_result;
+        
+        long return_type;
+        
+    };
+
+    
+};

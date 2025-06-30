@@ -1,0 +1,16 @@
+module StartRequestRadar {
+    
+    struct radar_info {
+        
+        long x;
+        
+        long y;
+        
+        long z;
+        
+        long size;
+        
+    };
+
+    
+};

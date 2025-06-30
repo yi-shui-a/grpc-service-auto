@@ -1,0 +1,25 @@
+{
+    "module": "EndRequest",
+    "messages": [
+        {
+            "name": "atomic_service_sf_task_E_Reply_st",
+            "description": "",
+            "fields": [
+                {
+                    "id": 1,
+                    "name": "sum_result",
+                    "type": "int",
+                    "description": "",
+                    "chinese_name": ""
+                },
+                {
+                    "id": 2,
+                    "name": "return_type",
+                    "type": "int",
+                    "description": "",
+                    "chinese_name": ""
+                }
+            ]
+        }
+    ]
+}

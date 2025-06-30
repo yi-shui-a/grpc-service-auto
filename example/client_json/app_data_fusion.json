@@ -1,0 +1,236 @@
+{
+  "name": "data_fusion",
+  "describe": "default service",
+  "id": "3518593",
+  "nodes": [
+    {
+      "type": "START",
+      "id": "7736173",
+      "title": "开始",
+      "x": 165,
+      "y": 22,
+      "method": "",
+      "input": "",
+      "module": "StartRequest",
+      "topic": "startA",
+      "struct": "typedef struct\r\n{\r\n  int number1;\r\n  int number2;\r\n} atomic_service_mbsb_task_A_Request_st;",
+      "struct_name": "atomic_service_mbsb_task_A_Request_st",
+      "dataBind": {
+        "input": "",
+        "output": ""
+      }
+    },
+    {
+      "type": "END",
+      "id": "5086696",
+      "title": "结束",
+      "x": 310,
+      "y": 851,
+      "method": "",
+      "input": "",
+      "module": "EndRequest",
+      "topic": "endA",
+      "struct": "typedef struct\r\n{\r\n  int sum_result;\r\n  int return_type;\r\n} atomic_service_sf_task_E_Reply_st;",
+      "struct_name": "atomic_service_sf_task_E_Reply_st",
+      "dataBind": {
+        "input": "",
+        "output": ""
+      }
+    },
+    {
+      "type": "SERVICE",
+      "id": "2358994",
+      "title": "数据预处理",
+      "x": 164,
+      "y": 163,
+      "file": "atomic_service_ycl.json",
+      "method": "atomic_service_fun_task_E",
+      "input": "",
+      "module": "",
+      "topic": "",
+      "struct": "",
+      "struct_name": "",
+      "basicData": {},
+      "dataBind": {
+        "input": "",
+        "output": ""
+      }
+    },
+    {
+      "type": "SERVICE",
+      "id": "8500560",
+      "title": "指令生成",
+      "x": 164,
+      "y": 288,
+      "file": "atomic_service_zlsc.json",
+      "method": "atomic_service_fun_task_A",
+      "input": "",
+      "module": "",
+      "topic": "",
+      "struct": "",
+      "struct_name": "",
+      "basicData": {},
+      "dataBind": {
+        "input": "",
+        "output": ""
+      }
+    },
+    {
+      "type": "SERVICE",
+      "id": "1913170",
+      "title": "机器人位姿",
+      "x": 411,
+      "y": 288,
+      "file": "RobotPose.json",
+      "method": "getRobotPose",
+      "input": "",
+      "module": "",
+      "topic": "",
+      "struct": "",
+      "struct_name": "",
+      "basicData": {},
+      "dataBind": {
+        "input": "",
+        "output": ""
+      }
+    },
+    {
+      "type": "SERVICE",
+      "id": "5154493",
+      "title": "融合数据",
+      "x": 310,
+      "y": 507,
+      "file": "FusionData.json",
+      "method": "getFusionData",
+      "input": "",
+      "module": "",
+      "topic": "",
+      "struct": "",
+      "struct_name": "",
+      "basicData": {},
+      "dataBind": {
+        "input": "",
+        "output": ""
+      }
+    },
+    {
+      "type": "SERVICE",
+      "id": "7803121",
+      "title": "目标识别",
+      "x": 310,
+      "y": 630,
+      "file": "atomic_service_mbsb.json",
+      "method": "atomic_service_fun_task_A",
+      "input": "",
+      "module": "",
+      "topic": "",
+      "struct": "",
+      "struct_name": "",
+      "basicData": {},
+      "dataBind": {
+        "input": "",
+        "output": ""
+      }
+    },
+    {
+      "type": "SERVICE",
+      "id": "1695920",
+      "title": "武器释放",
+      "x": 310,
+      "y": 757,
+      "file": "atomic_service_sf.json",
+      "method": "atomic_service_fun_task_E",
+      "input": "",
+      "module": "",
+      "topic": "",
+      "struct": "",
+      "struct_name": "",
+      "basicData": {},
+      "dataBind": {
+        "input": "",
+        "output": ""
+      }
+    },
+    {
+      "type": "SERVICE",
+      "id": "708486",
+      "title": "图像检测",
+      "x": 163,
+      "y": 405,
+      "file": "ImageDetection.json",
+      "method": "imageDetect",
+      "input": "",
+      "module": "",
+      "topic": "",
+      "struct": "",
+      "struct_name": "",
+      "basicData": {},
+      "dataBind": {
+        "input": "",
+        "output": ""
+      }
+    }
+  ],
+  "connections": [
+    {
+      "source": "7736173",
+      "target": "2358994",
+      "condition": "",
+      "ddsCondition": ""
+    },
+    {
+      "source": "2358994",
+      "target": "8500560",
+      "condition": "",
+      "ddsCondition": ""
+    },
+    {
+      "source": "8500560",
+      "target": "1913170",
+      "condition": "",
+      "ddsCondition": ""
+    },
+    {
+      "source": "1913170",
+      "target": "5154493",
+      "condition": "",
+      "ddsCondition": ""
+    },
+    {
+      "source": "5154493",
+      "target": "7803121",
+      "condition": "",
+      "ddsCondition": ""
+    },
+    {
+      "source": "7803121",
+      "target": "1695920",
+      "condition": "",
+      "ddsCondition": ""
+    },
+    {
+      "source": "1695920",
+      "target": "5086696",
+      "condition": "",
+      "ddsCondition": ""
+    },
+    {
+      "source": "7736173",
+      "target": "1913170",
+      "condition": "",
+      "ddsCondition": ""
+    },
+    {
+      "source": "8500560",
+      "target": "708486",
+      "condition": "",
+      "ddsCondition": ""
+    },
+    {
+      "source": "708486",
+      "target": "5154493",
+      "condition": "",
+      "ddsCondition": ""
+    }
+  ]
+}

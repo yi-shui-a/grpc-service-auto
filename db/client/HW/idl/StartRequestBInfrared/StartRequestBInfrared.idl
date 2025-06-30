@@ -1,0 +1,16 @@
+module StartRequestBInfrared {
+    
+    struct infrared_info {
+        
+        long x;
+        
+        long y;
+        
+        long z;
+        
+        long size;
+        
+    };
+
+    
+};

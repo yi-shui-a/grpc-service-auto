@@ -1,0 +1,17 @@
+{
+    "name": "atomic_show_zlsc",
+    "chinese_name": "",
+    "description": "",
+    "version": "V1.0.0",
+    "build_time": "2024-09-21T09-21-21",
+    "ip": "192.168.137.74",
+    "port": "50038",
+    "username": "root",
+    "password": "root",
+    "broadcast_address": "255.255.255.255",
+    "broadcast_port": "10450",
+    "heartbeat_interal":2,
+    "services": [
+        "atomic_show_zlsc"
+    ]
+}

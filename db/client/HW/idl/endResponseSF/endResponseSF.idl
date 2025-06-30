@@ -1,0 +1,16 @@
+module endResponseSF {
+    
+    struct release_result {
+        
+        long x;
+        
+        long y;
+        
+        long z;
+        
+        long return_type;
+        
+    };
+
+    
+};

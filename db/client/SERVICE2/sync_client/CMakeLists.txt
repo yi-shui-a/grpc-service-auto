@@ -5,6 +5,8 @@ project(SERVICE2_sync_client)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_PREFIX_PATH "/usr/local/share/cmake-3.22/Protobuf" ${CMAKE_PREFIX_PATH})
+set(CMAKE_PREFIX_PATH "/usr/local/share/cmake-3.22/gRPC" ${CMAKE_PREFIX_PATH})
 # 设置 gRPC 的 CMake 模块路径
 set(gRPC_DIR "/usr/local/lib/cmake/grpc/")
 # 设置 Protobuf 的 CMake 模块路径
@@ -69,8 +71,8 @@ target_link_libraries( SERVICE2_sync_client PRIVATE
     ${CMAKE_SOURCE_DIR}/../../../atomic_service/atomic_service_sf/lib/atomic_service_sf_sync_server_impl.so  # 动态库路径
     
     nlohmann_json::nlohmann_json
-    gRPC::grpc++
-    gRPC::grpc
+    grpc++
+    grpc
     protobuf::libprotobuf
     protobuf::libprotoc
     CycloneDDS::ddsc

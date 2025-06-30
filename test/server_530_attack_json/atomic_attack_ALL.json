@@ -1,0 +1,24 @@
+{
+    "name": "atomic_attack_ALL",
+    "chinese_name": "",
+    "description": "",
+    "version": "V1.0.0",
+    "build_time": "2024-09-21T09-21-21",
+    "ip": "192.168.137.74",
+    "port": "50019", 
+    "username": "root",
+    "password": "root",
+    "broadcast_address": "255.255.255.255",
+    "broadcast_port": "10450",
+    "heartbeat_interal":2,
+    "services": [
+        "atomic_attack_decode",
+        "atomic_attack_detect",
+        "atomic_attack_fusion",
+        "atomic_attack_infrared",
+        "atomic_attack_lock",
+        "atomic_attack_radar",
+        "atomic_attack_range",
+        "atomic_attack_release"
+    ]
+}

@@ -1,0 +1,39 @@
+{
+    "module": "endResponseSF",
+    "messages": [
+        {
+            "name": "release_result",
+            "description": "",
+            "fields": [
+                {
+                    "id": 1,
+                    "name": "x",
+                    "type": "int",
+                    "description": "",
+                    "chinese_name": ""
+                },
+                {
+                    "id": 2,
+                    "name": "y",
+                    "type": "int",
+                    "description": "",
+                    "chinese_name": ""
+                },
+                {
+                    "id": 3,
+                    "name": "z",
+                    "type": "int",
+                    "description": "",
+                    "chinese_name": ""
+                },
+                {
+                    "id": 4,
+                    "name": "return_type",
+                    "type": "int",
+                    "description": "",
+                    "chinese_name": ""
+                }
+            ]
+        }
+    ]
+}

@@ -183,3 +183,24 @@ class ServerUtil:
         print(
             f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/server/{server.get_name()}/sync_server/monitor.cpp generated successfully!"
         )
+
+    @staticmethod
+    def generateExecShell(server_name:str):
+        shell_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/monitor_deployment_template/exec_server_shell_template.j2"
+            ).read()
+        )
+        res_str = shell_template.render(
+        server_name=server_name,
+        )
+        # 确保目录存在
+        os.makedirs(
+            "/opt/",
+            exist_ok=True,
+        )
+
+        # 将res_str写入框架内的cpp文件中，同名不同路径
+        with open(os.path.join("/opt/",f"{server_name}.sh"), "w",) as file:
+            file.write(res_str)
+        print(f"SUCCESS: generated /opt/{server_name}.sh")

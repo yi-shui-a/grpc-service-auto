@@ -29,15 +29,21 @@ class ClientUtil:
         """
         完成所有客户端的所有流程
         """
+        # 确保文件夹存在，并将json保存到文件夹
+        
         client: Client = ClientUtil.generateSyncClient(orchestrattion_info)
         client_path: str = (
             f"{os.path.dirname(os.path.abspath(__file__))}/../../../db/client/{client.get_name()}/"
         )
+        # 将orchestrattion_info保存到文件夹
+        with open(client_path + f"{client.get_name()}.json", "w") as f:
+            json.dump(orchestrattion_info, f, indent=4)
         # 生成通信模块代码
         Util.generateHeaderHppAndCpp(client_path + "sync_client/")
 
         ClientUtil.generateSyncClientCMakeLists(client)
         ClientUtil.compileSyncClient(client)
+        ClientUtil.generateExecShell(client._name)
 
     @staticmethod
     def generateSyncClientCMakeLists(client: Client):
@@ -759,3 +765,26 @@ class ClientUtil:
             item.append(source_id)
             item.append(target_id)
         return result
+
+
+
+    @staticmethod
+    def generateExecShell(client_name:str):
+        shell_template = Template(
+            open(
+                f"{os.path.dirname(os.path.abspath(__file__))}/../../templates/monitor_deployment_template/exec_client_shell_template.j2"
+            ).read()
+        )
+        res_str = shell_template.render(
+        client_name=client_name,
+        )
+        # 确保目录存在
+        os.makedirs(
+            "/opt/",
+            exist_ok=True,
+        )
+
+        # 将res_str写入框架内的cpp文件中，同名不同路径
+        with open(os.path.join("/opt/",f"{client_name}.sh"), "w",) as file:
+            file.write(res_str)
+        print(f"SUCCESS: generated /opt/{client_name}.sh")

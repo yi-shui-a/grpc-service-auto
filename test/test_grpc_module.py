@@ -35,7 +35,7 @@ if __name__ == "__main__":
     )
     AtomServiceUtil.parseCpp(
         serviceB,
-        f"{os.path.dirname(os.path.abspath(__file__))}/../example/grpc_example/sf/atomic_service_sf.c",
+        f"{os.path.dirname(os.path.abspath(__file__))}/../example/grpc_example/sf/atomic_service_sf.cpp",
     )
 
     # 生成微服务编译的cmake
