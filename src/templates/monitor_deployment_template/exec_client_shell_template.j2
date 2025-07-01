@@ -1,0 +1,9 @@
+#!/bin/bash
+
+TARGET_PATH="/root/atom_service_dev/server_compiling/db/client/{{client_name}}/bin"
+
+cd "$TARGET_PATH" || {
+    echo "exec not found: $TARGET_PATH"
+    exit 1
+}
+./{{client_name}}_sync_client
